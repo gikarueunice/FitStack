@@ -1,0 +1,420 @@
+﻿@{
+    ViewData["Title"] = "FitTrack ";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 2L4 8V16C4 23.5 9.5 30.5 16 32C22.5 30.5 28 23.5 28 16V8L16 2Z" fill="#4F46E5" stroke="#6366F1" stroke-width="2" />
+                    <path d="M12 16L15 19L21 13" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>FitTrack</span>
+            </div>
+
+            <!-- Mobile menu button -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <!-- Desktop Navigation -->
+            <div class="nav-links" id="navLinks">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#testimonials">Success Stories</a>
+                <a href="#pricing">Pricing</a>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="/auth/login" class="btn btn-outline">Log In</a>
+                <a href="/auth/register" class="btn btn-primary">Start Free Trial</a>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#testimonials">Success Stories</a>
+            <a href="#pricing">Pricing</a>
+            <div class="mobile-buttons">
+                <a href="/account/login" class="btn btn-outline">Log In</a>
+                <a href="/account/register" class="btn btn-primary">Start Free Trial</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    ⚡ Join 10,000+ active users
+                </div>
+                <h1 class="hero-title">
+                    Your Journey to a <span class="gradient-text">Healthier You</span> Starts Here
+                </h1>
+                <p class="hero-description">
+                    Track workouts, monitor progress, and achieve your fitness goals with personalized insights and AI-powered recommendations.
+                </p>
+
+                <div class="hero-cta">
+                    <a href="/account/register" class="btn btn-primary btn-large">
+                        Get Started Free
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                    <a href="#how-it-works" class="btn btn-outline btn-large">
+                        Watch Demo
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M6 3L16 10L6 17V3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Workouts</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">50k+</div>
+                        <div class="stat-label">Minutes Tracked</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div class="stat-number">4.9★</div>
+                        <div class="stat-label">User Rating</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-image">
+                <div class="hero-image-container">
+                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
+                         alt="Person working out"
+                         class="hero-img"
+                         loading="lazy">
+
+                    <!-- Dashboard Preview Overlay -->
+                    <div class="dashboard-preview">
+                        <div class="preview-header">
+                            <div class="preview-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span>Today's Progress</span>
+                        </div>
+                        <div class="preview-stats">
+                            <div class="preview-stat">
+                                <span class="stat-circle blue"></span>
+                                <span>Steps: 8,432</span>
+                            </div>
+                            <div class="preview-stat">
+                                <span class="stat-circle green"></span>
+                                <span>Calories: 520</span>
+                            </div>
+                            <div class="preview-stat">
+                                <span class="stat-circle purple"></span>
+                                <span>HRV: 45ms</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">FEATURES</span>
+                <h2 class="section-title">Everything You Need to <span class="gradient-text">Succeed</span></h2>
+                <p class="section-description">
+                    Powerful tools to track, analyze, and improve your fitness journey
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon activity">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 12H6L9 3L15 21L18 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3>Activity Tracking</h3>
+                    <p>Track runs, strength training, yoga, and more with detailed metrics and form analysis</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon wellness">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" />
+                            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3>Wellness Insights</h3>
+                    <p>Monitor sleep quality, HRV, and mood to optimize recovery and prevent burnout</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon goals">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3>Smart Goals</h3>
+                    <p>Set personalized goals and get AI-powered recommendations to achieve them faster</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon community">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M17 21V19C17 16.7909 15.2091 15 13 15H5C2.79086 15 1 16.7909 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" />
+                            <path d="M23 21V19C22.9999 17.8084 22.5825 16.6564 21.8239 15.7463C21.0654 14.8362 20.0228 14.231 18.87 14.04" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M16 3.13C17.0613 3.72083 17.9145 4.61743 18.446 5.7025C18.9775 6.78757 19.1581 8.00385 18.96 9.19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3>Community Challenges</h3>
+                    <p>Join challenges, earn badges, and connect with like-minded fitness enthusiasts</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">SIMPLE PROCESS</span>
+                <h2 class="section-title">Start in <span class="gradient-text">3 Easy Steps</span></h2>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Create Account</h3>
+                    <p>Sign up in under 2 minutes with your email or connect your fitness wearable</p>
+                </div>
+
+                <div class="step-connector"></div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Set Your Goals</h3>
+                    <p>Tell us what you want to achieve and get a personalized plan</p>
+                </div>
+
+                <div class="step-connector"></div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Start Tracking</h3>
+                    <p>Log your activities and watch your progress grow with real-time insights</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">SUCCESS STORIES</span>
+                <h2 class="section-title">What Our <span class="gradient-text">Users Say</span></h2>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">
+                        "FitTrack completely transformed how I approach fitness. The HRV insights helped me avoid overtraining, and I've finally broken through my plateau!"
+                    </p>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                             alt="Sarah Johnson">
+                        <div>
+                            <h4>Sarah Johnson</h4>
+                            <p>Lost 25 lbs, Marathon Finisher</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">
+                        "The community challenges keep me motivated. I've made real friends and the streak rewards make me never want to miss a workout!"
+                    </p>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                             alt="Mike Chen">
+                        <div>
+                            <h4>Mike Chen</h4>
+                            <p>365-day streak 🔥</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">
+                        "As a busy parent, the quick-log feature is a lifesaver. I can track my workouts in seconds and the insights are incredibly accurate."
+                    </p>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                             alt="Emily Rodriguez">
+                        <div>
+                            <h4>Emily Rodriguez</h4>
+                            <p>Yoga Instructor, Mom of 2</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">PRICING</span>
+                <h2 class="section-title">Simple, <span class="gradient-text">Transparent</span> Pricing</h2>
+                <p class="section-description">Start free, upgrade anytime</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Free</h3>
+                    <div class="price">$0<span>/month</span></div>
+                    <ul class="pricing-features">
+                        <li>✓ Basic activity tracking</li>
+                        <li>✓ 3 active goals</li>
+                        <li>✓ 30-day history</li>
+                        <li>✓ Community access</li>
+                    </ul>
+                    <a href="/account/register" class="btn btn-outline btn-block">Get Started</a>
+                </div>
+
+                <div class="pricing-card popular">
+                    <div class="popular-badge">MOST POPULAR</div>
+                    <h3>Pro</h3>
+                    <div class="price">$12<span>/month</span></div>
+                    <ul class="pricing-features">
+                        <li>✓ Everything in Free</li>
+                        <li>✓ AI workout recommendations</li>
+                        <li>✓ Unlimited goals & history</li>
+                        <li>✓ HRV & recovery insights</li>
+                        <li>✓ Priority support</li>
+                    </ul>
+                    <a href="/account/register?plan=pro" class="btn btn-primary btn-block">Start Free Trial</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>Elite</h3>
+                    <div class="price">$29<span>/month</span></div>
+                    <ul class="pricing-features">
+                        <li>✓ Everything in Pro</li>
+                        <li>✓ Personal coaching</li>
+                        <li>✓ Custom workout plans</li>
+                        <li>✓ Nutrition tracking</li>
+                        <li>✓ 1-on-1 video calls</li>
+                    </ul>
+                    <a href="/account/register?plan=elite" class="btn btn-outline btn-block">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Transform Your Fitness Journey?</h2>
+                <p>Join thousands of users who've already achieved their goals with FitTrack</p>
+                <a href="/account/register" class="btn btn-primary btn-large">
+                    Start Your Free Trial
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </a>
+                <p class="trial-note">No credit card required • 14-day free trial</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="nav-logo">
+                        <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <path d="M16 2L4 8V16C4 23.5 9.5 30.5 16 32C22.5 30.5 28 23.5 28 16V8L16 2Z" fill="#4F46E5" stroke="#6366F1" stroke-width="2" />
+                            <path d="M12 16L15 19L21 13" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span>FitTrack</span>
+                    </div>
+                    <p>Making fitness tracking simple, insightful, and motivating for everyone.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#testimonials">Success Stories</a>
+                    <a href="#">FAQ</a>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <a href="#">About</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Security</a>
+                </div>
+
+                <div class="footer-social">
+                    <h4>Follow Us</h4>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon">📱</a>
+                        <a href="#" class="social-icon">💬</a>
+                        <a href="#" class="social-icon">📷</a>
+                        <a href="#" class="social-icon">🐦</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 FitTrack. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/js/landing.js" asp-append-version="true"></script>
+</body>
+</html>

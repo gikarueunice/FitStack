@@ -1,0 +1,9 @@
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackAPI\obj\Debug\net10.0\staticwebassets.build.json
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackAPI\obj\Debug\net10.0\staticwebassets.build.json
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackAPI\obj\Debug\net10.0\staticwebassets.build.json
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackAPI\obj\Debug\net10.0\staticwebassets.build.json
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackAPI\obj\Debug\net10.0\staticwebassets.build.json
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackAPI\obj\Debug\net10.0\staticwebassets.build.json
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackAPI\obj\Debug\net10.0\staticwebassets.build.json
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackAPI\obj\Debug\net10.0\staticwebassets.build.json
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackAPI\obj\Debug\net10.0\staticwebassets.build.json

@@ -1,0 +1,13 @@
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\bin\Debug\net10.0\FitStackDBL.deps.json
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\bin\Debug\net10.0\FitStackDBL.dll
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\bin\Debug\net10.0\FitStackDBL.pdb
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\obj\Debug\net10.0\FitStackDBL.csproj.AssemblyReference.cache
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\obj\Debug\net10.0\FitStackDBL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\obj\Debug\net10.0\FitStackDBL.AssemblyInfoInputs.cache
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\obj\Debug\net10.0\FitStackDBL.AssemblyInfo.cs
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\obj\Debug\net10.0\FitStackDBL.csproj.CoreCompileInputs.cache
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\obj\Debug\net10.0\FitStackDBL.dll
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\obj\Debug\net10.0\refint\FitStackDBL.dll
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\obj\Debug\net10.0\FitStackDBL.pdb
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\obj\Debug\net10.0\ref\FitStackDBL.dll
+C:\Users\ADMIN\Documents\Projects\FitStack\FitStackDBL\obj\Debug\net10.0\FitStackDBL.sourcelink.json

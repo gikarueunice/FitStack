@@ -1,0 +1,417 @@
+﻿@model FitStack.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Create Your Account";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="auth-container">
+    <div class="auth-card">
+        <!-- Header -->
+        <div class="auth-header">
+            <a href="/" class="auth-logo">
+                <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 2L4 8V16C4 23.5 9.5 30.5 16 32C22.5 30.5 28 23.5 28 16V8L16 2Z" fill="#4F46E5" stroke="#6366F1" stroke-width="2"/>
+                    <path d="M12 16L15 19L21 13" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>FitTrack</span>
+            </a>
+            <h1>Create your account</h1>
+            <p>Start your fitness journey today</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="registration-progress">
+            <div class="progress-step active" data-step="1">
+                <span class="step-number">1</span>
+                <span class="step-label">Account</span>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="2">
+                <span class="step-number">2</span>
+                <span class="step-label">Profile</span>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="3">
+                <span class="step-number">3</span>
+                <span class="step-label">Goals</span>
+            </div>
+        </div>
+
+        <!-- Registration Form -->
+        <form asp-action="Register" method="post" class="auth-form" id="registrationForm">
+            @Html.AntiForgeryToken()
+            
+            <!-- Step 1: Account Information -->
+            <div class="form-step active" id="step1">
+                <div class="form-group">
+                    <label asp-for="FullName" class="form-label">Full Name</label>
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input asp-for="FullName" class="form-input" placeholder="John Doe" />
+                    </div>
+                    <span asp-validation-for="FullName" class="validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-icon">📧</span>
+                        <input asp-for="Email" class="form-input" type="email" placeholder="you@example.com" />
+                    </div>
+                    <span asp-validation-for="Email" class="validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input asp-for="Password" class="form-input" type="password" placeholder="Create a strong password" id="password" />
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">👁️</button>
+                    </div>
+                    <span asp-validation-for="Password" class="validation-error"></span>
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                    </div>
+                    <ul class="password-requirements">
+                        <li id="req-length">✓ At least 8 characters</li>
+                        <li id="req-uppercase">✓ At least 1 uppercase letter</li>
+                        <li id="req-lowercase">✓ At least 1 lowercase letter</li>
+                        <li id="req-number">✓ At least 1 number</li>
+                        <li id="req-special">✓ At least 1 special character</li>
+                    </ul>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input asp-for="ConfirmPassword" class="form-input" type="password" placeholder="Re-enter your password" id="confirmPassword" />
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">👁️</button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input asp-for="AcceptTerms" type="checkbox" />
+                        <span class="checkmark"></span>
+                        <span class="checkbox-label">
+                            I agree to the <a href="/terms" target="_blank">Terms of Service</a> and 
+                            <a href="/privacy" target="_blank">Privacy Policy</a>
+                        </span>
+                    </label>
+                    <span asp-validation-for="AcceptTerms" class="validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input asp-for="SubscribeToNewsletter" type="checkbox" />
+                        <span class="checkmark"></span>
+                        <span class="checkbox-label">
+                            Subscribe to our newsletter for fitness tips and updates
+                        </span>
+                    </label>
+                </div>
+
+                <button type="button" class="btn-next" onclick="nextStep()">Continue to Profile →</button>
+            </div>
+
+            <!-- Step 2: Profile Information -->
+            <div class="form-step" id="step2">
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                        <div class="input-group">
+                            <span class="input-icon">🎂</span>
+                            <input asp-for="DateOfBirth" class="form-input" type="date" max="@DateTime.Today.AddYears(-13).ToString("yyyy-MM-dd")" />
+                        </div>
+                        <span asp-validation-for="DateOfBirth" class="validation-error"></span>
+                    </div>
+
+                    <div class="form-group half">
+                        <label asp-for="Gender" class="form-label">Gender</label>
+                        <div class="input-group">
+                            <span class="input-icon">⚥</span>
+                            <select asp-for="Gender" class="form-input">
+                                <option value="">Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Non-binary">Non-binary</option>
+                                <option value="Prefer not to say">Prefer not to say</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label asp-for="Height" class="form-label">Height (cm)</label>
+                        <div class="input-group">
+                            <span class="input-icon">📏</span>
+                            <input asp-for="Height" class="form-input" type="number" placeholder="175" min="100" max="250" />
+                        </div>
+                        <span asp-validation-for="Height" class="validation-error"></span>
+                    </div>
+
+                    <div class="form-group half">
+                        <label asp-for="Weight" class="form-label">Weight (kg)</label>
+                        <div class="input-group">
+                            <span class="input-icon">⚖️</span>
+                            <input asp-for="Weight" class="form-input" type="number" step="0.1" placeholder="70.5" min="30" max="250" />
+                        </div>
+                        <span asp-validation-for="Weight" class="validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="button" class="btn-prev" onclick="prevStep()">← Back</button>
+                    <button type="button" class="btn-next" onclick="nextStep()">Continue to Goals →</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Goals and Preferences -->
+            <div class="form-step" id="step3">
+                <div class="form-group">
+                    <label asp-for="FitnessGoal" class="form-label">What's your main fitness goal?</label>
+                    <div class="goal-options">
+                        <label class="goal-card">
+                            <input type="radio" asp-for="FitnessGoal" value="Lose Weight" />
+                            <div class="goal-content">
+                                <span class="goal-emoji">⚖️</span>
+                                <span class="goal-title">Lose Weight</span>
+                                <span class="goal-desc">Shed those extra pounds</span>
+                            </div>
+                        </label>
+                        <label class="goal-card">
+                            <input type="radio" asp-for="FitnessGoal" value="Build Muscle" />
+                            <div class="goal-content">
+                                <span class="goal-emoji">💪</span>
+                                <span class="goal-title">Build Muscle</span>
+                                <span class="goal-desc">Gain strength and mass</span>
+                            </div>
+                        </label>
+                        <label class="goal-card">
+                            <input type="radio" asp-for="FitnessGoal" value="Stay Fit" />
+                            <div class="goal-content">
+                                <span class="goal-emoji">🏃</span>
+                                <span class="goal-title">Stay Fit</span>
+                                <span class="goal-desc">Maintain healthy lifestyle</span>
+                            </div>
+                        </label>
+                        <label class="goal-card">
+                            <input type="radio" asp-for="FitnessGoal" value="Improve Endurance" />
+                            <div class="goal-content">
+                                <span class="goal-emoji">🏋️</span>
+                                <span class="goal-title">Improve Endurance</span>
+                                <span class="goal-desc">Build stamina and energy</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ActivityLevel" class="form-label">What's your current activity level?</label>
+                    <select asp-for="ActivityLevel" class="form-input">
+                        <option value="">Select your level</option>
+                        <option value="Sedentary">Sedentary (little or no exercise)</option>
+                        <option value="Light">Lightly active (1-3 days/week)</option>
+                        <option value="Moderate">Moderately active (3-5 days/week)</option>
+                        <option value="Active">Very active (6-7 days/week)</option>
+                        <option value="Extreme">Extremely active (athlete/physical job)</option>
+                    </select>
+                </div>
+
+                <!-- Hidden field for selected plan -->
+                @if (!string.IsNullOrEmpty(Model?.SelectedPlan))
+                {
+                    <input type="hidden" asp-for="SelectedPlan" value="@Model.SelectedPlan" />
+                }
+
+                <div class="form-buttons">
+                    <button type="button" class="btn-prev" onclick="prevStep()">← Back</button>
+                    <button type="submit" class="btn-submit">Create Account →</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Social Registration -->
+        <div class="social-registration">
+            <div class="divider">
+                <span>or continue with</span>
+            </div>
+            
+            <div class="social-buttons">
+                <button type="button" class="social-btn google" onclick="socialLogin('google')">
+                    <img src="https://www.google.com/favicon.ico" alt="Google" />
+                    Google
+                </button>
+                <button type="button" class="social-btn apple" onclick="socialLogin('apple')">
+                    <span class="apple-icon"></span>
+                    Apple
+                </button>
+                <button type="button" class="social-btn facebook" onclick="socialLogin('facebook')">
+                    <span class="facebook-icon">f</span>
+                    Facebook
+                </button>
+            </div>
+        </div>
+
+        <!-- Login Link -->
+        <div class="auth-footer">
+            <p>Already have an account? <a href="/account/login">Sign in</a></p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Multi-step form navigation
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                // Validate current step before proceeding
+                if (validateStep(currentStep)) {
+                    document.getElementById(`step${currentStep}`).classList.remove('active');
+                    currentStep++;
+                    document.getElementById(`step${currentStep}`).classList.add('active');
+                    updateProgressBar();
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep--;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                updateProgressBar();
+            }
+        }
+
+        function updateProgressBar() {
+            // Update progress steps
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                if (index + 1 < currentStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+        }
+
+        function validateStep(step) {
+            // Basic validation for each step
+            if (step === 1) {
+                const fullName = document.getElementById('FullName').value;
+                const email = document.getElementById('Email').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const terms = document.getElementById('AcceptTerms').checked;
+
+                if (!fullName || !email || !password || !confirmPassword || !terms) {
+                    alert('Please fill in all required fields and accept the terms.');
+                    return false;
+                }
+
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match.');
+                    return false;
+                }
+
+                if (!isPasswordStrong(password)) {
+                    alert('Please enter a stronger password that meets all requirements.');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Password strength checker
+        const password = document.getElementById('password');
+        if (password) {
+            password.addEventListener('input', checkPasswordStrength);
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            
+            // Check requirements
+            const hasLength = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[#$!%*?&]/.test(password);
+
+            // Update requirement indicators
+            document.getElementById('req-length').style.color = hasLength ? '#10B981' : '#6B7280';
+            document.getElementById('req-uppercase').style.color = hasUppercase ? '#10B981' : '#6B7280';
+            document.getElementById('req-lowercase').style.color = hasLowercase ? '#10B981' : '#6B7280';
+            document.getElementById('req-number').style.color = hasNumber ? '#10B981' : '#6B7280';
+            document.getElementById('req-special').style.color = hasSpecial ? '#10B981' : '#6B7280';
+
+            // Update strength bars
+            const strengthBars = document.querySelectorAll('.strength-bar');
+            const strengthCount = [hasLength, hasUppercase && hasLowercase, hasNumber, hasSpecial].filter(Boolean).length;
+            
+            strengthBars.forEach((bar, index) => {
+                if (index < strengthCount) {
+                    bar.style.background = strengthCount <= 2 ? '#F59E0B' : strengthCount <= 3 ? '#10B981' : '#059669';
+                    bar.style.width = '100%';
+                } else {
+                    bar.style.background = '#E5E7EB';
+                }
+            });
+        }
+
+        function isPasswordStrong(password) {
+            return password.length >= 8 &&
+                   /[A-Z]/.test(password) &&
+                   /[a-z]/.test(password) &&
+                   /[0-9]/.test(password) &&
+                   /[#$!%*?&]/.test(password);
+        }
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+        }
+
+        // Social login handlers
+        function socialLogin(provider) {
+            window.location.href = `/account/external-login?provider=${provider}`;
+        }
+
+        // Handle plan from URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const plan = urlParams.get('plan');
+            if (plan) {
+                const planInput = document.querySelector('input[name="SelectedPlan"]');
+                if (planInput) {
+                    planInput.value = plan;
+                    
+                    // Highlight the selected plan on pricing page if coming from there
+                    if (plan === 'pro') {
+                        // Show pro features message
+                        const message = document.createElement('div');
+                        message.className = 'plan-selected-message';
+                        message.innerHTML = '✨ You\'re signing up for the <strong>Pro Plan</strong>. Get ready for AI insights and unlimited tracking!';
+                        document.querySelector('.auth-header').appendChild(message);
+                    }
+                }
+            }
+        });
+    </script>
+}
