@@ -1,5 +1,6 @@
 ﻿using FitStack.ViewModels;
 using FitStackDBL;
+using FitStackDBL.Services;
 using FitStackDBL.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver.Core.Configuration;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace FitStack.Controllers
 {
@@ -15,14 +17,20 @@ namespace FitStack.Controllers
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthController> _logger;
         private readonly Bl _bl;
+        private readonly IUserService _userService;
+        private IEmailService _emailService;
 
-        public AuthController(IConfiguration configuration, ILogger<AuthController> logger)
+        public AuthController(IConfiguration configuration, ILogger<AuthController> logger, IUserService userService, IEmailService emailService)
         {
             _configuration = configuration;
             _logger = logger;
+            _userService = userService;
+            _emailService = emailService;
 
-            var ConnectionString = _configuration.GetConnectionString("DefaultConnection");
-            _bl = new Bl(ConnectionString);
+            var connectionString = _configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string not found");
+
+            _bl = new Bl(connectionString);
         }
         [HttpGet]
         [AllowAnonymous]
@@ -33,143 +41,443 @@ namespace FitStack.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = null)
         {
             if (!ModelState.IsValid)
             {
+                // Collect all validation errors
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                TempData["ValidationErrors"] = JsonSerializer.Serialize(errors);
                 return View(model);
             }
 
             try
             {
-                // Check if email already exists
-                var existingUser = await _bl.UsersRepository.GetByEmail(model.Email);
+                // Check if user already exists
+                var existingUser = await _userService.GetUserByEmailAsync(model.Email);
                 if (existingUser != null)
                 {
-                    ModelState.AddModelError("Email", "Email already exists");
+                    if (!existingUser.IsEmailVerified)
+                    {
+                        TempData["Warning"] = "An account with this email exists but is not verified. Please check your email for verification link or request a new one.";
+                        ModelState.AddModelError("Email", "Email already registered but not verified");
+                    }
+                    else
+                    {
+                        TempData["Error"] = "An account with this email already exists. Please login instead.";
+                        ModelState.AddModelError("Email", "Email already registered");
+                    }
                     return View(model);
                 }
 
-                // Validate password
-                if (!FitStack.Helpers.PasswordHelper.IsValidPassword(model.Password))
+                // Validate password strength
+                if (!IsPasswordStrong(model.Password))
                 {
-                    ModelState.AddModelError("Password", "Password must be at least 6 characters");
+                    TempData["Error"] = "Password does not meet security requirements. Please ensure it has at least 8 characters, uppercase, lowercase, number, and special character.";
                     return View(model);
                 }
 
-
-
-                // Create user
+                // Create new user
                 var user = new Users
                 {
-                    FullName = model.FullName.Trim(),
-                    Email = model.Email.Trim().ToLower(),
-                    Password = FitStack.Helpers.PasswordHelper.HashPassword(model.Password),
-                    IsActive = true
+                    FullName = model.FullName,
+                    Email = model.Email,
+                    DateOfBirth = model.DateOfBirth,
+                    Gender = model.Gender,
+                    Height = model.Height,
+                    Weight = model.Weight,
+                    FitnessGoal = model.FitnessGoal,
+                    ActivityLevel = model.ActivityLevel,
+                    SelectedPlan = model.SelectedPlan,
+                    SubscribeToNewsletter = model.SubscribeToNewsletter,
+                    CreatedAt = DateTime.UtcNow,
+                    IsActive = true,
+                    IsEmailVerified = false,
+                    EmailVerificationToken = Guid.NewGuid().ToString()
                 };
 
-                var userId = await _bl.UsersRepository.CreateUser(user);
+                // Hash password
+                user.Salt = BCrypt.Net.BCrypt.GenerateSalt();
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, user.Salt);
 
-                // On successful registration redirect to login
-                if (userId > 0)
+                // Save user to database
+                var userId = await _userService.CreateUserAsync(user);
+
+                // Send verification email
+                try
                 {
-                    return RedirectToAction("Login", "Auth");
+                    var verificationLink = Url.Action(nameof(VerifyEmail), "Auth",
+                        new { token = user.EmailVerificationToken }, Request.Scheme);
+                    await _emailService.SendVerificationEmailAsync(user.Email, verificationLink, user.FullName);
+                    TempData["Success"] = "Registration successful! We've sent a verification email to " + user.Email +
+                        ". Please check your inbox and click the verification link to activate your account.";
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send verification email");
+                    TempData["Warning"] = "Account created but we couldn't send the verification email. Please contact support.";
                 }
 
-                ModelState.AddModelError("", "Registration failed. Please try again.");
+                // Auto sign in
+                await SignInUserAsync(user);
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+
+                return RedirectToAction("Index", "Dashboard");
+            }
+            catch (DuplicateEmailException ex)
+            {
+                _logger.LogWarning(ex, "Duplicate email registration attempt");
+                TempData["Error"] = "This email address is already registered. Please use a different email or try logging in.";
+                ModelState.AddModelError("Email", "Email already exists");
                 return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Registration failed for email: {model.Email}");
-                ModelState.AddModelError("", $"Registration failed: {ex.Message}");
+                _logger.LogError(ex, "Error during registration for email {Email}", model.Email);
+                TempData["Error"] = "An unexpected error occurred during registration. Please try again later. Error: " + ex.Message;
                 return View(model);
             }
         }
+
+
+
         [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login(string? returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            var model = new LoginViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+
+            // Clear any existing messages
+            TempData.Remove("Error");
+            TempData.Remove("Success");
+            TempData.Remove("Warning");
+
+            return View(model);
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
+                if (string.IsNullOrEmpty(model.Email))
+                    TempData["Error"] = "Please enter your email address.";
+                else if (string.IsNullOrEmpty(model.Password))
+                    TempData["Error"] = "Please enter your password.";
+                else
+                    TempData["Error"] = "Please correct the errors in the form.";
+
                 return View(model);
             }
 
             try
             {
-                // Get user by email
-                var user = await _bl.UsersRepository.GetByEmail(model.Email);
+                var user = await _userService.GetUserByEmailAsync(model.Email);
 
-                // Validate user
                 if (user == null)
                 {
+                    _logger.LogWarning("Login attempt with non-existent email: {Email}", model.Email);
+                    TempData["Error"] = "No account found with this email address. Please check your email or <a href='/auth/register'>create a new account</a>.";
                     ModelState.AddModelError("", "Invalid email or password");
                     return View(model);
                 }
 
                 if (!user.IsActive)
                 {
-                    ModelState.AddModelError("", "Account is deactivated. Please contact administrator.");
+                    TempData["Error"] = "Your account has been deactivated. Please contact support for assistance.";
+                    return View(model);
+                }
+
+                if (!user.IsEmailVerified)
+                {
+                    TempData["Warning"] = "Your email address has not been verified. Please check your inbox for the verification link or <a href='/auth/resend-verification?email=" + model.Email + "'>click here to resend</a>.";
                     return View(model);
                 }
 
                 // Verify password
-                if (!FitStack.Helpers.PasswordHelper.VerifyPassword(model.Password, user.Password))
+                bool isPasswordValid;
+                try
                 {
+                    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password, user.Salt);
+                    isPasswordValid = hashedPassword == user.PasswordHash;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Password verification error for user {Email}", model.Email);
+                    TempData["Error"] = "Unable to verify credentials. Please try again later.";
+                    return View(model);
+                }
+
+                if (!isPasswordValid)
+                {
+                    _logger.LogWarning("Failed login attempt for {Email} - Incorrect password", model.Email);
+                    TempData["Error"] = "Incorrect password. Please try again. <a href='/auth/forgot-password'>Forgot your password?</a>";
                     ModelState.AddModelError("", "Invalid email or password");
                     return View(model);
                 }
 
-                // Update login statistics
-                await _bl.UsersRepository.UpdateLoginStats(user.Id);
-
-                // Create claims and sign in
-                await SignInUser(user, model.RememberMe);
-
-                // Redirect to returnUrl or home after successful login
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                // Check for multiple failed attempts (you can implement this in your user service)
+                if (await _userService.HasExceededLoginAttemptsAsync(user.Id))
                 {
-                    return Redirect(returnUrl);
+                    TempData["Error"] = "Too many failed login attempts. Your account has been temporarily locked. Please try again in 15 minutes or reset your password.";
+                    return View(model);
                 }
 
-                return RedirectToAction("Index", "Home");
+                // Update last login
+                user.LastLoginAt = DateTime.UtcNow;
+                await _userService.UpdateUserAsync(user);
 
+                // Clear any failed login attempts
+                await _userService.ResetLoginAttemptsAsync(user.Id);
+
+                // Sign in the user
+                await SignInUserAsync(user, model.RememberMe);
+
+                TempData["Success"] = $"Welcome back, {user.FullName}! 👋";
+
+                if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                {
+                    return Redirect(model.ReturnUrl);
+                }
+
+                return RedirectToAction("Index", "Dashboard");
+            }
+            catch (UserLockedException ex)
+            {
+                _logger.LogWarning(ex, "Locked account login attempt for {Email}", model.Email);
+                TempData["Error"] = "Your account has been locked due to multiple failed attempts. Please reset your password or contact support.";
+                return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Login failed for email: {model.Email}");
-                ModelState.AddModelError("", "Login failed. Please try again.");
+                _logger.LogError(ex, "Error during login for email {Email}", model.Email);
+                TempData["Error"] = "An unexpected error occurred during login. Please try again later.";
                 return View(model);
             }
         }
 
-        private async Task SignInUser(Users user, bool rememberMe = false)
+        [HttpGet]
+        public async Task<IActionResult> ResendVerification(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                TempData["Error"] = "Email address is required.";
+                return RedirectToAction("Login");
+            }
+
+            var user = await _userService.GetUserByEmailAsync(email);
+            if (user == null || user.IsEmailVerified)
+            {
+                TempData["Error"] = "Unable to resend verification. Please check your email or register a new account.";
+                return RedirectToAction("Login");
+            }
+
+            try
+            {
+                var verificationLink = Url.Action(nameof(VerifyEmail), "Auth",
+                    new { token = user.EmailVerificationToken }, Request.Scheme);
+                await _emailService.SendVerificationEmailAsync(user.Email, verificationLink, user.FullName);
+                TempData["Success"] = "Verification email has been resent. Please check your inbox (and spam folder).";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to resend verification email");
+                TempData["Error"] = "Unable to send verification email at this time. Please try again later.";
+            }
+
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VerifyEmail(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["Error"] = "Invalid verification token.";
+                return RedirectToAction("Login");
+            }
+
+            var user = await _userService.GetUserByVerificationTokenAsync(token);
+            if (user == null)
+            {
+                TempData["Error"] = "Invalid or expired verification token. Please request a new verification email.";
+                return RedirectToAction("Login");
+            }
+
+            if (user.IsEmailVerified)
+            {
+                TempData["Success"] = "Your email is already verified. You can now login.";
+                return RedirectToAction("Login");
+            }
+
+            user.IsEmailVerified = true;
+            user.EmailVerificationToken = null;
+            await _userService.UpdateUserAsync(user);
+
+            TempData["Success"] = "Email verified successfully! 🎉 You can now login and start your fitness journey.";
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                if (string.IsNullOrEmpty(model.Email))
+                    TempData["Error"] = "Please enter your email address.";
+                return View(model);
+            }
+
+            var user = await _userService.GetUserByEmailAsync(model.Email);
+            if (user != null && user.IsEmailVerified)
+            {
+                try
+                {
+                    // Generate password reset token
+                    user.PasswordResetToken = Guid.NewGuid().ToString();
+                    user.PasswordResetTokenExpiry = DateTime.UtcNow.AddHours(24);
+                    await _userService.UpdateUserAsync(user);
+
+                    // Send reset email
+                    var resetLink = Url.Action(nameof(ResetPassword), "Auth",
+                        new { token = user.PasswordResetToken }, Request.Scheme);
+                    await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink, user.FullName);
+
+                    TempData["Success"] = "Password reset instructions have been sent to your email address. The link will expire in 24 hours.";
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send password reset email");
+                    TempData["Error"] = "Unable to send password reset email at this time. Please try again later.";
+                }
+            }
+            else if (user != null && !user.IsEmailVerified)
+            {
+                TempData["Warning"] = "Your email is not verified. Please verify your email first before resetting your password. <a href='/auth/resend-verification?email=" + model.Email + "'>Resend verification email</a>";
+            }
+            else
+            {
+                // Don't reveal that email doesn't exist for security
+                TempData["Info"] = "If an account exists with this email and is verified, you will receive password reset instructions.";
+            }
+
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["Error"] = "Invalid password reset token.";
+                return RedirectToAction("Login");
+            }
+
+            var model = new ResetPasswordViewModel
+            {
+                Token = token
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage);
+                TempData["Error"] = string.Join(" ", errors);
+                return View(model);
+            }
+
+            var user = await _userService.GetUserByPasswordResetTokenAsync(model.Token);
+            if (user == null)
+            {
+                TempData["Error"] = "Invalid or expired password reset token. Please request a new password reset.";
+                return RedirectToAction("ForgotPassword");
+            }
+
+            if (user.PasswordResetTokenExpiry < DateTime.UtcNow)
+            {
+                TempData["Error"] = "Password reset link has expired. Please request a new one.";
+                return RedirectToAction("ForgotPassword");
+            }
+
+            // Validate password strength
+            if (!IsPasswordStrong(model.Password))
+            {
+                TempData["Error"] = "Password does not meet security requirements. It must be at least 8 characters and contain uppercase, lowercase, number, and special character.";
+                return View(model);
+            }
+
+            try
+            {
+                // Update password
+                user.Salt = BCrypt.Net.BCrypt.GenerateSalt();
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, user.Salt);
+                user.PasswordResetToken = null;
+                user.PasswordResetTokenExpiry = null;
+                await _userService.UpdateUserAsync(user);
+
+                TempData["Success"] = "Password reset successfully! You can now login with your new password.";
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error resetting password for user {Email}", user.Email);
+                TempData["Error"] = "An error occurred while resetting your password. Please try again.";
+                return View(model);
+            }
+        }
+
+        private bool IsPasswordStrong(string password)
+        {
+            return password.Length >= 8 &&
+                   password.Any(char.IsUpper) &&
+                   password.Any(char.IsLower) &&
+                   password.Any(char.IsDigit) &&
+                   password.Any(ch => "@$!%*?&".Contains(ch));
+        }
+
+        private async Task SignInUserAsync(Users user, bool isPersistent = false)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.FullName),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim("LastLogin", user.LastLogin?.ToString() ?? DateTime.UtcNow.ToString())
+                new Claim("FullName", user.FullName),
+                new Claim("EmailVerified", user.IsEmailVerified.ToString())
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = rememberMe,
-                ExpiresUtc = rememberMe ? DateTimeOffset.UtcNow.AddDays(7) : DateTimeOffset.UtcNow.AddHours(1)
+                IsPersistent = isPersistent,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7),
+                AllowRefresh = true
             };
 
             await HttpContext.SignInAsync(
@@ -177,13 +485,17 @@ namespace FitStack.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
-        }
     }
+
+    // Custom exceptions
+    public class DuplicateEmailException : Exception
+    {
+        public DuplicateEmailException(string message) : base(message) { }
+    }
+
+    public class UserLockedException : Exception
+    {
+        public UserLockedException(string message) : base(message) { }
+    }
+
 }

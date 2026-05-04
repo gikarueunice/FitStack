@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="FitStack/FitStack.csproj" />
+  <Project Path="FitStackDBL/FitStackDBL.csproj" />
+</Solution>

@@ -19,6 +19,57 @@
             <h1>Create your account</h1>
             <p>Start your fitness journey today</p>
         </div>
+        <!-- Add this right after the auth-header div and before the registration-progress -->
+        <!-- Alert Messages -->
+        <div id="alertContainer">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible">
+                    <span class="alert-icon">✅</span>
+                    <span class="alert-message">@Html.Raw(TempData["Success"])</span>
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-error alert-dismissible">
+                    <span class="alert-icon">❌</span>
+                    <span class="alert-message">@Html.Raw(TempData["Error"])</span>
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            }
+
+            @if (TempData["Warning"] != null)
+            {
+                <div class="alert alert-warning alert-dismissible">
+                    <span class="alert-icon">⚠️</span>
+                    <span class="alert-message">@Html.Raw(TempData["Warning"])</span>
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            }
+
+            @if (TempData["ValidationErrors"] != null)
+            {
+                var errors = System.Text.Json.JsonSerializer.Deserialize<List<string>>(TempData["ValidationErrors"].ToString());
+                if (errors != null && errors.Any())
+                {
+                    <div class="alert alert-error alert-dismissible">
+                        <span class="alert-icon">❌</span>
+                        <div class="alert-message">
+                            <strong>Please correct the following errors:</strong>
+                            <ul style="margin: 8px 0 0 20px;">
+                                @foreach (var error in errors)
+                                {
+                                    <li>@error</li>
+                                }
+                            </ul>
+                        </div>
+                        <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+                    </div>
+                }
+            }
+        </div>
 
         <!-- Progress Bar -->
         <div class="registration-progress">

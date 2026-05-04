@@ -7,13 +7,32 @@ namespace FitStackDBL.Model
     public class Users
     {
         public int Id { get; set; }
-        public string? FullName { get; set; }
-        public string? Email { get; set; }
-        // Stored/hash password
-        public string? Password { get; set; }
-        // Optional fields used by the web app
-        public bool IsActive { get; set; } = true;
-        public DateTime? LastLogin { get; set; }
-        public string? PhoneNumber{ get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
+        public string? Salt { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string? Gender { get; set; }
+        public int? Height { get; set; }
+        public decimal? Weight { get; set; }
+        public string? FitnessGoal { get; set; }
+        public string? ActivityLevel { get; set; }
+        public bool IsEmailVerified { get; set; }
+        public string? EmailVerificationToken { get; set; }
+        public string? PasswordResetToken { get; set; }
+        public DateTime? PasswordResetTokenExpiry { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiry { get; set; }
+        public string? SelectedPlan { get; set; }
+        public bool SubscribeToNewsletter { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public DateTime? LastLoginAt { get; set; }
+        public bool IsActive { get; set; }
+        public string? ProfilePictureUrl { get; set; }
+
+        // Navigation properties for related data
+        public UserProfile? Profile { get; set; }
+        public string? Password { get; internal set; }
     }
 }
