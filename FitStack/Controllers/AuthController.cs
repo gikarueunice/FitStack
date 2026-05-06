@@ -4,34 +4,30 @@ using FitStackDBL.Services;
 using FitStackDBL.Model;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver.Core.Configuration;
 using System.Security.Claims;
-using System.Text.Json;
+using FitStackDBL.Model;
+using FitStack.ViewModels;
+using FitStackDBL.Services;
 
-namespace FitStack.Controllers
+namespace YourApp.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<AuthController> _logger;
-        private readonly Bl _bl;
         private readonly IUserService _userService;
-        private IEmailService _emailService;
+        private readonly IEmailService _emailService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IConfiguration configuration, ILogger<AuthController> logger, IUserService userService, IEmailService emailService)
+        public AuthController(
+            IUserService userService,
+            IEmailService emailService,
+            ILogger<AuthController> logger)
         {
-            _configuration = configuration;
-            _logger = logger;
             _userService = userService;
             _emailService = emailService;
-
-            var connectionString = _configuration.GetConnectionString("DefaultConnection")
-                ?? throw new InvalidOperationException("Connection string not found");
-
-            _bl = new Bl(connectionString);
+            _logger = logger;
         }
+
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Register()
@@ -485,17 +481,21 @@ namespace FitStack.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
         }
-    }
 
-    // Custom exceptions
-    public class DuplicateEmailException : Exception
-    {
-        public DuplicateEmailException(string message) : base(message) { }
-    }
+        private async Task SendVerificationEmailAsync(string email, string token)
+        {
+            var verificationLink = Url.Action(nameof(VerifyEmail), "Account", new { token }, Request.Scheme);
+            // Implement email sending logic here
+            await _emailService.SendEmailAsync(email, "Verify Your Email",
+                $"Please verify your email by clicking <a href='{verificationLink}'>here</a>");
+        }
 
-    public class UserLockedException : Exception
-    {
-        public UserLockedException(string message) : base(message) { }
+        private async Task SendPasswordResetEmailAsync(string email, string token)
+        {
+            var resetLink = Url.Action(nameof(ResetPassword), "Account", new { token }, Request.Scheme);
+            // Implement email sending logic here
+            await _emailService.SendEmailAsync(email, "Reset Your Password",
+                $"Please reset your password by clicking <a href='{resetLink}'>here</a>");
+        }
     }
-
 }
