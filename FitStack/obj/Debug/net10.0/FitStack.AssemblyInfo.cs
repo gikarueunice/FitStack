@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FitStack")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b722026f8a7514f0ea728b74272b2b68b814efa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+67bdf0748e4642a4ded8740f9ffdb510e8fd2326")]
 [assembly: System.Reflection.AssemblyProductAttribute("FitStack")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FitStack")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
