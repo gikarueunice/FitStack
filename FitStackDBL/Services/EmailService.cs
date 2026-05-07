@@ -184,6 +184,18 @@ namespace FitStackDBL.Services
                             color: #6B7280;
                             font-size: 14px;
                         }}
+                        h1 {{
+                            color: #1F2937;
+                            font-size: 28px;
+                            margin-bottom: 16px;
+                        }}
+                        .alert {{
+                            background: #FEF3C7;
+                            border-left: 4px solid #F59E0B;
+                            padding: 16px;
+                            margin: 20px 0;
+                            border-radius: 8px;
+                        }}
                     </style>
                 </head>
                 <body>
@@ -428,11 +440,11 @@ namespace FitStackDBL.Services
                                 <li>Join community challenges</li>
                             </ol>
                             
-                            <p>Need help? Check out our Getting Started Guide or contact our support team.</p>
+                            <p>Need help? Check out our <a href='https://yourdomain.com/guides'>Getting Started Guide</a> or contact our support team.</p>
                         </div>
                         <div class='footer'>
                             <p>© 2026 FitTrack. All rights reserved.</p>
-                            <p>Follow us on social media for daily tips and motivation!</p>
+                            <p>Follow us on <a href='#'>Twitter</a> | <a href='#'>Instagram</a> | <a href='#'>Facebook</a></p>
                         </div>
                     </div>
                 </body>
@@ -638,7 +650,7 @@ namespace FitStackDBL.Services
                             
                             {(streakDays >= 7 ? @"
                             <div style='background: #ECFDF5; padding: 16px; border-radius: 12px; margin: 20px 0;'>
-                                <strong>🎉 Amazing streak!</strong> You've been consistent. Keep it up!
+                                <strong>🎉 Amazing streak!</strong> You've been consistent for {streakDays} days. Keep it up!
                             </div>" : "")}
                             
                             <div style='text-align: center;'>
@@ -659,11 +671,11 @@ namespace FitStackDBL.Services
                     </div>
                 </body>
                 </html>";
-        }
+            }
 
-        private string GetGoalAchievedTemplate(string userName, string goalName)
-        {
-            return $@"
+            private string GetGoalAchievedTemplate(string userName, string goalName)
+            {
+                return $@"
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -743,23 +755,23 @@ namespace FitStackDBL.Services
                     </div>
                 </body>
                 </html>";
-        }
+            }
 
-        private string GetNewsletterTemplate(string userName, List<NewsletterArticle> articles)
-        {
-            var articlesHtml = "";
-            foreach (var article in articles)
+            private string GetNewsletterTemplate(string userName, List<NewsletterArticle> articles)
             {
-                articlesHtml += $@"
+                var articlesHtml = "";
+                foreach (var article in articles)
+                {
+                    articlesHtml += $@"
                     <div style='margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #E5E7EB;'>
                         {(string.IsNullOrEmpty(article.ImageUrl) ? "" : $"<img src='{article.ImageUrl}' style='width: 100%; border-radius: 12px; margin-bottom: 16px;' />")}
                         <h3 style='margin-bottom: 8px;'>{article.Title}</h3>
                         <p style='color: #6B7280;'>{article.Description}</p>
                         <a href='{article.Link}' style='color: #4F46E5; text-decoration: none; font-weight: 500;'>Read more →</a>
                     </div>";
-            }
+                }
 
-            return $@"
+                return $@"
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -834,8 +846,10 @@ namespace FitStackDBL.Services
                     </div>
                 </body>
                 </html>";
-        }
+            }
 
-        #endregion
+            #endregion
+        }
     }
-}
+
+

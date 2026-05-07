@@ -1,25 +1,25 @@
-﻿using FitStackDBL.Model;
+﻿using Dapper;
+using FitStackDBL.Model;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver.Core.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Dapper;
-using Microsoft.Data.SqlClient;
 
 namespace FitStackDBL.Services
 {
-
     public class UserService : IUserService
     {
-        private readonly string _connectionString;
         private readonly IConfiguration _configuration;
+        private readonly object? _ConnectionString;
         private readonly ILogger<UserService> _logger;
 
         public UserService(IConfiguration configuration, ILogger<UserService> logger)
         {
             _configuration = configuration;
-            _connectionString = configuration.GetConnectionString("DefaultConnection")
+            _ConnectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             _logger = logger;
         }
@@ -30,7 +30,7 @@ namespace FitStackDBL.Services
                 SELECT * FROM Users WHERE Id = @Id;
                 SELECT * FROM UserProfiles WHERE UserId = @Id;";
 
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection((string)_ConnectionString);
             using var multi = await connection.QueryMultipleAsync(sql, new { Id = id });
 
             var user = await multi.ReadSingleOrDefaultAsync<Users>();
@@ -45,21 +45,21 @@ namespace FitStackDBL.Services
         public async Task<Users?> GetUserByEmailAsync(string email)
         {
             const string sql = "SELECT * FROM Users WHERE Email = @Email";
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection((string)_ConnectionString);
             return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { Email = email });
         }
 
         public async Task<Users?> GetUserByVerificationTokenAsync(string token)
         {
             const string sql = "SELECT * FROM Users WHERE EmailVerificationToken = @Token";
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection((string)_ConnectionString);
             return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { Token = token });
         }
 
         public async Task<Users?> GetUserByPasswordResetTokenAsync(string token)
         {
             const string sql = "SELECT * FROM Users WHERE PasswordResetToken = @Token AND PasswordResetTokenExpiry > @Now";
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection((string)_ConnectionString);
             return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { Token = token, Now = DateTime.UtcNow });
         }
 
@@ -79,7 +79,7 @@ namespace FitStackDBL.Services
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection((string)_ConnectionString);
             var id = await connection.ExecuteScalarAsync<int>(sql, user);
 
             // Create empty profile
@@ -118,7 +118,7 @@ namespace FitStackDBL.Services
                     ProfilePictureUrl = @ProfilePictureUrl
                 WHERE Id = @Id";
 
-            using var connection = new SqlConnection(_connectionString);
+            using var connection = new SqlConnection((string)_ConnectionString);
             await connection.ExecuteAsync(sql, user);
         }
 

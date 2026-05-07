@@ -7,9 +7,6 @@ namespace FitStackDBL.Services
 {
     public interface IUserService
     {
- 
-
-
         Task<Users?> GetUserByIdAsync(int id);
         Task<Users?> GetUserByEmailAsync(string email);
         Task<Users?> GetUserByVerificationTokenAsync(string token);

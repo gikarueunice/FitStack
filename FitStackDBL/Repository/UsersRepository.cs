@@ -54,10 +54,6 @@ namespace FitStackDBL.Repository
             {
                 throw new Exception("Email already exists", ex);
             }
-            catch (SqlException ex) when (ex.Number == 51001)
-            {
-                throw new Exception("Invalid role specified", ex);
-            }
             catch (Exception ex)
             {
                 throw new Exception("Error creating user", ex);

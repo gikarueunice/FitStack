@@ -33,6 +33,7 @@ namespace FitStackDBL.Model
 
         // Navigation properties for related data
         public UserProfile? Profile { get; set; }
+        public object? PhoneNumber { get; internal set; }
         public string? Password { get; internal set; }
     }
 }
