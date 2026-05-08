@@ -20,24 +20,49 @@
             <p>Sign in to continue your fitness journey</p>
         </div>
 
+        <!-- Alert Messages -->
+        <div id="alertContainer">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible">
+                    <span class="alert-icon">✅</span>
+                    <span class="alert-message">@Html.Raw(TempData["Success"])</span>
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-error alert-dismissible">
+                    <span class="alert-icon">❌</span>
+                    <span class="alert-message">@Html.Raw(TempData["Error"])</span>
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            }
+
+            @if (TempData["Warning"] != null)
+            {
+                <div class="alert alert-warning alert-dismissible">
+                    <span class="alert-icon">⚠️</span>
+                    <span class="alert-message">@Html.Raw(TempData["Warning"])</span>
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            }
+
+            @if (TempData["Info"] != null)
+            {
+                <div class="alert alert-info alert-dismissible">
+                    <span class="alert-icon">ℹ️</span>
+                    <span class="alert-message">@Html.Raw(TempData["Info"])</span>
+                    <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+            }
+        </div>
+
         <!-- Login Form -->
-        <form asp-action="Login" method="post" class="auth-form">
+        <form asp-action="Login" method="post" class="auth-form" id="loginForm">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ReturnUrl" />
-
-            @if (ViewData["ErrorMessage"] != null)
-            {
-                <div class="alert alert-error">
-                    @ViewData["ErrorMessage"]
-                </div>
-            }
-
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success">
-                    @TempData["SuccessMessage"]
-                </div>
-            }
 
             <div class="form-group">
                 <label asp-for="Email" class="form-label">Email Address</label>
@@ -64,10 +89,13 @@
                     <span class="checkmark"></span>
                     <span class="checkbox-label">Remember me</span>
                 </label>
-                <a href="/account/forgot-password" class="forgot-password">Forgot password?</a>
+                <a href="/auth/forgot-password" class="forgot-password">Forgot password?</a>
             </div>
 
-            <button type="submit" class="btn-submit">Sign In</button>
+            <button type="submit" class="btn-submit" id="loginBtn">
+                <span class="btn-text">Sign In</span>
+                <span class="btn-loader" style="display: none;">⏳</span>
+            </button>
         </form>
 
         <!-- Social Login -->
@@ -75,7 +103,7 @@
             <div class="divider">
                 <span>or continue with</span>
             </div>
-
+            
             <div class="social-buttons">
                 <button type="button" class="social-btn google" onclick="socialLogin('google')">
                     <img src="https://www.google.com/favicon.ico" alt="Google" />
@@ -110,7 +138,44 @@
 
         // Social login handlers
         function socialLogin(provider) {
-            window.location.href = `/account/external-login?provider=${provider}&returnUrl=@(Model?.ReturnUrl)`;
+            window.location.href = `/auth/external-login?provider=${provider}&returnUrl=@(Model?.ReturnUrl)`;
         }
+
+        // Form submission with loading state
+        document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+            const btn = document.getElementById('loginBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const btnLoader = btn.querySelector('.btn-loader');
+            
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline';
+            btn.disabled = true;
+        });
+
+        // Auto-dismiss alerts after 5 seconds
+        document.querySelectorAll('.alert-dismissible').forEach(alert => {
+            setTimeout(() => {
+                if (alert && alert.parentElement) {
+                    alert.style.animation = 'slideOut 0.3s ease-out';
+                    setTimeout(() => alert.remove(), 300);
+                }
+            }, 5000);
+        });
+
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+            @@keyframes slideOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 }

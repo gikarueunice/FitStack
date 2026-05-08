@@ -3,7 +3,6 @@ using FitStackDBL.Model;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using MongoDB.Driver.Core.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +14,7 @@ namespace FitStackDBL.Services
         private readonly IConfiguration _configuration;
         private readonly object? _ConnectionString;
         private readonly ILogger<UserService> _logger;
+        private readonly string _connectionString;
 
         public UserService(IConfiguration configuration, ILogger<UserService> logger)
         {

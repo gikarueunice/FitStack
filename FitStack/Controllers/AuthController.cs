@@ -9,6 +9,8 @@ using System.Security.Claims;
 using FitStackDBL.Model;
 using FitStack.ViewModels;
 using FitStackDBL.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace YourApp.Controllers
 {
@@ -496,6 +498,38 @@ namespace YourApp.Controllers
             // Implement email sending logic here
             await _emailService.SendEmailAsync(email, "Reset Your Password",
                 $"Please reset your password by clicking <a href='{resetLink}'>here</a>");
+        }
+    }
+
+    [Serializable]
+    internal class UserLockedException : Exception
+    {
+        public UserLockedException()
+        {
+        }
+
+        public UserLockedException(string? message) : base(message)
+        {
+        }
+
+        public UserLockedException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
+    }
+
+    [Serializable]
+    internal class DuplicateEmailException : Exception
+    {
+        public DuplicateEmailException()
+        {
+        }
+
+        public DuplicateEmailException(string? message) : base(message)
+        {
+        }
+
+        public DuplicateEmailException(string? message, Exception? innerException) : base(message, innerException)
+        {
         }
     }
 }

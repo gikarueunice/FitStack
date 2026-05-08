@@ -15,8 +15,7 @@ namespace FitStack.ViewModels
         [StringLength(100, ErrorMessage = "Email cannot exceed 100 characters")]
         public string Email { get; set; } = string.Empty;
 
-<<<<<<< HEAD
-=======
+
         [Required]
         [Phone]
         [Display(Name = "Mobile Phone")]
@@ -25,7 +24,7 @@ namespace FitStack.ViewModels
         public string? PhoneNumber { get; set; }
        
 
->>>>>>> 4f79176 (Remove Visual Studio cache files)
+
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]

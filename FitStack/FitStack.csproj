@@ -7,9 +7,30 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<!-- Database -->
+		<PackageReference Include="Dapper" Version="2.1.35" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
+
+		<!-- Security -->
 		<PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
-		<PackageReference Include="Dapper" Version="2.1.72" />
-		<PackageReference Include="MediatR" Version="14.1.0" />
+
+		<!-- CQRS Pattern -->
+		<PackageReference Include="MediatR" Version="12.4.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+
+		<!-- Authentication - CORRECT VERSIONS FOR .NET 8 -->
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+
+		<!-- Email & Configuration -->
+		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
+
+
+		<PackageReference Include="System.Text.Json" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
