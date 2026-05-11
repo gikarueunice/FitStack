@@ -18,8 +18,7 @@ namespace FitStackDBL.Services
 
         public UserService(IConfiguration configuration, ILogger<UserService> logger)
         {
-            _configuration = configuration;
-            _ConnectionString = configuration.GetConnectionString("DefaultConnection")
+            _connectionString = configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             _logger = logger;
         }

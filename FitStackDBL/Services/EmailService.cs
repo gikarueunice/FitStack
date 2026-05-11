@@ -836,6 +836,10 @@ namespace FitStackDBL.Services
                 </html>";
         }
 
+        public interface IWebHostEnvironment
+        {
+        }
+
         #endregion
     }
 }
