@@ -1,12 +1,14 @@
 ﻿using FitStackDBL.Model;
-using Microsoft.Extensions.Logging;
+using FitStackDBL.Services;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
+
 
 namespace FitStackDBL.Services
 {
@@ -14,16 +16,15 @@ namespace FitStackDBL.Services
     {
         private readonly EmailSettings _emailSettings;
         private readonly ILogger<EmailService> _logger;
-        private readonly IWebHostEnvironment _env;
+      
 
         public EmailService(
             IOptions<EmailSettings> emailSettings,
-            ILogger<EmailService> logger,
-            IWebHostEnvironment env)
-        {
+            ILogger<EmailService> logger)
+                  {
             _emailSettings = emailSettings.Value;
             _logger = logger;
-            _env = env;
+  
         }
 
         public async Task SendEmailAsync(string to, string subject, string body, bool isHtml = true)
@@ -836,12 +837,6 @@ namespace FitStackDBL.Services
                 </html>";
         }
 
-        public interface IWebHostEnvironment
-        {
-        }
-
         #endregion
     }
 }
-
-

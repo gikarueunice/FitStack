@@ -1,20 +1,15 @@
 ﻿using Dapper;
-using FitStackDBL.Model;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using FitStackDBL.Model;
 
 namespace FitStackDBL.Services
 {
     public class UserService : IUserService
     {
-        private readonly IConfiguration _configuration;
-        private readonly object? _ConnectionString;
-        private readonly ILogger<UserService> _logger;
         private readonly string _connectionString;
+        private readonly ILogger<UserService> _logger;
 
         public UserService(IConfiguration configuration, ILogger<UserService> logger)
         {
@@ -25,40 +20,34 @@ namespace FitStackDBL.Services
 
         public async Task<Users?> GetUserByIdAsync(int id)
         {
-            const string sql = @"
-                SELECT * FROM Users WHERE Id = @Id;
-                SELECT * FROM UserProfiles WHERE UserId = @Id;";
-
-            using var connection = new SqlConnection((string)_ConnectionString);
-            using var multi = await connection.QueryMultipleAsync(sql, new { Id = id });
-
-            var user = await multi.ReadSingleOrDefaultAsync<Users>();
-            if (user != null)
-            {
-                user.Profile = await multi.ReadSingleOrDefaultAsync<UserProfile>();
-            }
-
-            return user;
+            const string sql = "SELECT * FROM Users WHERE Id = @Id";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { Id = id });
         }
 
         public async Task<Users?> GetUserByEmailAsync(string email)
         {
             const string sql = "SELECT * FROM Users WHERE Email = @Email";
-            using var connection = new SqlConnection((string)_ConnectionString);
+            using var connection = new SqlConnection(_connectionString);
             return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { Email = email });
         }
-
+        public async Task<Users?> GetUserByPhoneNumberAsync(string phoneNumber)
+        {
+            const string sql = "SELECT * FROM Users WHERE Email = @PhoneNumber";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { PhoneNumber = phoneNumber });
+        }
         public async Task<Users?> GetUserByVerificationTokenAsync(string token)
         {
             const string sql = "SELECT * FROM Users WHERE EmailVerificationToken = @Token";
-            using var connection = new SqlConnection((string)_ConnectionString);
+            using var connection = new SqlConnection(_connectionString);
             return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { Token = token });
         }
 
         public async Task<Users?> GetUserByPasswordResetTokenAsync(string token)
         {
             const string sql = "SELECT * FROM Users WHERE PasswordResetToken = @Token AND PasswordResetTokenExpiry > @Now";
-            using var connection = new SqlConnection((string)_ConnectionString);
+            using var connection = new SqlConnection(_connectionString);
             return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { Token = token, Now = DateTime.UtcNow });
         }
 
@@ -78,14 +67,8 @@ namespace FitStackDBL.Services
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            using var connection = new SqlConnection((string)_ConnectionString);
-            var id = await connection.ExecuteScalarAsync<int>(sql, user);
-
-            // Create empty profile
-            const string profileSql = "INSERT INTO UserProfiles (UserId) VALUES (@UserId)";
-            await connection.ExecuteAsync(profileSql, new { UserId = id });
-
-            return id;
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.ExecuteScalarAsync<int>(sql, user);
         }
 
         public async Task UpdateUserAsync(Users user)
@@ -95,6 +78,7 @@ namespace FitStackDBL.Services
             const string sql = @"
                 UPDATE Users SET
                     FullName = @FullName,
+                    Email = @Email,
                     PasswordHash = @PasswordHash,
                     Salt = @Salt,
                     DateOfBirth = @DateOfBirth,
@@ -114,10 +98,12 @@ namespace FitStackDBL.Services
                     UpdatedAt = @UpdatedAt,
                     LastLoginAt = @LastLoginAt,
                     IsActive = @IsActive,
-                    ProfilePictureUrl = @ProfilePictureUrl
+                    ProfilePictureUrl = @ProfilePictureUrl,
+                    LoginAttempts = @LoginAttempts,
+                    LastLoginAttempt = @LastLoginAttempt
                 WHERE Id = @Id";
 
-            using var connection = new SqlConnection((string)_ConnectionString);
+            using var connection = new SqlConnection(_connectionString);
             await connection.ExecuteAsync(sql, user);
         }
 
@@ -128,18 +114,18 @@ namespace FitStackDBL.Services
             var rowsAffected = await connection.ExecuteAsync(sql, new { Id = id });
             return rowsAffected > 0;
         }
-    
+
         public async Task<bool> HasExceededLoginAttemptsAsync(int userId)
         {
             const string sql = @"
-        SELECT 
-            CASE 
-                WHEN LoginAttempts >= 5 AND LastLoginAttempt > DATEADD(minute, -15, GETUTCDATE()) 
-                THEN 1 
-                ELSE 0 
-            END
-        FROM Users 
-        WHERE Id = @UserId";
+                SELECT 
+                    CASE 
+                        WHEN LoginAttempts >= 5 AND LastLoginAttempt > DATEADD(minute, -15, GETUTCDATE()) 
+                        THEN 1 
+                        ELSE 0 
+                    END
+                FROM Users 
+                WHERE Id = @UserId";
 
             using var connection = new SqlConnection(_connectionString);
             return await connection.ExecuteScalarAsync<bool>(sql, new { UserId = userId });
@@ -148,10 +134,10 @@ namespace FitStackDBL.Services
         public async Task ResetLoginAttemptsAsync(int userId)
         {
             const string sql = @"
-        UPDATE Users 
-        SET LoginAttempts = 0, 
-            LastLoginAttempt = NULL 
-        WHERE Id = @UserId";
+                UPDATE Users 
+                SET LoginAttempts = 0, 
+                    LastLoginAttempt = NULL 
+                WHERE Id = @UserId";
 
             using var connection = new SqlConnection(_connectionString);
             await connection.ExecuteAsync(sql, new { UserId = userId });
@@ -160,16 +146,13 @@ namespace FitStackDBL.Services
         public async Task IncrementLoginAttemptsAsync(int userId)
         {
             const string sql = @"
-        UPDATE Users 
-        SET LoginAttempts = ISNULL(LoginAttempts, 0) + 1,
-            LastLoginAttempt = GETUTCDATE()
-        WHERE Id = @UserId";
+                UPDATE Users 
+                SET LoginAttempts = ISNULL(LoginAttempts, 0) + 1,
+                    LastLoginAttempt = GETUTCDATE()
+                WHERE Id = @UserId";
 
             using var connection = new SqlConnection(_connectionString);
             await connection.ExecuteAsync(sql, new { UserId = userId });
         }
-
-        
     }
-    
 }

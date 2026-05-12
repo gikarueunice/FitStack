@@ -1,5 +1,4 @@
-﻿using FitStack.ViewModels;
-using FitStackDBL;
+﻿using FitStackDBL;
 using FitStackDBL.Services;
 using FitStackDBL.Model;
 using Microsoft.AspNetCore.Authentication;
@@ -7,10 +6,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using FitStackDBL.Model;
-using FitStack.ViewModels;
 using FitStackDBL.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
+using FitStack.ViewModels.Auth;
 
 namespace YourApp.Controllers
 {
@@ -70,6 +69,12 @@ namespace YourApp.Controllers
                         TempData["Error"] = "An account with this email already exists. Please login instead.";
                         ModelState.AddModelError("Email", "Email already registered");
                     }
+                    return View(model);
+                }
+                var existingPhone = await _userService.GetUserByPhoneNumberAsync(model.PhoneNumber);
+                if (existingPhone != null)
+                {
+                    ModelState.AddModelError("PhoneNumber", "Phone number already registered");
                     return View(model);
                 }
 

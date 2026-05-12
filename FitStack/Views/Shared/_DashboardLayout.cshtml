@@ -1,0 +1,425 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>@ViewData["Title"] - FitTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --primary: #4F46E5;
+                --primary-dark: #4338CA;
+                --primary-light: #818CF8;
+                --secondary: #10B981;
+                --danger: #EF4444;
+                --warning: #F59E0B;
+                --info: #3B82F6;
+                --dark: #1F2937;
+                --gray: #6B7280;
+                --light-gray: #F3F4F6;
+                --white: #FFFFFF;
+                --sidebar-width: 280px;
+                --sidebar-collapsed-width: 80px;
+                --header-height: 70px;
+            }
+
+            body {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                background: var(--light-gray);
+                overflow-x: hidden;
+            }
+
+            /* Dashboard Container */
+            .dashboard-container {
+                display: flex;
+                min-height: 100vh;
+            }
+
+            /* Sidebar Styles */
+            .sidebar {
+                width: var(--sidebar-width);
+                background: linear-gradient(180deg, var(--dark) 0%, #111827 100%);
+                color: var(--white);
+                position: fixed;
+                height: 100vh;
+                overflow-y: auto;
+                transition: all 0.3s ease;
+                z-index: 1000;
+            }
+
+                .sidebar.collapsed {
+                    width: var(--sidebar-collapsed-width);
+                }
+
+            .sidebar-header {
+                padding: 24px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .sidebar-logo {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-size: 1.5rem;
+                font-weight: 700;
+                text-decoration: none;
+                color: var(--white);
+            }
+
+            .sidebar.collapsed .sidebar-logo span {
+                display: none;
+            }
+
+            .sidebar-toggle {
+                background: none;
+                border: none;
+                color: var(--white);
+                cursor: pointer;
+                font-size: 1.2rem;
+                padding: 8px;
+                border-radius: 8px;
+                transition: background 0.3s;
+            }
+
+                .sidebar-toggle:hover {
+                    background: rgba(255,255,255,0.1);
+                }
+
+            /* User Profile in Sidebar */
+            .sidebar-user {
+                padding: 24px 20px;
+                text-align: center;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .sidebar.collapsed .sidebar-user {
+                padding: 20px;
+            }
+
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                margin-bottom: 12px;
+                border: 3px solid var(--primary);
+            }
+
+            .sidebar.collapsed .user-avatar {
+                width: 50px;
+                height: 50px;
+            }
+
+            .sidebar.collapsed .user-name,
+            .sidebar.collapsed .user-level {
+                display: none;
+            }
+
+            .user-name {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .user-level {
+                font-size: 0.85rem;
+                color: var(--primary-light);
+            }
+
+            /* Navigation Menu */
+            .sidebar-nav {
+                padding: 20px 0;
+            }
+
+            .nav-item {
+                list-style: none;
+                margin-bottom: 4px;
+            }
+
+            .nav-link {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 20px;
+                color: #9CA3AF;
+                text-decoration: none;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            }
+
+                .nav-link:hover {
+                    background: rgba(79, 70, 229, 0.1);
+                    color: var(--white);
+                }
+
+                .nav-link.active {
+                    background: rgba(79, 70, 229, 0.15);
+                    color: var(--primary-light);
+                    border-left-color: var(--primary);
+                }
+
+            .nav-icon {
+                width: 24px;
+                font-size: 1.2rem;
+                text-align: center;
+            }
+
+            .sidebar.collapsed .nav-label {
+                display: none;
+            }
+
+            /* Main Content */
+            .main-content {
+                flex: 1;
+                margin-left: var(--sidebar-width);
+                transition: all 0.3s ease;
+            }
+
+                .main-content.expanded {
+                    margin-left: var(--sidebar-collapsed-width);
+                }
+
+            /* Top Header */
+            .top-header {
+                background: var(--white);
+                height: var(--header-height);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 24px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                position: sticky;
+                top: 0;
+                z-index: 999;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: var(--dark);
+            }
+
+            .header-actions {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .notification-btn, .message-btn {
+                background: none;
+                border: none;
+                font-size: 1.2rem;
+                cursor: pointer;
+                position: relative;
+                color: var(--gray);
+            }
+
+            .badge {
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                background: var(--danger);
+                color: white;
+                font-size: 10px;
+                padding: 2px 5px;
+                border-radius: 10px;
+            }
+
+            /* Content Area */
+            .content-wrapper {
+                padding: 24px;
+            }
+
+            /* Responsive Design */
+            @@media (max-width: 768px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                }
+            
+                    .sidebar.mobile-open {
+                        transform: translateX(0);
+                    }
+            
+                .main-content {
+                    margin-left: 0;
+                }
+            
+                .mobile-menu-btn {
+                    display: block;
+                }
+            }
+
+            .mobile-menu-btn {
+                display: none;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--dark);
+            }
+
+            /* Scrollbar Styling */
+            ::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: var(--light-gray);
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: var(--primary);
+                border-radius: 3px;
+            }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard" class="sidebar-logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <path d="M16 2L4 8V16C4 23.5 9.5 30.5 16 32C22.5 30.5 28 23.5 28 16V8L16 2Z" fill="#4F46E5" stroke="#6366F1" stroke-width="2" />
+                        <path d="M12 16L15 19L21 13" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span>FitTrack</span>
+                </a>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-user">
+                <img src="@(ViewBag.UserAvatar ?? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop")"
+                     alt="User" class="user-avatar">
+                <div class="user-name">@(ViewBag.UserName ?? "Alex Johnson")</div>
+                <div class="user-level">Level @(ViewBag.UserLevel ?? 12) · @(ViewBag.UserXP ?? 2450) XP</div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span class="nav-label">Home / Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Goals", "Dashboard")" class="nav-link">
+                        <i class="fas fa-bullseye nav-icon"></i>
+                        <span class="nav-label">My Goals</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Schedules", "Dashboard")" class="nav-link">
+                        <i class="fas fa-calendar-alt nav-icon"></i>
+                        <span class="nav-label">Schedules</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("WorkoutPlan", "Dashboard")" class="nav-link">
+                        <i class="fas fa-dumbbell nav-icon"></i>
+                        <span class="nav-label">Workout Plan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("DietPlan", "Dashboard")" class="nav-link">
+                        <i class="fas fa-apple-alt nav-icon"></i>
+                        <span class="nav-label">Diet Plan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Progress", "Dashboard")" class="nav-link">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span class="nav-label">Progress</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Achievements", "Dashboard")" class="nav-link">
+                        <i class="fas fa-trophy nav-icon"></i>
+                        <span class="nav-label">Achievements</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Statistics", "Dashboard")" class="nav-link">
+                        <i class="fas fa-chart-bar nav-icon"></i>
+                        <span class="nav-label">Statistics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Profile", "Dashboard")" class="nav-link">
+                        <i class="fas fa-user nav-icon"></i>
+                        <span class="nav-label">Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Settings", "Dashboard")" class="nav-link">
+                        <i class="fas fa-cog nav-icon"></i>
+                        <span class="nav-label">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <div class="top-header">
+                <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">@ViewData["Title"]</h1>
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    <button class="message-btn">
+                        <i class="fas fa-envelope"></i>
+                        <span class="badge">5</span>
+                    </button>
+                    <a href="/auth/logout" class="btn btn-outline" style="padding: 8px 16px;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+            <div class="content-wrapper">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    <script>
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+            }
+
+            function toggleMobileSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('mobile-open');
+            }
+
+            // Load sidebar state
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                document.getElementById('sidebar').classList.add('collapsed');
+                document.getElementById('mainContent').classList.add('expanded');
+            }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

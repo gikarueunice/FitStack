@@ -1,0 +1,26 @@
+﻿@model FitStack.ViewModels.Dashboard.GoalViewModel
+@{
+    ViewData["Title"] = "My Goals";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h2>My Fitness Goals</h2>
+        <button class="btn btn-primary" onclick="openAddGoalModal()">+ Add New Goal</button>
+    </div>
+    <div style="display: grid; gap: 20px;">
+        <!-- Goals will be listed here -->
+        <div class="activity-item">
+            <div class="activity-icon">🎯</div>
+            <div class="activity-details">
+                <div class="activity-title">Weekly Workout Goal</div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

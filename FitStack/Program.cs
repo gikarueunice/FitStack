@@ -2,21 +2,43 @@ using FitStackDBL.Model;
 using FitStackDBL.Repository;
 using FitStackDBL.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddScoped<IUsersRepository>(sp =>
+//builder.Services.AddScoped<IUsersRepository>(sp =>
+//{
+//    var configuration = sp.GetRequiredService<IConfiguration>();
+
+//    var connectionString = configuration.GetConnectionString("DefaultConnection")
+//        ?? throw new InvalidOperationException("Connection string not found");
+
+//    return new UsersRepository(connectionString);
+//});
+try
 {
-    var configuration = sp.GetRequiredService<IConfiguration>();
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    using var testConnection = new SqlConnection(connectionString);
+    await testConnection.OpenAsync();
+    Console.WriteLine("Database connection successful!");
 
-    var connectionString = configuration.GetConnectionString("DefaultConnection")
-        ?? throw new InvalidOperationException("Connection string not found");
+    // Ensure database exists
+    using var command = testConnection.CreateCommand();
+    command.CommandText = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Users'";
+    var tableExists = (int)await command.ExecuteScalarAsync();
 
-    return new UsersRepository(connectionString);
-});
+    if (tableExists == 0)
+    {
+        Console.WriteLine("Users table not found. Please run the database creation script.");
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Database connection failed: {ex.Message}");
+}
 
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));

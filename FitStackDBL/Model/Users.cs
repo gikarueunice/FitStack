@@ -8,6 +8,7 @@ namespace FitStackDBL.Model
     {
         public int Id { get; set; }
         public string FullName { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string? Salt { get; set; }
@@ -30,10 +31,7 @@ namespace FitStackDBL.Model
         public DateTime? LastLoginAt { get; set; }
         public bool IsActive { get; set; }
         public string? ProfilePictureUrl { get; set; }
-
-        // Navigation properties for related data
         public UserProfile? Profile { get; set; }
-        public object? PhoneNumber { get; internal set; }
         public string? Password { get; internal set; }
     }
 }

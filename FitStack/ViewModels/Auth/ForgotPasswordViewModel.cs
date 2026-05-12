@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FitStack.ViewModels
+namespace FitStack.ViewModels.Auth
 {
     public class ForgotPasswordViewModel
     {

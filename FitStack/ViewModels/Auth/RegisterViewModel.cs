@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FitStack.ViewModels
+namespace FitStack.ViewModels.Auth
 {
     public class RegisterViewModel
     {
@@ -16,13 +16,14 @@ namespace FitStack.ViewModels
         public string Email { get; set; } = string.Empty;
 
 
-        [Required]
-        [Phone]
-        [Display(Name = "Mobile Phone")]
-        [RegularExpression(@"^\+?[1-9][0-9]{7,14}$",
-        ErrorMessage = "Enter a valid phone number (e.g., +1234567890)")]
-        public string? PhoneNumber { get; set; }
-       
+        [Required(ErrorMessage = "Phone number is required")]
+        [Display(Name = "Phone Number")]
+        [Phone(ErrorMessage = "Invalid phone number format")]
+        [StringLength(20, MinimumLength = 10, ErrorMessage = "Phone number must be between 10 and 20 characters")]
+        [RegularExpression(@"^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,3}[)]?[-\s\.]?[0-9]{3,4}[-\s\.]?[0-9]{3,4}$",
+            ErrorMessage = "Please enter a valid phone number (e.g., +1234567890 or 123-456-7890)")]
+        public string PhoneNumber { get; set; } = string.Empty;
+
 
 
         [Required(ErrorMessage = "Password is required")]

@@ -9,6 +9,7 @@ namespace FitStackDBL.Services
     {
         Task<Users?> GetUserByIdAsync(int id);
         Task<Users?> GetUserByEmailAsync(string email);
+        Task<Users?> GetUserByPhoneNumberAsync(string phoneNumber);
         Task<Users?> GetUserByVerificationTokenAsync(string token);
         Task<Users?> GetUserByPasswordResetTokenAsync(string token);
         Task<int> CreateUserAsync(Users user);
