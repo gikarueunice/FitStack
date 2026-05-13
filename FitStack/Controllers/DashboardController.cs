@@ -9,7 +9,9 @@ namespace FitStack.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            var model = GetDashboardData();
+
+            return View(model);
         }
         public IActionResult Goals()
         {

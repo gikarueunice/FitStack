@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using static System.Net.WebRequestMethods;
 
 namespace FitStackDBL.Services
 {
@@ -14,6 +15,10 @@ namespace FitStackDBL.Services
         Task SendWeeklyProgressReportAsync(string to, string userName, int workoutsCompleted, int totalCalories, int streakDays);
         Task SendGoalAchievedEmailAsync(string to, string userName, string goalName);
         Task SendNewsletterEmailAsync(string to, string userName, List<NewsletterArticle> articles);
+        Task SendEmailAsync(string to, string subject, string body);
+        Task SendOTPEmailAsync(string to, string otp, string purpose);
+        Task Send2FADisableEmailAsync(string to, string userName);
+        Task Send2FAEnableEmailAsync(string to, string userName, string backupCodes);
     }
     public class NewsletterArticle
     {

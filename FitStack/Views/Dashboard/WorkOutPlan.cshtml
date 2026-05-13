@@ -1,5 +1,14 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Workout Plan";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
+
+<div class="card">
+    <div class="card-header">
+        <h2>Your Weekly Workout Plan</h2>
+        <button class="btn btn-primary">Customize Plan</button>
+    </div>
+    <div class="weekly-schedule">
+        <!-- Weekly workout schedule will be displayed here -->
+    </div>
+</div>

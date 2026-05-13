@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using FitStackDBL.Model;
-using FitStackDBL.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 using FitStack.ViewModels.Auth;
@@ -17,15 +15,19 @@ namespace YourApp.Controllers
     {
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
+        private readonly IOTPService _otpService;
         private readonly ILogger<AuthController> _logger;
-
+ 
         public AuthController(
             IUserService userService,
             IEmailService emailService,
+            IOTPService otpService,
+            ISmsService smsService,
             ILogger<AuthController> logger)
         {
             _userService = userService;
             _emailService = emailService;
+            _otpService = otpService;
             _logger = logger;
         }
 
@@ -503,6 +505,136 @@ namespace YourApp.Controllers
             // Implement email sending logic here
             await _emailService.SendEmailAsync(email, "Reset Your Password",
                 $"Please reset your password by clicking <a href='{resetLink}'>here</a>");
+        }
+        [HttpPost]
+        public async Task<IActionResult> SendPhoneOTP([FromBody] PhoneVerificationRequest request)
+        {
+            try
+            {
+                var user = await _userService.GetUserByPhoneNumberAsync(request.PhoneNumber);
+                if (user != null && user.IsPhoneVerified)
+                {
+                    return Json(new { success = false, message = "Phone number already verified" });
+                }
+
+                await _otpService.GenerateOTPAsync(request.PhoneNumber, OTPType.PhoneVerification);
+                return Json(new { success = true, message = "OTP sent successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending phone OTP");
+                return Json(new { success = false, message = "Failed to send OTP" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyPhoneOTP([FromBody] PhoneVerificationRequest request)
+        {
+            try
+            {
+                var isValid = await _otpService.VerifyOTPAsync(request.PhoneNumber, request.Code, OTPType.PhoneVerification);
+
+                if (isValid)
+                {
+                    var user = await _userService.GetUserByPhoneNumberAsync(request.PhoneNumber);
+                    if (user != null)
+                    {
+                        user.IsPhoneVerified = true;
+                        await _userService.UpdateUserAsync(user);
+                    }
+                    return Json(new { success = true, message = "Phone verified successfully" });
+                }
+
+                return Json(new { success = false, message = "Invalid or expired OTP" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error verifying phone OTP");
+                return Json(new { success = false, message = "Failed to verify OTP" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendLoginOTP([FromBody] LoginOTPRequest request)
+        {
+            try
+            {
+                var user = await _userService.GetUserByEmailAsync(request.Identifier);
+                if (user == null)
+                {
+                    user = await _userService.GetUserByPhoneNumberAsync(request.Identifier);
+                }
+
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "No account found" });
+                }
+
+                // Send OTP via email or SMS based on identifier type
+                if (request.Identifier.Contains("@"))
+                {
+                    await _otpService.GenerateOTPAsync(request.Identifier, OTPType.Login);
+                }
+                else
+                {
+                    await _otpService.GenerateOTPAsync(request.Identifier, OTPType.Login);
+                }
+
+                return Json(new { success = true, message = "Login code sent" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending login OTP");
+                return Json(new { success = false, message = "Failed to send login code" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyLoginOTP([FromBody] LoginOTPVerifyRequest request)
+        {
+            try
+            {
+                var isValid = await _otpService.VerifyOTPAsync(request.Identifier, request.Code, OTPType.Login);
+
+                if (isValid)
+                {
+                    var user = await _userService.GetUserByEmailAsync(request.Identifier);
+                    if (user == null)
+                    {
+                        user = await _userService.GetUserByPhoneNumberAsync(request.Identifier);
+                    }
+
+                    if (user != null)
+                    {
+                        await SignInUserAsync(user, false);
+                        return Json(new { success = true, redirect = "/dashboard" });
+                    }
+                }
+
+                return Json(new { success = false, message = "Invalid or expired code" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error verifying login OTP");
+                return Json(new { success = false, message = "Failed to verify code" });
+            }
+        }
+
+        public class PhoneVerificationRequest
+        {
+            public string PhoneNumber { get; set; } = string.Empty;
+            public string? Code { get; set; }
+        }
+
+        public class LoginOTPRequest
+        {
+            public string Identifier { get; set; } = string.Empty;
+        }
+
+        public class LoginOTPVerifyRequest
+        {
+            public string Identifier { get; set; } = string.Empty;
+            public string Code { get; set; } = string.Empty;
         }
     }
 

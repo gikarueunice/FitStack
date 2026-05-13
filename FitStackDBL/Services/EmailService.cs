@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 
 namespace FitStackDBL.Services
@@ -78,6 +79,47 @@ namespace FitStackDBL.Services
             var subject = "Reset Your Password - FitTrack";
             var body = GetPasswordResetEmailTemplate(userName, resetLink);
             await SendEmailAsync(to, subject, body);
+        }
+        public Task SendOTPEmailAsync(string to, string otp, string purpose)
+        {
+            var subject = $"Your {purpose} OTP - FitTrack";
+            var body = $@"
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset='UTF-8'></head>
+            <body style='font-family: Arial, sans-serif;'>
+                <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
+                    <h2 style='color: #4F46E5;'>Your OTP Code</h2>
+                    <p>Your One-Time Password (OTP) for <strong>{purpose}</strong> is:</p>
+                    <div style='text-align: center; margin: 30px 0;'>
+                        <div style='font-size: 32px; font-weight: bold; letter-spacing: 5px; background: #F3F4F6; padding: 20px; border-radius: 10px;'>
+                            {otp}
+                        </div>
+                    </div>
+                    <p>This code is valid for <strong>10 minutes</strong>.</p>
+                    <p style='color: #EF4444;'>⚠️ Never share this code with anyone, including FitTrack support.</p>
+                </div>
+            </body>
+            </html>";
+            return SendEmailAsync(to, subject, body);
+        }
+        public Task Send2FADisableEmailAsync(string to, string userName)
+        {
+            var subject = "Two-Factor Authentication Disabled - FitTrack";
+            var body = $@"
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset='UTF-8'></head>
+            <body style='font-family: Arial, sans-serif;'>
+                <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
+                    <h2 style='color: #4F46E5;'>2FA Disabled</h2>
+                    <p>Hi <strong>{userName}</strong>,</p>
+                    <p>Two-Factor Authentication has been disabled on your account.</p>
+                    <p>If you didn't make this change, please contact support immediately.</p>
+                </div>
+            </body>
+            </html>";
+            return SendEmailAsync(to, subject, body);
         }
 
         public async Task SendWelcomeEmailAsync(string to, string userName)
@@ -835,6 +877,16 @@ namespace FitStackDBL.Services
                     </div>
                 </body>
                 </html>";
+        }
+
+        public Task SendEmailAsync(string to, string subject, string body)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Send2FAEnableEmailAsync(string to, string userName, string backupCodes)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

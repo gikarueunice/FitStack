@@ -1,5 +1,14 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Diet Plan";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
+
+<div class="card">
+    <div class="card-header">
+        <h2>Personalized Nutrition Plan</h2>
+        <button class="btn btn-primary">Log Meal</button>
+    </div>
+    <div class="meal-plans">
+        <!-- Daily meal plans will be displayed here -->
+    </div>
+</div>
