@@ -8,7 +8,7 @@ namespace FitStackDBL.Model
     {
         public int Id { get; set; }
         public string FullName { get; set; } = string.Empty;
-        public string PhoneNumber { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } 
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string? Salt { get; set; }
@@ -24,6 +24,12 @@ namespace FitStackDBL.Model
         public DateTime? PasswordResetTokenExpiry { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiry { get; set; }
+        public int? EmailOTP { get; set; }
+        public string? PhoneOTP { get; set; }
+        public string? EmailOTPExpiry { get; set; }
+        public string? PhoneOTPExpiry { get; set; }
+        public bool IsLocked { get; set; }
+        public DateTime? LockedUntil { get; set; }
         public string? SelectedPlan { get; set; }
         public bool SubscribeToNewsletter { get; set; }
         public DateTime CreatedAt { get; set; }

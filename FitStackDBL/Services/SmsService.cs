@@ -19,23 +19,17 @@ namespace FitStackDBL.Services
             _configuration = configuration;
         }
 
+
         public async Task SendSmsAsync(string phoneNumber, string message)
         {
-            // For development, just log the SMS
             _logger.LogInformation("SMS to {PhoneNumber}: {Message}", phoneNumber, message);
-
-            // In production, integrate with SMS provider like Twilio, Vonage, etc.
-            // Example with Twilio:
-            /*
-            TwilioClient.Init(_configuration["Twilio:AccountSid"], _configuration["Twilio:AuthToken"]);
-            var message = await MessageResource.CreateAsync(
-                body: message,
-                from: new PhoneNumber(_configuration["Twilio:PhoneNumber"]),
-                to: new PhoneNumber(phoneNumber)
-            );
-            */
-
             await Task.CompletedTask;
+        }
+
+        public async Task SendRegistrationOTPAsync(string phoneNumber, string otp)
+        {
+            var message = $"🔐 Your FitTrack verification code is: {otp}. Valid for 10 minutes.";
+            await SendSmsAsync(phoneNumber, message);
         }
 
         public async Task SendVerificationCodeAsync(string phoneNumber, string code)
@@ -67,5 +61,7 @@ namespace FitStackDBL.Services
             var message = $"💪 Reminder: Your {workoutName} workout is scheduled for {time:hh:mm tt}. Get ready to crush your goals!";
             await SendSmsAsync(phoneNumber, message);
         }
+
+        
     }
 }

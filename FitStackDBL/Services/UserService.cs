@@ -154,5 +154,86 @@ namespace FitStackDBL.Services
             using var connection = new SqlConnection(_connectionString);
             await connection.ExecuteAsync(sql, new { UserId = userId });
         }
+
+        public async Task<Users?> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            const string sql = "SELECT * FROM Users WHERE RefreshToken = @RefreshToken AND RefreshTokenExpiry > @Now";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { RefreshToken = refreshToken, Now = DateTime.UtcNow });
+        }
+        public async Task<Users?> GetUserByEmailOTPAsync(string emailOTP)
+        {
+            const string sql = "SELECT * FROM Users WHERE EmailOTP = @EmailOTP AND EmailOTPExpiry > @Now";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { EmailOTP = emailOTP, Now = DateTime.UtcNow });
+        }
+
+        public async Task<Users?> GetUserByPhoneOTPAsync(string phoneOTP)
+        {
+            const string sql = "SELECT * FROM Users WHERE PhoneOTP = @PhoneOTP AND PhoneOTPExpiry > @Now";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { PhoneOTP = phoneOTP, Now = DateTime.UtcNow });
+        }
+        public async Task<Users?> GetUserByProfilePictureUrlAsync(string profilePictureUrl)
+        {
+            const string sql = "SELECT * FROM Users WHERE ProfilePictureUrl = @ProfilePictureUrl";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { ProfilePictureUrl = profilePictureUrl });
+        }
+        public async Task<Users?> GetUserBySelectedPlanAsync(string selectedPlan)
+        {
+            const string sql = "SELECT * FROM Users WHERE SelectedPlan = @SelectedPlan";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { SelectedPlan = selectedPlan });
+        }
+        public async Task<Users?> GetUserByFitnessGoalAsync(string fitnessGoal)
+        {
+            const string sql = "SELECT * FROM Users WHERE FitnessGoal = @FitnessGoal";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { FitnessGoal = fitnessGoal });
+        }
+        public async Task<Users?> GetUserByActivityLevelAsync(string activityLevel)
+        {
+            const string sql = "SELECT * FROM Users WHERE ActivityLevel = @ActivityLevel";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { ActivityLevel = activityLevel });
+        }
+        public async Task<Users?> GetUserBySubscriptionStatusAsync(bool subscribeToNewsletter)
+        {
+            const string sql = "SELECT * FROM Users WHERE SubscribeToNewsletter = @SubscribeToNewsletter";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { SubscribeToNewsletter = subscribeToNewsletter });
+        }
+        public async Task<Users?> GetUserByIsActiveAsync(bool isActive)
+        {
+            const string sql = "SELECT * FROM Users WHERE IsActive = @IsActive";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { IsActive = isActive });
+        }
+        public async Task<Users?> GetUserByIsEmailVerifiedAsync(bool isEmailVerified)
+        {
+            const string sql = "SELECT * FROM Users WHERE IsEmailVerified = @IsEmailVerified";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { IsEmailVerified = isEmailVerified });
+        }
+        public async Task<Users?> GetUserByIsPhoneVerifiedAsync(bool isPhoneVerified)
+        {
+            const string sql = "SELECT * FROM Users WHERE IsPhoneVerified = @IsPhoneVerified";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { IsPhoneVerified = isPhoneVerified });
+        }
+        public async Task<Users?> GetUserByIsLockedAsync(bool isLocked)
+        {
+            const string sql = "SELECT * FROM Users WHERE IsLocked = @IsLocked";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { IsLocked = isLocked });
+        }
+        public async Task<Users?> GetUserByLockedUntilAsync(DateTime? lockedUntil)
+        {
+            const string sql = "SELECT * FROM Users WHERE LockedUntil > @LockedUntil";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { LockedUntil = lockedUntil });
+        }
+
     }
 }

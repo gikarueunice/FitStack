@@ -197,10 +197,34 @@
                         </span>
                     </label>
                 </div>
-
+                
                 <button type="button" class="btn-next" onclick="nextStep()">Continue to Profile →</button>
             </div>
-
+            <div id="otpModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Verify Your Account</h3>
+                        <button class="modal-close" onclick="closeOTPModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="otpMessage">We've sent a verification code to:</p>
+                        <div id="otpTarget" class="otp-target"></div>
+            
+                        <div class="form-group">
+                            <label>Enter Verification Code</label>
+                            <div class="input-group">
+                                <input type="text" id="otpCode" class="form-input" placeholder="Enter 6-digit code" maxlength="6" autocomplete="off" />
+                            </div>
+                            <div class="timer" id="timer"></div>
+                            <button type="button" id="resendBtn" class="btn-link" style="display: none;" onclick="resendOTP()">
+                                Resend Code
+                            </button>
+                        </div>
+            
+                        <button class="btn-submit" onclick="verifyOTP()" id="verifyBtn">Verify Account</button>
+                    </div>
+                </div>
+            </div>
             <!-- Step 2: Profile Information -->
             <div class="form-step" id="step2">
                 <div class="form-row">

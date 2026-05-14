@@ -1,6 +1,8 @@
-﻿using FitStackDBL.Model;
+﻿using Dapper;
+using FitStackDBL.Model;
 using FitStackDBL.Services;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -17,7 +19,7 @@ namespace FitStackDBL.Services
     {
         private readonly EmailSettings _emailSettings;
         private readonly ILogger<EmailService> _logger;
-      
+        private string _connectionString;
 
         public EmailService(
             IOptions<EmailSettings> emailSettings,
@@ -122,12 +124,12 @@ namespace FitStackDBL.Services
             return SendEmailAsync(to, subject, body);
         }
 
-        public async Task SendWelcomeEmailAsync(string to, string userName)
-        {
-            var subject = "Welcome to FitTrack! 🎉";
-            var body = GetWelcomeEmailTemplate(userName);
-            await SendEmailAsync(to, subject, body);
-        }
+        //public async Task SendWelcomeEmailAsync(string to, string userName)
+        //{
+        //    var subject = "Welcome to FitTrack! 🎉";
+        //    var body = GetWelcomeEmailTemplate(userName);
+        //    await SendEmailAsync(to, subject, body);
+        //}
 
         public async Task SendWorkoutReminderAsync(string to, string userName, string workoutType, DateTime scheduledTime)
         {
@@ -877,6 +879,82 @@ namespace FitStackDBL.Services
                     </div>
                 </body>
                 </html>";
+        }
+
+        public async Task SendRegistrationOTPAsync(string to, string otp, string userName)
+        {
+            var subject = "Verify Your FitTrack Account";
+            var body = $@"
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset='UTF-8'>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
+                    .container {{ max-width: 500px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background: #4F46E5; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }}
+                    .content {{ padding: 30px; background: #f9fafb; }}
+                    .otp-code {{ font-size: 32px; font-weight: bold; text-align: center; padding: 20px; background: white; border-radius: 10px; letter-spacing: 5px; color: #4F46E5; }}
+                    .footer {{ text-align: center; padding: 20px; color: #6B7280; font-size: 12px; }}
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <div class='header'>
+                        <h2>Welcome to FitTrack!</h2>
+                    </div>
+                    <div class='content'>
+                        <p>Hi <strong>{userName}</strong>,</p>
+                        <p>Thanks for registering! Please use the verification code below to complete your registration:</p>
+                        <div class='otp-code'>{otp}</div>
+                        <p>This code will expire in <strong>10 minutes</strong>.</p>
+                        <p>If you didn't create an account, please ignore this email.</p>
+                    </div>
+                    <div class='footer'>
+                        <p>&copy; 2026 FitTrack. All rights reserved.</p>
+                    </div>
+                </div>
+            </body>
+            </html>";
+
+            await SendEmailAsync(to, subject, body);
+        }
+
+        public async Task SendWelcomeEmailAsync(string to, string userName)
+        {
+            var subject = "Welcome to FitTrack! 🎉";
+            var body = $@"
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset='UTF-8'>
+                <style>
+                    body {{ font-family: Arial, sans-serif; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background: #4F46E5; color: white; padding: 20px; text-align: center; }}
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <div class='header'>
+                        <h2>Welcome to FitTrack!</h2>
+                    </div>
+                    <div class='content'>
+                        <p>Hi {userName},</p>
+                        <p>Your account has been successfully verified! Get ready to start your fitness journey.</p>
+                        <p>Here's what you can do:</p>
+                        <ul>
+                            <li>📊 Track your workouts</li>
+                            <li>🎯 Set fitness goals</li>
+                            <li>🏆 Join challenges</li>
+                        </ul>
+                        <p>Login to your dashboard to get started!</p>
+                    </div>
+                </div>
+            </body>
+            </html>";
+
+            await SendEmailAsync(to, subject, body);
         }
 
         public Task SendEmailAsync(string to, string subject, string body)

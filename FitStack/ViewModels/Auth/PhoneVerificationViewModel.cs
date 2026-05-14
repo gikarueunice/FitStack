@@ -2,5 +2,6 @@
 {
     public class PhoneVerificationViewModel
     {
+        public int PhoneNumber { get; set; } 
     }
 }

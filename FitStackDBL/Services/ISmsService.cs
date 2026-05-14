@@ -14,5 +14,8 @@ namespace FitStackDBL.Services
         Task SendTwoFactorCodeAsync(string phoneNumber, string code);
         Task SendWelcomeSmsAsync(string phoneNumber, string userName);
         Task SendWorkoutReminderAsync(string phoneNumber, string workoutName, DateTime time);
+         Task SendRegistrationOTPAsync(string phoneNumber, string otp);
+
+
     }
 }

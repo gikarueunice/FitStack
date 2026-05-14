@@ -8,16 +8,20 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 using FitStack.ViewModels.Auth;
+using BCrypt.Net;
 
-namespace YourApp.Controllers
+namespace FitStack.Controllers
 {
     public class AuthController : Controller
     {
         private readonly IUserService _userService;
         private readonly IEmailService _emailService;
         private readonly IOTPService _otpService;
+        private readonly ISmsService _smsService;
         private readonly ILogger<AuthController> _logger;
- 
+        private Dictionary<string, Users> _pendingRegistrations = new();
+        private Dictionary<string, string> _pendingOtps = new();
+
         public AuthController(
             IUserService userService,
             IEmailService emailService,
@@ -28,6 +32,7 @@ namespace YourApp.Controllers
             _userService = userService;
             _emailService = emailService;
             _otpService = otpService;
+            _smsService = smsService;
             _logger = logger;
         }
 
@@ -39,59 +44,149 @@ namespace YourApp.Controllers
             return View(model);
         }
 
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = null)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        // Collect all validation errors
+        //        var errors = ModelState.Values
+        //            .SelectMany(v => v.Errors)
+        //            .Select(e => e.ErrorMessage)
+        //            .ToList();
+
+        //        TempData["ValidationErrors"] = JsonSerializer.Serialize(errors);
+        //        return View(model);
+        //    }
+
+        //    try
+        //    {
+        //        // Check if user already exists
+        //        var existingUser = await _userService.GetUserByEmailAsync(model.Email);
+        //        if (existingUser != null)
+        //        {
+        //            if (!existingUser.IsEmailVerified)
+        //            {
+        //                TempData["Warning"] = "An account with this email exists but is not verified. Please check your email for verification link or request a new one.";
+        //                ModelState.AddModelError("Email", "Email already registered but not verified");
+        //            }
+        //            else
+        //            {
+        //                TempData["Error"] = "An account with this email already exists. Please login instead.";
+        //                ModelState.AddModelError("Email", "Email already registered");
+        //            }
+        //            return View(model);
+        //        }
+        //        var existingPhone = await _userService.GetUserByPhoneNumberAsync(model.PhoneNumber);
+        //        if (existingPhone != null)
+        //        {
+        //            ModelState.AddModelError("PhoneNumber", "Phone number already registered");
+        //            return View(model);
+        //        }
+
+        //        // Validate password strength
+        //        if (!IsPasswordStrong(model.Password))
+        //        {
+        //            TempData["Error"] = "Password does not meet security requirements. Please ensure it has at least 8 characters, uppercase, lowercase, number, and special character.";
+        //            return View(model);
+        //        }
+
+        //        // Create new user
+        //        var user = new Users
+        //        {
+        //            FullName = model.FullName,
+        //            Email = model.Email,
+        //            DateOfBirth = model.DateOfBirth,
+        //            Gender = model.Gender,
+        //            Height = model.Height,
+        //            Weight = model.Weight,
+        //            FitnessGoal = model.FitnessGoal,
+        //            ActivityLevel = model.ActivityLevel,
+        //            SelectedPlan = model.SelectedPlan,
+        //            SubscribeToNewsletter = model.SubscribeToNewsletter,
+        //            CreatedAt = DateTime.UtcNow,
+        //            IsActive = true,
+        //            IsEmailVerified = false,
+        //            EmailVerificationToken = Guid.NewGuid().ToString()
+        //        };
+
+        //        // Hash password
+        //        user.Salt = BCrypt.Net.BCrypt.GenerateSalt();
+        //        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, user.Salt);
+
+        //        // Save user to database
+        //        var userId = await _userService.CreateUserAsync(user);
+
+        //        // Send verification email
+        //        try
+        //        {
+        //            var verificationLink = Url.Action(nameof(VerifyEmail), "Auth",
+        //                new { token = user.EmailVerificationToken }, Request.Scheme);
+        //            await _emailService.SendVerificationEmailAsync(user.Email, verificationLink, user.FullName);
+        //            TempData["Success"] = "Registration successful! We've sent a verification email to " + user.Email +
+        //                ". Please check your inbox and click the verification link to activate your account.";
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            _logger.LogError(ex, "Failed to send verification email");
+        //            TempData["Warning"] = "Account created but we couldn't send the verification email. Please contact support.";
+        //        }
+
+        //        // Auto sign in
+        //        await SignInUserAsync(user);
+
+        //        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        //        {
+        //            return Redirect(returnUrl);
+        //        }
+
+        //        return RedirectToAction("Index", "Dashboard");
+        //    }
+        //    catch (DuplicateEmailException ex)
+        //    {
+        //        _logger.LogWarning(ex, "Duplicate email registration attempt");
+        //        TempData["Error"] = "This email address is already registered. Please use a different email or try logging in.";
+        //        ModelState.AddModelError("Email", "Email already exists");
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error during registration for email {Email}", model.Email);
+        //        TempData["Error"] = "An unexpected error occurred during registration. Please try again later. Error: " + ex.Message;
+        //        return View(model);
+        //    }
+        //}
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = null)
+        public async Task<IActionResult> Register([FromForm] RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                // Collect all validation errors
                 var errors = ModelState.Values
                     .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-
-                TempData["ValidationErrors"] = JsonSerializer.Serialize(errors);
-                return View(model);
+                    .Select(e => e.ErrorMessage);
+                return Json(new { success = false, message = string.Join(", ", errors) });
             }
 
             try
             {
-                // Check if user already exists
+                // Check if email exists
                 var existingUser = await _userService.GetUserByEmailAsync(model.Email);
                 if (existingUser != null)
                 {
-                    if (!existingUser.IsEmailVerified)
-                    {
-                        TempData["Warning"] = "An account with this email exists but is not verified. Please check your email for verification link or request a new one.";
-                        ModelState.AddModelError("Email", "Email already registered but not verified");
-                    }
-                    else
-                    {
-                        TempData["Error"] = "An account with this email already exists. Please login instead.";
-                        ModelState.AddModelError("Email", "Email already registered");
-                    }
-                    return View(model);
-                }
-                var existingPhone = await _userService.GetUserByPhoneNumberAsync(model.PhoneNumber);
-                if (existingPhone != null)
-                {
-                    ModelState.AddModelError("PhoneNumber", "Phone number already registered");
-                    return View(model);
+                    return Json(new { success = false, message = "Email already registered" });
                 }
 
-                // Validate password strength
-                if (!IsPasswordStrong(model.Password))
-                {
-                    TempData["Error"] = "Password does not meet security requirements. Please ensure it has at least 8 characters, uppercase, lowercase, number, and special character.";
-                    return View(model);
-                }
+                // CORRECT BCrypt usage - no separate salt needed
+                string passwordHash = BCrypt.HashPassword(model.Password, 12);
 
-                // Create new user
                 var user = new Users
                 {
                     FullName = model.FullName,
                     Email = model.Email,
+                    PhoneNumber = model.PhoneNumber ?? string.Empty,
+                    PasswordHash = passwordHash,
+                    Salt = string.Empty, // BCrypt handles salt internally
                     DateOfBirth = model.DateOfBirth,
                     Gender = model.Gender,
                     Height = model.Height,
@@ -100,56 +195,128 @@ namespace YourApp.Controllers
                     ActivityLevel = model.ActivityLevel,
                     SelectedPlan = model.SelectedPlan,
                     SubscribeToNewsletter = model.SubscribeToNewsletter,
-                    CreatedAt = DateTime.UtcNow,
-                    IsActive = true,
                     IsEmailVerified = false,
-                    EmailVerificationToken = Guid.NewGuid().ToString()
+                    IsPhoneVerified = false,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
                 };
 
-                // Hash password
-                user.Salt = BCrypt.Net.BCrypt.GenerateSalt();
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, user.Salt);
-
-                // Save user to database
                 var userId = await _userService.CreateUserAsync(user);
 
-                // Send verification email
-                try
-                {
-                    var verificationLink = Url.Action(nameof(VerifyEmail), "Auth",
-                        new { token = user.EmailVerificationToken }, Request.Scheme);
-                    await _emailService.SendVerificationEmailAsync(user.Email, verificationLink, user.FullName);
-                    TempData["Success"] = "Registration successful! We've sent a verification email to " + user.Email +
-                        ". Please check your inbox and click the verification link to activate your account.";
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to send verification email");
-                    TempData["Warning"] = "Account created but we couldn't send the verification email. Please contact support.";
-                }
+                // Generate OTP (6 digits)
+                var otp = new Random().Next(100000, 999999).ToString();
 
-                // Auto sign in
-                await SignInUserAsync(user);
+                // Store OTP temporarily
+                _pendingRegistrations[userId] = otp;
 
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                // Send OTP via email
+                await _emailService.SendRegistrationOTPAsync(user.Email, otp, user.FullName);
+
+                // Send OTP via SMS if phone provided
+                if (!string.IsNullOrEmpty(model.PhoneNumber))
                 {
-                    return Redirect(returnUrl);
+                    await _smsService.SendRegistrationOTPAsync(model.PhoneNumber, otp);
                 }
 
-                return RedirectToAction("Index", "Dashboard");
-            }
-            catch (DuplicateEmailException ex)
-            {
-                _logger.LogWarning(ex, "Duplicate email registration attempt");
-                TempData["Error"] = "This email address is already registered. Please use a different email or try logging in.";
-                ModelState.AddModelError("Email", "Email already exists");
-                return View(model);
+                string target = model.Email;
+                if (!string.IsNullOrEmpty(model.PhoneNumber))
+                {
+                    target += $" or {model.PhoneNumber}";
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    userId = userId,
+                    message = "We've sent a verification code to:",
+                    target = target
+                });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during registration for email {Email}", model.Email);
-                TempData["Error"] = "An unexpected error occurred during registration. Please try again later. Error: " + ex.Message;
-                return View(model);
+                _logger.LogError(ex, "Registration error");
+                return Json(new { success = false, message = "An error occurred during registration" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyRegistrationOTP([FromBody] VerifyOTPRequest request)
+        {
+            try
+            {
+                if (!_pendingRegistrations.ContainsKey(request.UserId))
+                {
+                    return Json(new { success = false, message = "Invalid or expired verification code" });
+                }
+
+                if (_pendingRegistrations[request.UserId] != request.Code)
+                {
+                    return Json(new { success = false, message = "Invalid verification code" });
+                }
+
+                // Get user and mark as verified
+                var user = await _userService.GetUserByIdAsync(request.UserId);
+                if (user != null)
+                {
+                    user.IsEmailVerified = true;
+                    if (!string.IsNullOrEmpty(user.PhoneNumber))
+                    {
+                        user.IsPhoneVerified = true;
+                    }
+                    await _userService.UpdateUserAsync(user);
+
+                    // Remove from pending
+                    _pendingRegistrations.Remove(request.UserId);
+
+                    // Sign in the user
+                    await SignInUserAsync(user, false);
+
+                    return Json(new { success = true, message = "Account verified successfully!" });
+                }
+
+                return Json(new { success = false, message = "User not found" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "OTP verification error");
+                return Json(new { success = false, message = "Verification failed" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResendRegistrationOTP([FromBody] ResendOTPRequest request)
+        {
+            try
+            {
+                if (!_pendingRegistrations.ContainsKey(request.UserId))
+                {
+                    return Json(new { success = false, message = "Invalid request" });
+                }
+
+                var user = await _userService.GetUserByIdAsync(request.UserId);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "User not found" });
+                }
+
+                // Generate new OTP
+                var newOtp = new Random().Next(100000, 999999).ToString();
+                _pendingRegistrations[request.UserId] = newOtp;
+
+                // Resend OTP
+                await _emailService.SendRegistrationOTPAsync(user.Email, newOtp, user.FullName);
+
+                if (!string.IsNullOrEmpty(user.PhoneNumber))
+                {
+                    await _smsService.SendRegistrationOTPAsync(user.PhoneNumber, newOtp);
+                }
+
+                return Json(new { success = true, message = "New verification code sent" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Resend OTP error");
+                return Json(new { success = false, message = "Failed to resend code" });
             }
         }
 
@@ -333,6 +500,50 @@ namespace YourApp.Controllers
 
             TempData["Success"] = "Email verified successfully! 🎉 You can now login and start your fitness journey.";
             return RedirectToAction("Login");
+        }
+        [HttpGet]
+
+
+        [HttpGet]
+        public IActionResult VerifyPhone(int phoneNumber)
+        {
+            var model = new PhoneVerificationViewModel { PhoneNumber = phoneNumber };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendPhoneOTP([FromBody] PhoneOTPRequest request)
+        {
+            try
+            {
+                await _otpService.GeneratePhoneOTPAsync(request.PhoneNumber);
+                return Json(new { success = true, message = "Verification code sent" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to send phone OTP");
+                return Json(new { success = false, message = "Failed to send code" });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> VerifyPhoneOTP([FromBody] PhoneOTPVerifyRequest request)
+        {
+            try
+            {
+                var isValid = await _otpService.VerifyPhoneOTPAsync(request.PhoneNumber, request.Code);
+
+                if (isValid)
+                {
+                    return Json(new { success = true, message = "Phone verified successfully" });
+                }
+
+                return Json(new { success = false, message = "Invalid or expired code" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to verify phone OTP");
+                return Json(new { success = false, message = "Verification failed" });
+            }
         }
 
         [HttpGet]

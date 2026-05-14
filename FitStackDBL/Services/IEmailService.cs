@@ -18,6 +18,7 @@ namespace FitStackDBL.Services
         Task SendEmailAsync(string to, string subject, string body);
         Task SendOTPEmailAsync(string to, string otp, string purpose);
         Task Send2FADisableEmailAsync(string to, string userName);
+        Task SendRegistrationOTPAsync(string to, string otp, string userName);
         Task Send2FAEnableEmailAsync(string to, string userName, string backupCodes);
     }
     public class NewsletterArticle

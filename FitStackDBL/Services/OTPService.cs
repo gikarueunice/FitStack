@@ -184,6 +184,16 @@ namespace FitStackDBL.Services
         {
             return $"otp_{type}_{identifier}";
         }
+
+        public Task GeneratePhoneOTPAsync(object phoneNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> VerifyPhoneOTPAsync(object phoneNumber, object code)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class OTPData
