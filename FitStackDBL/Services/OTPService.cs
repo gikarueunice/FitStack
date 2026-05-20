@@ -180,19 +180,64 @@ namespace FitStackDBL.Services
             }
         }
 
+        public async Task<string> GenerateAndSendPhoneOTPAsync(string phoneNumber, OTPType type)
+        {
+            var otp = _random.Next(100000, 999999).ToString();
+
+            // Store in database or cache
+            await _userService.UpdatePhoneOTPAsync(phoneNumber, otp);
+
+            // Send via Twilio SMS
+            bool smsSent = false;
+
+            switch (type)
+            {
+                case OTPType.PhoneVerification:
+                    smsSent = await _smsService.SendVerificationCodeAsync(phoneNumber, otp);
+                    break;
+                case OTPType.Registration:
+                    smsSent = await _smsService.SendRegistrationOTPAsync(phoneNumber, otp);
+                    break;
+                case OTPType.Login:
+                    smsSent = await _smsService.SendLoginCodeAsync(phoneNumber, otp);
+                    break;
+                case OTPType.TwoFactorAuth:
+                    smsSent = await _smsService.SendTwoFactorCodeAsync(phoneNumber, otp);
+                    break;
+                case OTPType.PasswordReset:
+                    smsSent = await _smsService.SendPasswordResetCodeAsync(phoneNumber, otp);
+                    break;
+            }
+
+            if (!smsSent)
+            {
+                _logger.LogWarning("Failed to send SMS OTP to {PhoneNumber}", phoneNumber);
+            }
+
+            return otp;
+        }
         private string GetCacheKey(string identifier, OTPType type)
         {
             return $"otp_{type}_{identifier}";
         }
 
-        public Task GeneratePhoneOTPAsync(object phoneNumber)
+        public async Task GeneratePhoneOTPAsync(string phoneNumber)
         {
-            throw new NotImplementedException();
+            await GenerateOTPAsync(
+                phoneNumber,
+                OTPType.PhoneVerification
+            );
         }
 
-        public Task<bool> VerifyPhoneOTPAsync(object phoneNumber, object code)
+        public async Task<bool> VerifyPhoneOTPAsync(
+            string phoneNumber,
+            string code)
         {
-            throw new NotImplementedException();
+            return await VerifyOTPAsync(
+                phoneNumber,
+                code,
+                OTPType.PhoneVerification
+            );
         }
     }
 

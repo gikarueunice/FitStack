@@ -234,6 +234,20 @@ namespace FitStackDBL.Services
             using var connection = new SqlConnection(_connectionString);
             return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { LockedUntil = lockedUntil });
         }
+        public async Task<Users?> VerifyOTPRequest (string email, string phoneNumber, string otp)
+        {
+            const string sql = @"
+                SELECT * FROM Users 
+                WHERE (Email = @Email OR PhoneNumber = @PhoneNumber) 
+                AND (EmailOTP = @OTP AND EmailOTPExpiry > @Now OR PhoneOTP = @OTP AND PhoneOTPExpiry > @Now)";
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { Email = email, PhoneNumber = phoneNumber, OTP = otp, Now = DateTime.UtcNow });
 
+        }
+
+        public Task UpdatePhoneOTPAsync(string phoneNumber, string otp)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

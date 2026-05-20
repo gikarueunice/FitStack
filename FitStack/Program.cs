@@ -1,3 +1,4 @@
+using FitStack.Services;
 using FitStackDBL.Model;
 using FitStackDBL.Repository;
 using FitStackDBL.Services;
@@ -6,9 +7,15 @@ using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//var message = MessageResource.Create(
+//    to: new PhoneNumber(phoneNumber),
+//    messagingServiceSid: twilioSettings.MessagingServiceSid,
+//    body: $"Your OTP code is {otp}"
+//);
 // Add services
 builder.Services.AddControllersWithViews();
 
+builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
 //builder.Services.AddScoped<IUsersRepository>(sp =>
 //{
 //    var configuration = sp.GetRequiredService<IConfiguration>();

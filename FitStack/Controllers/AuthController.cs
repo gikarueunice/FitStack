@@ -19,8 +19,8 @@ namespace FitStack.Controllers
         private readonly IOTPService _otpService;
         private readonly ISmsService _smsService;
         private readonly ILogger<AuthController> _logger;
-        private Dictionary<string, Users> _pendingRegistrations = new();
-        private Dictionary<string, string> _pendingOtps = new();
+        private static Dictionary<int, string> _pendingRegistrations = new();
+        private static Dictionary<string, string> _pendingOtps = new();
 
         public AuthController(
             IUserService userService,
@@ -178,7 +178,7 @@ namespace FitStack.Controllers
                 }
 
                 // CORRECT BCrypt usage - no separate salt needed
-                string passwordHash = BCrypt.HashPassword(model.Password, 12);
+                string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
                 var user = new Users
                 {
@@ -196,18 +196,19 @@ namespace FitStack.Controllers
                     SelectedPlan = model.SelectedPlan,
                     SubscribeToNewsletter = model.SubscribeToNewsletter,
                     IsEmailVerified = false,
+                    EmailVerificationToken = Guid.NewGuid().ToString(),
                     IsPhoneVerified = false,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 };
 
-                var userId = await _userService.CreateUserAsync(user);
+                var Id = await _userService.CreateUserAsync(user);
 
                 // Generate OTP (6 digits)
                 var otp = new Random().Next(100000, 999999).ToString();
 
                 // Store OTP temporarily
-                _pendingRegistrations[userId] = otp;
+                _pendingRegistrations[Id] = otp;
 
                 // Send OTP via email
                 await _emailService.SendRegistrationOTPAsync(user.Email, otp, user.FullName);
@@ -227,7 +228,7 @@ namespace FitStack.Controllers
                 return Json(new
                 {
                     success = true,
-                    userId = userId,
+                    Id = Id,
                     message = "We've sent a verification code to:",
                     target = target
                 });
@@ -374,21 +375,55 @@ namespace FitStack.Controllers
 
                 if (!user.IsEmailVerified)
                 {
-                    TempData["Warning"] = "Your email address has not been verified. Please check your inbox for the verification link or <a href='/auth/resend-verification?email=" + model.Email + "'>click here to resend</a>.";
-                    return View(model);
+                    var otp = new Random().Next(100000, 999999).ToString();
+
+                    _pendingRegistrations[user.Id] = otp;
+
+                    await _emailService.SendRegistrationOTPAsync(
+                        user.Email,
+                        otp,
+                        user.FullName);
+
+                    TempData["Warning"] =
+                    "Your account isn't verified yet. A new OTP code has been sent to your email.";
+
+                    return RedirectToAction(
+                        "VerifyRegistration",
+                        new { userId = user.Id });
                 }
 
                 // Verify password
+                // Verify password
                 bool isPasswordValid;
+
                 try
                 {
-                    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password, user.Salt);
-                    isPasswordValid = hashedPassword == user.PasswordHash;
+                    if (!string.IsNullOrEmpty(user.Salt))
+                    {
+                        // old users
+                        var oldHash = BCrypt.Net.BCrypt.HashPassword(
+                            model.Password,
+                            user.Salt
+                        );
+
+                        isPasswordValid = oldHash == user.PasswordHash;
+                    }
+                    else
+                    {
+                        // new users
+                        isPasswordValid = BCrypt.Net.BCrypt.Verify(
+                            model.Password,
+                            user.PasswordHash
+                        );
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Password verification error for user {Email}", model.Email);
-                    TempData["Error"] = "Unable to verify credentials. Please try again later.";
+                    _logger.LogError(ex,
+                        "Password verification error for {Email}",
+                        model.Email);
+
+                    TempData["Error"] = "Password verification error";
                     return View(model);
                 }
 
@@ -434,8 +469,13 @@ namespace FitStack.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during login for email {Email}", model.Email);
-                TempData["Error"] = "An unexpected error occurred during login. Please try again later.";
+                _logger.LogError(ex,
+                    "Error during login for {Email}",
+                    model.Email);
+
+                TempData["Error"] =
+                    ex.Message;
+
                 return View(model);
             }
         }
@@ -651,8 +691,8 @@ namespace FitStack.Controllers
             try
             {
                 // Update password
-                user.Salt = BCrypt.Net.BCrypt.GenerateSalt();
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, user.Salt);
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+                user.Salt = string.Empty;
                 user.PasswordResetToken = null;
                 user.PasswordResetTokenExpiry = null;
                 await _userService.UpdateUserAsync(user);
@@ -847,6 +887,31 @@ namespace FitStack.Controllers
             public string Identifier { get; set; } = string.Empty;
             public string Code { get; set; } = string.Empty;
         }
+
+        [HttpGet]
+        public IActionResult VerifyRegistration(int userId)
+        {
+            // Get user info from TempData or query string
+            var email = TempData["VerificationEmail"]?.ToString() ?? string.Empty;
+            var phone = TempData["VerificationPhone"]?.ToString();
+
+            // If not in TempData, try to get from database
+            if (string.IsNullOrEmpty(email))
+            {
+                // You might want to fetch from database here
+                // For now, just use the userId from query string
+            }
+
+            var model = new VerifyRegistrationViewModel
+            {
+                UserId = userId,
+                Email = email,
+                PhoneNumber = phone
+            };
+
+            return View(model);
+        }
+
     }
 
     [Serializable]

@@ -17,8 +17,8 @@ namespace FitStackDBL.Services
         Task Disable2FAAsync(int userId);
         Task Enable2FAAsync(int userId);
         Task<bool> Is2FAEnabledAsync(int userId);
-        Task GeneratePhoneOTPAsync(object phoneNumber);
-        Task<bool> VerifyPhoneOTPAsync(object phoneNumber, object code);
+        Task GeneratePhoneOTPAsync(string phoneNumber);
+        Task<bool> VerifyPhoneOTPAsync(string phoneNumber, string code);
     }
     public enum OTPType
     {
@@ -27,7 +27,8 @@ namespace FitStackDBL.Services
         Login,
         PasswordReset,
         TwoFactorAuth,
-        TransactionConfirmation
+        TransactionConfirmation,
+        Registration
     }
 
     public class OTPResult

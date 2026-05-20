@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace FitStackDBL.Model
 {
-    public class PhoneOTPVerifyRequest
+    public class VerifyOTPRequest
     {
-        public required string PhoneNumber { get; set; }
-        public required String Code { get; set; }
+        public int UserId { get; set; }
+        public string Code { get; set; } = string.Empty;
     }
 }

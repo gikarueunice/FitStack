@@ -1,0 +1,441 @@
+﻿@model FitStack.ViewModels.Auth.VerifyRegistrationViewModel
+
+@{
+    ViewData["Title"] = "Verify Your Account";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <a href="/" class="auth-logo">
+                <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 2L4 8V16C4 23.5 9.5 30.5 16 32C22.5 30.5 28 23.5 28 16V8L16 2Z" fill="#4F46E5" stroke="#6366F1" stroke-width="2" />
+                    <path d="M12 16L15 19L21 13" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>FitTrack</span>
+            </a>
+            <h1>Verify Your Account</h1>
+            <p>Enter the verification code sent to your email</p>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <!-- Verification Form -->
+        <form id="verifyForm" class="auth-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="userId" value="@Model.UserId" />
+
+            <div class="verification-info">
+                <div class="info-icon">📧</div>
+                <p>We've sent a verification code to:</p>
+                <div class="info-target">@Model.Email</div>
+                @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                {
+                    <p class="mt-2">and to:</p>
+                    <div class="info-target">@Model.PhoneNumber</div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Verification Code</label>
+                <div class="otp-input-container">
+                    <input type="text" class="otp-input" id="otp1" maxlength="1" onkeyup="moveToNext(this, 'otp2')" />
+                    <input type="text" class="otp-input" id="otp2" maxlength="1" onkeyup="moveToNext(this, 'otp3')" />
+                    <input type="text" class="otp-input" id="otp3" maxlength="1" onkeyup="moveToNext(this, 'otp4')" />
+                    <input type="text" class="otp-input" id="otp4" maxlength="1" onkeyup="moveToNext(this, 'otp5')" />
+                    <input type="text" class="otp-input" id="otp5" maxlength="1" onkeyup="moveToNext(this, 'otp6')" />
+                    <input type="text" class="otp-input" id="otp6" maxlength="1" onkeyup="moveToNext(this, '')" />
+                </div>
+                <input type="hidden" id="fullOtp" />
+            </div>
+
+            <div class="timer-container">
+                <div class="timer" id="timer">
+                    <span class="timer-icon">⏱️</span>
+                    <span id="timerText">Code expires in 10:00</span>
+                </div>
+                <button type="button" id="resendBtn" class="btn-resend" style="display: none;" onclick="resendCode()">
+                    Resend Verification Code
+                </button>
+            </div>
+
+            <button type="button" class="btn-submit" id="verifyBtn" onclick="verifyCode()">
+                Verify Account
+            </button>
+
+            <div class="alternative-link">
+                <p>Wrong email address? <a href="/auth/register">Register again</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .verification-info {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+        border-radius: 16px;
+    }
+
+    .info-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+
+    .info-target {
+        font-weight: 600;
+        color: #4F46E5;
+        font-size: 1.1rem;
+        margin-top: 5px;
+        word-break: break-all;
+    }
+
+    .mt-2 {
+        margin-top: 10px;
+    }
+
+    .otp-input-container {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    .otp-input {
+        width: 55px;
+        height: 65px;
+        text-align: center;
+        font-size: 24px;
+        font-weight: 600;
+        border: 2px solid #E5E7EB;
+        border-radius: 12px;
+        background: white;
+        transition: all 0.3s;
+    }
+
+    .otp-input:focus {
+        outline: none;
+        border-color: #4F46E5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .timer-container {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .timer {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: #F3F4F6;
+        border-radius: 40px;
+        font-size: 14px;
+        color: #6B7280;
+    }
+
+    .timer-icon {
+        font-size: 16px;
+    }
+
+    .btn-resend {
+        background: none;
+        border: none;
+        color: #4F46E5;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        margin-top: 10px;
+        text-decoration: underline;
+    }
+
+    .btn-resend:hover {
+        color: #4338CA;
+    }
+
+    .alternative-link {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #E5E7EB;
+    }
+
+    .alternative-link a {
+        color: #4F46E5;
+        text-decoration: none;
+    }
+
+    .alternative-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* Loading state for button */
+    .btn-submit.loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .btn-submit.loading::after {
+        content: " ⏳";
+    }
+
+    /* Success animation */
+    @@keyframes successPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .success {
+        animation: successPulse 0.5s ease-out;
+    }
+
+    @@media (max-width: 480px) {
+        .otp-input {
+            width: 45px;
+            height: 55px;
+            font-size: 20px;
+        }
+
+        .otp-input-container {
+            gap: 8px;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        let countdownInterval;
+        let timeLeft = 600; // 10 minutes in seconds
+        let userId = @Model.UserId;
+
+        // Auto-focus first OTP input on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('otp1').focus();
+            startTimer();
+        });
+
+        // Move to next input field
+        function moveToNext(current, nextId) {
+            if (current.value.length === current.maxLength) {
+                if (nextId) {
+                    document.getElementById(nextId).focus();
+                } else {
+                    // Last field, auto-submit if all fields filled
+                    const allOtp = getFullOtp();
+                    if (allOtp.length === 6) {
+                        verifyCode();
+                    }
+                }
+            }
+            updateFullOtp();
+        }
+
+        // Get full OTP from individual fields
+        function getFullOtp() {
+            let otp = '';
+            for (let i = 1; i <= 6; i++) {
+                const value = document.getElementById(`otp${i}`).value;
+                otp += value;
+            }
+            return otp;
+        }
+
+        // Update hidden field with full OTP
+        function updateFullOtp() {
+            const fullOtp = getFullOtp();
+            document.getElementById('fullOtp').value = fullOtp;
+        }
+
+        // Start countdown timer
+        function startTimer() {
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            countdownInterval = setInterval(function() {
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('timerText').innerText = 'Code expired';
+                    document.getElementById('resendBtn').style.display = 'block';
+                    document.getElementById('verifyBtn').disabled = true;
+                    document.getElementById('verifyBtn').style.opacity = '0.5';
+                } else {
+                    timeLeft--;
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    document.getElementById('timerText').innerText = `Code expires in ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        // Verify the code
+        async function verifyCode() {
+            const code = getFullOtp();
+
+            if (code.length !== 6) {
+                showAlert('Please enter the 6-digit verification code', 'error');
+                return;
+            }
+
+            const verifyBtn = document.getElementById('verifyBtn');
+            verifyBtn.classList.add('loading');
+            verifyBtn.disabled = true;
+
+            try {
+                const response = await fetch('/auth/verify-registration-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        code: code
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('Account verified successfully! Redirecting to dashboard...', 'success');
+
+                    // Add success animation
+                    document.querySelector('.auth-card').classList.add('success');
+
+                    // Clear timer
+                    if (countdownInterval) clearInterval(countdownInterval);
+
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 2000);
+                } else {
+                    showAlert(result.message, 'error');
+                    verifyBtn.classList.remove('loading');
+                    verifyBtn.disabled = false;
+
+                    // Clear OTP fields on error
+                    clearOtpFields();
+                }
+            } catch (error) {
+                showAlert('Verification failed. Please try again.', 'error');
+                verifyBtn.classList.remove('loading');
+                verifyBtn.disabled = false;
+            }
+        }
+
+        // Resend verification code
+        async function resendCode() {
+            const resendBtn = document.getElementById('resendBtn');
+            resendBtn.disabled = true;
+            resendBtn.innerText = 'Sending...';
+
+            try {
+                const response = await fetch('/auth/resend-registration-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({ userId: userId })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('New verification code sent!', 'success');
+
+                    // Reset timer
+                    timeLeft = 600;
+                    startTimer();
+
+                    // Hide resend button and enable verify button
+                    resendBtn.style.display = 'none';
+                    document.getElementById('verifyBtn').disabled = false;
+                    document.getElementById('verifyBtn').style.opacity = '1';
+
+                    // Clear OTP fields
+                    clearOtpFields();
+
+                    // Focus on first field
+                    document.getElementById('otp1').focus();
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to resend code. Please try again.', 'error');
+            } finally {
+                resendBtn.disabled = false;
+                resendBtn.innerText = 'Resend Verification Code';
+            }
+        }
+
+        // Clear all OTP fields
+        function clearOtpFields() {
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`otp${i}`).value = '';
+            }
+            document.getElementById('otp1').focus();
+            updateFullOtp();
+        }
+
+        // Show alert message
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible`;
+            alertDiv.innerHTML = `
+                <span class="alert-icon">${type === 'success' ? '✅' : '❌'}</span>
+                <span class="alert-message">${message}</span>
+                <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
+            `;
+
+            alertContainer.appendChild(alertDiv);
+
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                if (alertDiv && alertDiv.parentElement) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Allow paste functionality for OTP
+        document.getElementById('otp1').addEventListener('paste', function(e) {
+            e.preventDefault();
+            const paste = (e.clipboardData || window.clipboardData).getData('text');
+            const numbers = paste.replace(/\D/g, '').slice(0, 6);
+
+            for (let i = 0; i < numbers.length; i++) {
+                const field = document.getElementById(`otp${i + 1}`);
+                if (field) {
+                    field.value = numbers[i];
+                }
+            }
+
+            updateFullOtp();
+
+            // Focus on last filled field or next empty
+            const lastFilledIndex = Math.min(numbers.length, 6);
+            if (lastFilledIndex < 6) {
+                document.getElementById(`otp${lastFilledIndex + 1}`).focus();
+            } else {
+                document.getElementById('otp6').focus();
+                verifyCode();
+            }
+        });
+
+        // Handle backspace key to move to previous field
+        for (let i = 1; i <= 6; i++) {
+            const field = document.getElementById(`otp${i}`);
+            field.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && this.value === '' && i > 1) {
+                    document.getElementById(`otp${i - 1}`).focus();
+                }
+            });
+        }
+    </script>
+}
