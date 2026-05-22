@@ -7,24 +7,21 @@ using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//var message = MessageResource.Create(
-//    to: new PhoneNumber(phoneNumber),
-//    messagingServiceSid: twilioSettings.MessagingServiceSid,
-//    body: $"Your OTP code is {otp}"
-//);
+
 // Add services
 builder.Services.AddControllersWithViews();
 
+
 builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
-//builder.Services.AddScoped<IUsersRepository>(sp =>
-//{
-//    var configuration = sp.GetRequiredService<IConfiguration>();
+builder.Services.AddScoped<IUsersRepository>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
 
-//    var connectionString = configuration.GetConnectionString("DefaultConnection")
-//        ?? throw new InvalidOperationException("Connection string not found");
+    var connectionString = configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException("Connection string not found");
 
-//    return new UsersRepository(connectionString);
-//});
+    return new UsersRepository(connectionString);
+});
 try
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -79,8 +76,22 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error/StatusCode/500");
+    app.UseStatusCodePagesWithReExecute("/Error/StatusCode/{0}");
     app.UseHsts();
+}
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error/StatusCode/500");
+    app.UseStatusCodePagesWithReExecute("/Error/StatusCode/{0}");
+    app.UseHsts();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
+
+    // Enable custom pages in development too
+    app.UseStatusCodePagesWithReExecute("/Error/StatusCode/{0}");
 }
 
 app.UseHttpsRedirection();
@@ -92,8 +103,21 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "areas",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    // Handle 404 for non-existent controllers/actions
+    endpoints.MapControllerRoute(
+        name: "notFound",
+        pattern: "{*url}",
+        defaults: new { controller = "Error", action = "NotFound" });
+});
 
 app.Run();

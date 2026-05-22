@@ -5,6 +5,19 @@
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
 }
 
+@* Add null check at the very beginning *@
+@if (Model == null)
+{
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="alert alert-error">
+                Invalid verification request. Please <a href="/auth/register">register again</a>.
+            </div>
+        </div>
+    </div>
+    return;
+}
+
 <div class="auth-container">
     <div class="auth-card">
         <div class="auth-header">
@@ -29,7 +42,7 @@
             <div class="verification-info">
                 <div class="info-icon">📧</div>
                 <p>We've sent a verification code to:</p>
-                <div class="info-target">@Model.Email</div>
+                <div class="info-target">@(Model.Email ?? "your email address")</div>
                 @if (!string.IsNullOrEmpty(Model.PhoneNumber))
                 {
                     <p class="mt-2">and to:</p>
@@ -88,7 +101,7 @@
     .info-target {
         font-weight: 600;
         color: #4F46E5;
-        font-size: 1.1rem;
+        font-size: 1rem;
         margin-top: 5px;
         word-break: break-all;
     }
@@ -116,11 +129,11 @@
         transition: all 0.3s;
     }
 
-    .otp-input:focus {
-        outline: none;
-        border-color: #4F46E5;
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    }
+        .otp-input:focus {
+            outline: none;
+            border-color: #4F46E5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
 
     .timer-container {
         text-align: center;
@@ -138,23 +151,14 @@
         color: #6B7280;
     }
 
-    .timer-icon {
-        font-size: 16px;
-    }
-
     .btn-resend {
         background: none;
         border: none;
         color: #4F46E5;
         cursor: pointer;
         font-size: 14px;
-        font-weight: 500;
         margin-top: 10px;
         text-decoration: underline;
-    }
-
-    .btn-resend:hover {
-        color: #4338CA;
     }
 
     .alternative-link {
@@ -164,35 +168,10 @@
         border-top: 1px solid #E5E7EB;
     }
 
-    .alternative-link a {
-        color: #4F46E5;
-        text-decoration: none;
-    }
-
-    .alternative-link a:hover {
-        text-decoration: underline;
-    }
-
-    /* Loading state for button */
-    .btn-submit.loading {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-
-    .btn-submit.loading::after {
-        content: " ⏳";
-    }
-
-    /* Success animation */
-    @@keyframes successPulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-
-    .success {
-        animation: successPulse 0.5s ease-out;
-    }
+        .alternative-link a {
+            color: #4F46E5;
+            text-decoration: none;
+        }
 
     @@media (max-width: 480px) {
         .otp-input {
@@ -210,22 +189,24 @@
 @section Scripts {
     <script>
         let countdownInterval;
-        let timeLeft = 600; // 10 minutes in seconds
-        let userId = @Model.UserId;
+        let timeLeft = 600;
+        let userId = @(Model?.UserId ?? 0);
 
-        // Auto-focus first OTP input on page load
+        // If userId is 0, redirect to register
+        if (userId === 0) {
+            window.location.href = '/auth/register';
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('otp1').focus();
             startTimer();
         });
 
-        // Move to next input field
         function moveToNext(current, nextId) {
             if (current.value.length === current.maxLength) {
                 if (nextId) {
                     document.getElementById(nextId).focus();
                 } else {
-                    // Last field, auto-submit if all fields filled
                     const allOtp = getFullOtp();
                     if (allOtp.length === 6) {
                         verifyCode();
@@ -235,7 +216,6 @@
             updateFullOtp();
         }
 
-        // Get full OTP from individual fields
         function getFullOtp() {
             let otp = '';
             for (let i = 1; i <= 6; i++) {
@@ -245,13 +225,11 @@
             return otp;
         }
 
-        // Update hidden field with full OTP
         function updateFullOtp() {
             const fullOtp = getFullOtp();
             document.getElementById('fullOtp').value = fullOtp;
         }
 
-        // Start countdown timer
         function startTimer() {
             if (countdownInterval) clearInterval(countdownInterval);
 
@@ -261,7 +239,6 @@
                     document.getElementById('timerText').innerText = 'Code expired';
                     document.getElementById('resendBtn').style.display = 'block';
                     document.getElementById('verifyBtn').disabled = true;
-                    document.getElementById('verifyBtn').style.opacity = '0.5';
                 } else {
                     timeLeft--;
                     const minutes = Math.floor(timeLeft / 60);
@@ -271,9 +248,12 @@
             }, 1000);
         }
 
-        // Verify the code
-        async function verifyCode() {
+                async function verifyCode() {
             const code = getFullOtp();
+
+            console.log("=== VERIFICATION DEBUG ===");
+            console.log("User ID:", userId);
+            console.log("Code:", code);
 
             if (code.length !== 6) {
                 showAlert('Please enter the 6-digit verification code', 'error');
@@ -281,99 +261,108 @@
             }
 
             const verifyBtn = document.getElementById('verifyBtn');
-            verifyBtn.classList.add('loading');
             verifyBtn.disabled = true;
+            verifyBtn.innerText = 'Verifying...';
 
             try {
-                const response = await fetch('/auth/verify-registration-otp', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                    },
-                    body: JSON.stringify({
-                        userId: userId,
-                        code: code
-                    })
+                // Create a timeout promise
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('Request timeout')), 10000);
                 });
 
+                const requestBody = {
+                    userId: userId,
+                    code: code
+                };
+
+                console.log("Sending request to server...");
+
+                const fetchPromise = fetch('/auth/VerifyRegistrationOTP', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                // Race between fetch and timeout
+                const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+                console.log("Response received, status:", response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const result = await response.json();
+                console.log("Response data:", result);
 
                 if (result.success) {
-                    showAlert('Account verified successfully! Redirecting to dashboard...', 'success');
-
-                    // Add success animation
-                    document.querySelector('.auth-card').classList.add('success');
-
-                    // Clear timer
+                    showAlert('Account verified successfully! Redirecting...', 'success');
                     if (countdownInterval) clearInterval(countdownInterval);
-
-                    // Redirect to dashboard after 2 seconds
                     setTimeout(() => {
                         window.location.href = '/dashboard';
                     }, 2000);
                 } else {
-                    showAlert(result.message, 'error');
-                    verifyBtn.classList.remove('loading');
+                    showAlert(result.message || 'Verification failed', 'error');
                     verifyBtn.disabled = false;
-
-                    // Clear OTP fields on error
+                    verifyBtn.innerText = 'Verify Account';
                     clearOtpFields();
                 }
             } catch (error) {
-                showAlert('Verification failed. Please try again.', 'error');
-                verifyBtn.classList.remove('loading');
+                console.error("Verification error:", error);
+                showAlert('Verification failed. Please try again. Error: ' + error.message, 'error');
                 verifyBtn.disabled = false;
+                verifyBtn.innerText = 'Verify Account';
             }
         }
-
-        // Resend verification code
-        async function resendCode() {
+                async function resendCode() {
             const resendBtn = document.getElementById('resendBtn');
             resendBtn.disabled = true;
             resendBtn.innerText = 'Sending...';
 
             try {
-                const response = await fetch('/auth/resend-registration-otp', {
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('Request timeout')), 10000);
+                });
+
+                const fetchPromise = fetch('/auth/ResendRegistrationOTP', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ userId: userId })
                 });
 
+                const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const result = await response.json();
+                console.log("Resend response:", result);
 
                 if (result.success) {
                     showAlert('New verification code sent!', 'success');
-
-                    // Reset timer
                     timeLeft = 600;
                     startTimer();
-
-                    // Hide resend button and enable verify button
                     resendBtn.style.display = 'none';
                     document.getElementById('verifyBtn').disabled = false;
-                    document.getElementById('verifyBtn').style.opacity = '1';
-
-                    // Clear OTP fields
+                    document.getElementById('verifyBtn').innerText = 'Verify Account';
                     clearOtpFields();
-
-                    // Focus on first field
-                    document.getElementById('otp1').focus();
                 } else {
-                    showAlert(result.message, 'error');
+                    showAlert(result.message || 'Failed to resend code', 'error');
                 }
             } catch (error) {
+                console.error("Resend error:", error);
                 showAlert('Failed to resend code. Please try again.', 'error');
             } finally {
                 resendBtn.disabled = false;
-                resendBtn.innerText = 'Resend Verification Code';
+                resendBtn.innerText = 'Resend Code';
             }
         }
 
-        // Clear all OTP fields
         function clearOtpFields() {
             for (let i = 1; i <= 6; i++) {
                 document.getElementById(`otp${i}`).value = '';
@@ -382,7 +371,6 @@
             updateFullOtp();
         }
 
-        // Show alert message
         function showAlert(message, type) {
             const alertContainer = document.getElementById('alertContainer');
             const alertDiv = document.createElement('div');
@@ -392,18 +380,11 @@
                 <span class="alert-message">${message}</span>
                 <button type="button" class="alert-close" onclick="this.parentElement.remove()">×</button>
             `;
-
             alertContainer.appendChild(alertDiv);
-
-            // Auto dismiss after 5 seconds
-            setTimeout(() => {
-                if (alertDiv && alertDiv.parentElement) {
-                    alertDiv.remove();
-                }
-            }, 5000);
+            setTimeout(() => alertDiv.remove(), 5000);
         }
 
-        // Allow paste functionality for OTP
+        // Allow paste functionality
         document.getElementById('otp1').addEventListener('paste', function(e) {
             e.preventDefault();
             const paste = (e.clipboardData || window.clipboardData).getData('text');
@@ -418,17 +399,17 @@
 
             updateFullOtp();
 
-            // Focus on last filled field or next empty
-            const lastFilledIndex = Math.min(numbers.length, 6);
-            if (lastFilledIndex < 6) {
-                document.getElementById(`otp${lastFilledIndex + 1}`).focus();
-            } else {
-                document.getElementById('otp6').focus();
+            if (numbers.length === 6) {
                 verifyCode();
+            } else {
+                const nextIndex = numbers.length + 1;
+                if (nextIndex <= 6) {
+                    document.getElementById(`otp${nextIndex}`).focus();
+                }
             }
         });
 
-        // Handle backspace key to move to previous field
+        // Handle backspace
         for (let i = 1; i <= 6; i++) {
             const field = document.getElementById(`otp${i}`);
             field.addEventListener('keydown', function(e) {

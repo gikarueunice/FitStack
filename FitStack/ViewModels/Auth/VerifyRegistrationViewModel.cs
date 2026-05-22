@@ -1,9 +1,22 @@
-﻿namespace FitStack.ViewModels.Auth
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FitStack.ViewModels.Auth
 {
     public class VerifyRegistrationViewModel
     {
+        [Required]
         public int UserId { get; set; }
-        public string Email { get; set; } = string.Empty;
-        public string? PhoneNumber { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty; // Initialize with empty string
+
+        public string? PhoneNumber { get; set; } // Nullable
+
+        // Add validation method
+        public bool IsValid()
+        {
+            return UserId > 0 && !string.IsNullOrEmpty(Email);
+        }
     }
 }

@@ -44,119 +44,7 @@ namespace FitStack.Controllers
             return View(model);
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = null)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        // Collect all validation errors
-        //        var errors = ModelState.Values
-        //            .SelectMany(v => v.Errors)
-        //            .Select(e => e.ErrorMessage)
-        //            .ToList();
 
-        //        TempData["ValidationErrors"] = JsonSerializer.Serialize(errors);
-        //        return View(model);
-        //    }
-
-        //    try
-        //    {
-        //        // Check if user already exists
-        //        var existingUser = await _userService.GetUserByEmailAsync(model.Email);
-        //        if (existingUser != null)
-        //        {
-        //            if (!existingUser.IsEmailVerified)
-        //            {
-        //                TempData["Warning"] = "An account with this email exists but is not verified. Please check your email for verification link or request a new one.";
-        //                ModelState.AddModelError("Email", "Email already registered but not verified");
-        //            }
-        //            else
-        //            {
-        //                TempData["Error"] = "An account with this email already exists. Please login instead.";
-        //                ModelState.AddModelError("Email", "Email already registered");
-        //            }
-        //            return View(model);
-        //        }
-        //        var existingPhone = await _userService.GetUserByPhoneNumberAsync(model.PhoneNumber);
-        //        if (existingPhone != null)
-        //        {
-        //            ModelState.AddModelError("PhoneNumber", "Phone number already registered");
-        //            return View(model);
-        //        }
-
-        //        // Validate password strength
-        //        if (!IsPasswordStrong(model.Password))
-        //        {
-        //            TempData["Error"] = "Password does not meet security requirements. Please ensure it has at least 8 characters, uppercase, lowercase, number, and special character.";
-        //            return View(model);
-        //        }
-
-        //        // Create new user
-        //        var user = new Users
-        //        {
-        //            FullName = model.FullName,
-        //            Email = model.Email,
-        //            DateOfBirth = model.DateOfBirth,
-        //            Gender = model.Gender,
-        //            Height = model.Height,
-        //            Weight = model.Weight,
-        //            FitnessGoal = model.FitnessGoal,
-        //            ActivityLevel = model.ActivityLevel,
-        //            SelectedPlan = model.SelectedPlan,
-        //            SubscribeToNewsletter = model.SubscribeToNewsletter,
-        //            CreatedAt = DateTime.UtcNow,
-        //            IsActive = true,
-        //            IsEmailVerified = false,
-        //            EmailVerificationToken = Guid.NewGuid().ToString()
-        //        };
-
-        //        // Hash password
-        //        user.Salt = BCrypt.Net.BCrypt.GenerateSalt();
-        //        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password, user.Salt);
-
-        //        // Save user to database
-        //        var userId = await _userService.CreateUserAsync(user);
-
-        //        // Send verification email
-        //        try
-        //        {
-        //            var verificationLink = Url.Action(nameof(VerifyEmail), "Auth",
-        //                new { token = user.EmailVerificationToken }, Request.Scheme);
-        //            await _emailService.SendVerificationEmailAsync(user.Email, verificationLink, user.FullName);
-        //            TempData["Success"] = "Registration successful! We've sent a verification email to " + user.Email +
-        //                ". Please check your inbox and click the verification link to activate your account.";
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            _logger.LogError(ex, "Failed to send verification email");
-        //            TempData["Warning"] = "Account created but we couldn't send the verification email. Please contact support.";
-        //        }
-
-        //        // Auto sign in
-        //        await SignInUserAsync(user);
-
-        //        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-        //        {
-        //            return Redirect(returnUrl);
-        //        }
-
-        //        return RedirectToAction("Index", "Dashboard");
-        //    }
-        //    catch (DuplicateEmailException ex)
-        //    {
-        //        _logger.LogWarning(ex, "Duplicate email registration attempt");
-        //        TempData["Error"] = "This email address is already registered. Please use a different email or try logging in.";
-        //        ModelState.AddModelError("Email", "Email already exists");
-        //        return View(model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error during registration for email {Email}", model.Email);
-        //        TempData["Error"] = "An unexpected error occurred during registration. Please try again later. Error: " + ex.Message;
-        //        return View(model);
-        //    }
-        //}
         [HttpPost]
         public async Task<IActionResult> Register([FromForm] RegisterViewModel model)
         {
@@ -177,7 +65,7 @@ namespace FitStack.Controllers
                     return Json(new { success = false, message = "Email already registered" });
                 }
 
-                // CORRECT BCrypt usage - no separate salt needed
+                // Hash password
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
                 var user = new Users
@@ -186,7 +74,7 @@ namespace FitStack.Controllers
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber ?? string.Empty,
                     PasswordHash = passwordHash,
-                    Salt = string.Empty, // BCrypt handles salt internally
+                    Salt = string.Empty,
                     DateOfBirth = model.DateOfBirth,
                     Gender = model.Gender,
                     Height = model.Height,
@@ -202,13 +90,28 @@ namespace FitStack.Controllers
                     CreatedAt = DateTime.UtcNow
                 };
 
-                var Id = await _userService.CreateUserAsync(user);
+                // ONLY CREATE USER ONCE!
+                var userId = await _userService.CreateUserAsync(user);
 
                 // Generate OTP (6 digits)
                 var otp = new Random().Next(100000, 999999).ToString();
 
+                // DEBUG: Log the OTP
+                _logger.LogInformation($"=== OTP GENERATED ===");
+                _logger.LogInformation($"User ID: {userId}");
+                _logger.LogInformation($"Generated OTP: {otp}");
+                _logger.LogInformation($"Email: {user.Email}");
+                _logger.LogInformation($"===================");
+
+                // Also output to console for immediate visibility
+                Console.WriteLine($"\n\n*** VERIFICATION CODE FOR USER {userId}: {otp} ***\n\n");
+
                 // Store OTP temporarily
-                _pendingRegistrations[Id] = otp;
+                _pendingRegistrations[userId] = otp;
+
+                // DEBUG: Verify it was stored
+                _logger.LogInformation($"OTP stored successfully. Pending count: {_pendingRegistrations.Count}");
+                _logger.LogInformation($"Stored OTP for ID {userId}: {_pendingRegistrations[userId]}");
 
                 // Send OTP via email
                 await _emailService.SendRegistrationOTPAsync(user.Email, otp, user.FullName);
@@ -227,37 +130,151 @@ namespace FitStack.Controllers
 
                 TempData["VerificationEmail"] = user.Email;
                 TempData["VerificationPhone"] = user.PhoneNumber;
+                TempData["VerificationUserId"] = userId;
 
-                return RedirectToAction(
-                    "VerifyRegistrationPage",
-                    new { userId = Id }
-                );
+                return RedirectToAction("VerifyRegistration", new { userId = userId });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
-
-                return Json(new
-                {
-                    success = false,
-                    message = ex.Message,
-                    details = ex.InnerException?.Message
-                });
+                _logger.LogError(ex, "Error during registration");
+                return Json(new { success = false, message = "Registration failed. Please try again." });
             }
+        }
+        [HttpGet]
+        [Route("auth/VerifyRegistrationOTP")]
+        //[Route("auth/verify/{userId?}")]
+        //[Route("auth/verify-registration/{userId?}")]
+        //[Route("auth/verify-otp/{userId?}")]
+        [Route("auth/verify-registration-otp")]
+        public async Task<IActionResult> VerifyRegistration(int? userId)
+        {
+            // Try to get userId from multiple sources
+            int finalUserId = 0;
+
+            // 1. From route parameter
+            if (userId.HasValue && userId.Value > 0)
+            {
+                finalUserId = userId.Value;
+            }
+
+            // 2. From query string
+            if (finalUserId == 0 && Request.Query.ContainsKey("userId"))
+            {
+                int.TryParse(Request.Query["userId"], out finalUserId);
+            }
+
+            // 3. From TempData (in case of redirect)
+            if (finalUserId == 0 && TempData["VerificationUserId"] != null)
+            {
+                finalUserId = Convert.ToInt32(TempData["VerificationUserId"]);
+            }
+
+            // 4. From session (if you're using session)
+            if (finalUserId == 0 && HttpContext.Session.GetInt32("PendingUserId") != null)
+            {
+                finalUserId = HttpContext.Session.GetInt32("PendingUserId").Value;
+            }
+
+            // If still no userId, show error
+            if (finalUserId <= 0)
+            {
+                TempData["Error"] = "Invalid verification request. Please register again.";
+                return RedirectToAction("Register");
+            }
+
+            var user = await _userService.GetUserByIdAsync(finalUserId);
+
+            if (user == null)
+            {
+                TempData["Error"] = "User not found. Please register again.";
+                return RedirectToAction("Register");
+            }
+
+            // Check if already verified
+            if (user.IsEmailVerified)
+            {
+                TempData["Success"] = "Your account is already verified! Please login.";
+                return RedirectToAction("Login");
+            }
+
+            var model = new VerifyRegistrationViewModel
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber
+            };
+
+            // Store in TempData for backup
+            TempData["VerificationUserId"] = user.Id;
+
+            return View("VerifyRegistrationPage", model);
+        }
+
+        // Alternative: Also accept userId from query string
+        [HttpGet]
+        public async Task<IActionResult> Verify(int? userId)
+        {
+            if (userId == null || userId <= 0)
+            {
+                // Try to get from TempData
+                if (TempData["VerificationUserId"] != null)
+                {
+                    userId = Convert.ToInt32(TempData["VerificationUserId"]);
+                }
+                else
+                {
+                    TempData["Error"] = "Invalid verification request.";
+                    return RedirectToAction("Register");
+                }
+            }
+
+            var user = await _userService.GetUserByIdAsync(userId.Value);
+
+            if (user == null)
+            {
+                TempData["Error"] = "User not found.";
+                return RedirectToAction("Register");
+            }
+
+            var model = new VerifyRegistrationViewModel
+            {
+                UserId = user.Id,
+                Email = user.Email ?? string.Empty,
+                PhoneNumber = user.PhoneNumber ?? string.Empty
+            };
+
+            return View("VerifyRegistrationPage", model);
         }
 
         [HttpPost]
+        [Route("auth/VerifyRegistrationOTP")]
+        [Route("auth/verify-registration-otp")]
         public async Task<IActionResult> VerifyRegistrationOTP([FromBody] VerifyOTPRequest request)
         {
             try
             {
+                Console.WriteLine($"=== OTP VERIFICATION RECEIVED ===");
+                Console.WriteLine($"UserId: {request?.UserId}");
+                Console.WriteLine($"Code: {request?.Code}");
+
+                if (request == null)
+                {
+                    return Json(new { success = false, message = "Invalid request" });
+                }
+
+                // Check if pending registrations contains the userId
                 if (!_pendingRegistrations.ContainsKey(request.UserId))
                 {
+                    Console.WriteLine($"UserId {request.UserId} not found in pending registrations");
                     return Json(new { success = false, message = "Invalid or expired verification code" });
                 }
 
-                if (_pendingRegistrations[request.UserId] != request.Code)
+                var storedOtp = _pendingRegistrations[request.UserId];
+                Console.WriteLine($"Stored OTP: {storedOtp}, Entered: {request.Code}");
+
+                if (storedOtp != request.Code)
                 {
+                    Console.WriteLine($"OTP mismatch!");
                     return Json(new { success = false, message = "Invalid verification code" });
                 }
 
@@ -290,8 +307,10 @@ namespace FitStack.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Exception: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
                 _logger.LogError(ex, "OTP verification error");
-                return Json(new { success = false, message = "Verification failed" });
+                return Json(new { success = false, message = "Verification failed: " + ex.Message });
             }
         }
 
@@ -399,8 +418,9 @@ namespace FitStack.Controllers
                     "Your account isn't verified yet. A new OTP code has been sent to your email.";
 
                     return RedirectToAction(
-                        "VerifyRegistrationPage",
-                        new { userId = user.Id });
+                        "VerifyRegistration",
+                        new { userId = user.Id }
+                        );
                 }
 
                 // Verify password
@@ -881,6 +901,12 @@ namespace FitStack.Controllers
                 return Json(new { success = false, message = "Failed to verify code" });
             }
         }
+        [HttpGet]
+        [Route("auth/test-api")]
+        public IActionResult TestApi()
+        {
+            return Json(new { success = true, message = "API is working!" });
+        }
 
         public class PhoneVerificationRequest
         {
@@ -899,29 +925,29 @@ namespace FitStack.Controllers
             public string Code { get; set; } = string.Empty;
         }
 
-        [HttpGet]
-        public IActionResult VerifyRegistration(int userId)
-        {
-            // Get user info from TempData or query string
-            var email = TempData["VerificationEmail"]?.ToString() ?? string.Empty;
-            var phone = TempData["VerificationPhone"]?.ToString();
+        //[HttpGet]
+        //public IActionResult VerifyRegistration(int userId)
+        //{
+        //    // Get user info from TempData or query string
+        //    var email = TempData["VerificationEmail"]?.ToString() ?? string.Empty;
+        //    var phone = TempData["VerificationPhone"]?.ToString();
 
-            // If not in TempData, try to get from database
-            if (string.IsNullOrEmpty(email))
-            {
-                // You might want to fetch from database here
-                // For now, just use the userId from query string
-            }
+        //    // If not in TempData, try to get from database
+        //    if (string.IsNullOrEmpty(email))
+        //    {
+        //        // You might want to fetch from database here
+        //        // For now, just use the userId from query string
+        //    }
 
-            var model = new VerifyRegistrationViewModel
-            {
-                UserId = userId,
-                Email = email,
-                PhoneNumber = phone
-            };
+        //    var model = new VerifyRegistrationViewModel
+        //    {
+        //        UserId = userId,
+        //        Email = email,
+        //        PhoneNumber = phone
+        //    };
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
     }
 

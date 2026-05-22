@@ -1,0 +1,346 @@
+﻿@{
+    ViewData["Title"] = "Page Not Found - FitTrack";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .error-container {
+                max-width: 600px;
+                width: 100%;
+                animation: fadeInUp 0.6s ease-out;
+            }
+
+            .error-card {
+                background: white;
+                border-radius: 32px;
+                padding: 60px 40px;
+                text-align: center;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            }
+
+            .error-code {
+                font-size: 120px;
+                font-weight: 800;
+                background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                line-height: 1;
+                margin-bottom: 20px;
+            }
+
+            .error-icon {
+                font-size: 80px;
+                margin-bottom: 20px;
+                animation: bounce 2s ease-in-out infinite;
+            }
+
+            .error-title {
+                font-size: 28px;
+                font-weight: 700;
+                color: #1F2937;
+                margin-bottom: 12px;
+            }
+
+            .error-message {
+                font-size: 16px;
+                color: #6B7280;
+                margin-bottom: 30px;
+                line-height: 1.6;
+            }
+
+            .error-actions {
+                display: flex;
+                gap: 16px;
+                justify-content: center;
+                margin-bottom: 30px;
+                flex-wrap: wrap;
+            }
+
+            .btn-primary, .btn-secondary {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: all 0.3s;
+                cursor: pointer;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+                color: white;
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            }
+
+                .btn-primary:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+                }
+
+            .btn-secondary {
+                background: #F3F4F6;
+                color: #4F46E5;
+            }
+
+                .btn-secondary:hover {
+                    background: #E5E7EB;
+                    transform: translateY(-2px);
+                }
+
+            .suggestions {
+                text-align: left;
+                background: #F9FAFB;
+                padding: 20px;
+                border-radius: 16px;
+                margin-bottom: 30px;
+            }
+
+                .suggestions h4 {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #1F2937;
+                    margin-bottom: 12px;
+                }
+
+                .suggestions ul {
+                    list-style: none;
+                    padding: 0;
+                }
+
+                .suggestions li {
+                    padding: 8px 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    color: #6B7280;
+                }
+
+                    .suggestions li a {
+                        color: #4F46E5;
+                        text-decoration: none;
+                    }
+
+                        .suggestions li a:hover {
+                            text-decoration: underline;
+                        }
+
+            .search-box {
+                position: relative;
+                margin-top: 20px;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 14px 20px;
+                border: 2px solid #E5E7EB;
+                border-radius: 12px;
+                font-size: 14px;
+                font-family: inherit;
+                transition: all 0.3s;
+            }
+
+                .search-input:focus {
+                    outline: none;
+                    border-color: #4F46E5;
+                    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+                }
+
+            .search-button {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: #4F46E5;
+                border: none;
+                border-radius: 8px;
+                padding: 8px 16px;
+                color: white;
+                cursor: pointer;
+                font-weight: 500;
+            }
+
+            .workout-tip {
+                background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+                padding: 16px;
+                border-radius: 12px;
+                margin-top: 20px;
+            }
+
+                .workout-tip p {
+                    font-size: 14px;
+                    color: #92400E;
+                }
+
+            .footer {
+                margin-top: 30px;
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.7);
+                text-align: center;
+            }
+
+            @@keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @@keyframes bounce {
+                0%, 100% {
+                    transform: translateY(0);
+                }
+
+                50% {
+                    transform: translateY(-20px);
+                }
+            }
+
+            @@media (max-width: 480px) {
+                .error-card {
+                    padding: 40px 24px;
+                }
+
+                .error-code {
+                    font-size: 80px;
+                }
+
+                .error-title {
+                    font-size: 24px;
+                }
+
+                .btn-primary, .btn-secondary {
+                    padding: 10px 20px;
+                    font-size: 14px;
+                }
+            }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-card">
+            <div class="error-icon">🏋️</div>
+            <div class="error-code">404</div>
+            <h1 class="error-title">Oops! Page Not Found</h1>
+            <p class="error-message">
+                The page you're looking for seems to have wandered off during a workout.<br>
+                Don't worry, even the best fitness journeys have a few wrong turns.
+            </p>
+
+            <div class="error-actions">
+                <a href="/" class="btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M3 10H17M17 10L13 6M17 10L13 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Back to Home
+                </a>
+                <a href="/dashboard" class="btn-secondary">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M3 9L10 3L17 9V16H13V11H7V16H3V9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Go to Dashboard
+                </a>
+            </div>
+
+            <div class="suggestions">
+                <h4>💡 While you're here, try these:</h4>
+                <ul>
+                    <li>
+                        <span>🔍</span>
+                        <a href="/workout-plans">Check out our workout plans</a>
+                    </li>
+                    <li>
+                        <span>🥗</span>
+                        <a href="/nutrition-tips">Explore healthy recipes</a>
+                    </li>
+                    <li>
+                        <span>🏆</span>
+                        <a href="/challenges">Join community challenges</a>
+                    </li>
+                    <li>
+                        <span>📞</span>
+                        <a href="/support">Contact support</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search for workouts, exercises, or articles...">
+                <button class="search-button" onclick="performSearch()">Search</button>
+            </div>
+
+            <div class="workout-tip">
+                <p>
+                    💪 <strong>Daily Fitness Tip:</strong>
+                    Take a deep breath and stretch for 5 minutes. The page you're looking for will find its way back eventually!
+                </p>
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 FitTrack - Get back on track with your fitness goals</p>
+        </div>
+    </div>
+
+    <script>
+            function performSearch() {
+                const searchTerm = document.getElementById('searchInput').value;
+                if (searchTerm.trim()) {
+                    window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+                }
+            }
+
+            // Allow Enter key to trigger search
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+
+            // Random workout tips for the 404 page (refreshes on each visit)
+            const tips = [
+                "Even the best athletes miss their mark sometimes. What matters is getting back up!",
+                "Consider this a rest day for your browsing muscles.",
+                "Why not do 10 jumping jacks while we find the page?",
+                "This page might be taking a water break. Try again in a moment.",
+                "404 not found, but your motivation is still 100%!",
+                "Every rep counts, even the ones that don't go as planned."
+            ];
+
+            // Optional: Display random tip
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            document.querySelector('.workout-tip p').innerHTML = `💪 <strong>Daily Fitness Tip:</strong> ${randomTip}`;
+    </script>
+</body>
+</html>
