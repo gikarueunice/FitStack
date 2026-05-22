@@ -957,11 +957,10 @@ namespace FitStackDBL.Services
             await SendEmailAsync(to, subject, body);
         }
 
-        public Task SendEmailAsync(string to, string subject, string body)
+        public async Task SendEmailAsync(string to, string subject, string body)
         {
-            throw new NotImplementedException();
+            await SendEmailAsync(to, subject, body, true);
         }
-
         public Task Send2FAEnableEmailAsync(string to, string userName, string backupCodes)
         {
             throw new NotImplementedException();

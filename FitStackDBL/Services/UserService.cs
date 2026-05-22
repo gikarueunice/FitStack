@@ -18,6 +18,7 @@ namespace FitStackDBL.Services
             _logger = logger;
         }
 
+
         public async Task<Users?> GetUserByIdAsync(int id)
         {
             const string sql = "SELECT * FROM Users WHERE Id = @Id";
@@ -33,7 +34,7 @@ namespace FitStackDBL.Services
         }
         public async Task<Users?> GetUserByPhoneNumberAsync(string phoneNumber)
         {
-            const string sql = "SELECT * FROM Users WHERE Email = @PhoneNumber";
+            const string sql = "SELECT * FROM Users WHERE PhoneNumber = @PhoneNumber";
             using var connection = new SqlConnection(_connectionString);
             return await connection.QuerySingleOrDefaultAsync<Users>(sql, new { PhoneNumber = phoneNumber });
         }
@@ -245,9 +246,19 @@ namespace FitStackDBL.Services
 
         }
 
-        public Task UpdatePhoneOTPAsync(string phoneNumber, string otp)
+        public async Task<Users?> UpdatePhoneOTPAsync(string phoneNumber, string otp)
         {
-            throw new NotImplementedException();
+            const string sql = @"
+        UPDATE Users 
+        SET PhoneOTP = @OTP, 
+            PhoneOTPExpiry = DATEADD(minute, 10, GETUTCDATE())
+        WHERE PhoneNumber = @PhoneNumber;
+        
+        SELECT * FROM Users WHERE PhoneNumber = @PhoneNumber";
+
+            using var connection = new SqlConnection(_connectionString);
+            return await connection.QuerySingleOrDefaultAsync<Users>(
+                sql, new { PhoneNumber = phoneNumber, OTP = otp });
         }
     }
 }

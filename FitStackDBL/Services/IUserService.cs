@@ -18,7 +18,7 @@ namespace FitStackDBL.Services
         Task<bool> HasExceededLoginAttemptsAsync(int userId);
         Task ResetLoginAttemptsAsync(int userId);
         Task IncrementLoginAttemptsAsync(int userId);
-        Task UpdatePhoneOTPAsync(string phoneNumber, string otp);
+        Task<Users> UpdatePhoneOTPAsync(string phoneNumber, string otp);
         
     }
 }

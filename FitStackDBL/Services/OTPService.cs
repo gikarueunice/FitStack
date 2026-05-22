@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,13 +20,15 @@ namespace FitStackDBL.Services
         private readonly IUserService _userService;
         private readonly Random _random = new();
 
-        public OTPService(
+        public OTPService(IConfiguration configuration,
             IMemoryCache cache,
             ILogger<OTPService> logger,
             IEmailService emailService,
             ISmsService smsService,
             IUserService userService)
         {
+
+            configuration = configuration;
             _cache = cache;
             _logger = logger;
             _emailService = emailService;

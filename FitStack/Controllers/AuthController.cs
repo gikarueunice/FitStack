@@ -225,18 +225,24 @@ namespace FitStack.Controllers
                     target += $" or {model.PhoneNumber}";
                 }
 
-                return Json(new
-                {
-                    success = true,
-                    Id = Id,
-                    message = "We've sent a verification code to:",
-                    target = target
-                });
+                TempData["VerificationEmail"] = user.Email;
+                TempData["VerificationPhone"] = user.PhoneNumber;
+
+                return RedirectToAction(
+                    "VerifyRegistrationPage",
+                    new { userId = Id }
+                );
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Registration error");
-                return Json(new { success = false, message = "An error occurred during registration" });
+                _logger.LogError(ex, ex.Message);
+
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message,
+                    details = ex.InnerException?.Message
+                });
             }
         }
 
@@ -272,7 +278,12 @@ namespace FitStack.Controllers
                     // Sign in the user
                     await SignInUserAsync(user, false);
 
-                    return Json(new { success = true, message = "Account verified successfully!" });
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Account verified successfully!",
+                        redirect = Url.Action("Index", "Dashboard")
+                    });
                 }
 
                 return Json(new { success = false, message = "User not found" });
@@ -388,7 +399,7 @@ namespace FitStack.Controllers
                     "Your account isn't verified yet. A new OTP code has been sent to your email.";
 
                     return RedirectToAction(
-                        "VerifyRegistration",
+                        "VerifyRegistrationPage",
                         new { userId = user.Id });
                 }
 
@@ -551,20 +562,20 @@ namespace FitStack.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SendPhoneOTP([FromBody] PhoneOTPRequest request)
-        {
-            try
-            {
-                await _otpService.GeneratePhoneOTPAsync(request.PhoneNumber);
-                return Json(new { success = true, message = "Verification code sent" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to send phone OTP");
-                return Json(new { success = false, message = "Failed to send code" });
-            }
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> SendPhoneOTP([FromBody] PhoneOTPRequest request)
+        //{
+        //    try
+        //    {
+        //        await _otpService.GeneratePhoneOTPAsync(request.PhoneNumber);
+        //        return Json(new { success = true, message = "Verification code sent" });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Failed to send phone OTP");
+        //        return Json(new { success = false, message = "Failed to send code" });
+        //    }
+        //}
         [HttpPost]
         public async Task<IActionResult> VerifyPhoneOTP([FromBody] PhoneOTPVerifyRequest request)
         {
