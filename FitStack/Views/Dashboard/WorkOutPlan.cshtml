@@ -1,14 +1,95 @@
-﻿@{
-    ViewData["Title"] = "Workout Plan";
+﻿@model FitStack.ViewModels.Dashboard.WorkoutPlanViewModel
+@{
+    ViewData["Title"] = "Workouts";
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
 
-<div class="card">
-    <div class="card-header">
-        <h2>Your Weekly Workout Plan</h2>
-        <button class="btn btn-primary">Customize Plan</button>
+<style>
+    .workouts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+    }
+
+    .workout-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+        .workout-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .workout-content {
+        padding: 20px;
+    }
+
+    .difficulty {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .easy {
+        background: #10B981;
+        color: white;
+    }
+
+    .medium {
+        background: #F59E0B;
+        color: white;
+    }
+
+    .hard {
+        background: #EF4444;
+        color: white;
+    }
+</style>
+
+<h2 style="margin-bottom: 24px;">Today's Recommended Workouts</h2>
+
+<div class="workouts-grid">
+    <div class="workout-card">
+        <div style="background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%); height: 120px;"></div>
+        <div class="workout-content">
+            <h3>Full Body HIIT</h3>
+            <p style="color: #6B7280; margin: 8px 0;">High-intensity interval training for full body conditioning</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+                <span class="difficulty hard">Hard</span>
+                <span>30 min • 350 cal</span>
+            </div>
+            <button class="btn-primary" style="width: 100%; margin-top: 16px;">Start Workout</button>
+        </div>
     </div>
-    <div class="weekly-schedule">
-        <!-- Weekly workout schedule will be displayed here -->
+
+    <div class="workout-card">
+        <div style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); height: 120px;"></div>
+        <div class="workout-content">
+            <h3>Upper Body Strength</h3>
+            <p style="color: #6B7280; margin: 8px 0;">Build upper body strength with compound movements</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+                <span class="difficulty medium">Medium</span>
+                <span>45 min • 300 cal</span>
+            </div>
+            <button class="btn-primary" style="width: 100%; margin-top: 16px;">Start Workout</button>
+        </div>
+    </div>
+
+    <div class="workout-card">
+        <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); height: 120px;"></div>
+        <div class="workout-content">
+            <h3>Core Crusher</h3>
+            <p style="color: #6B7280; margin: 8px 0;">Target your core with this intense abdominal workout</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+                <span class="difficulty medium">Medium</span>
+                <span>20 min • 180 cal</span>
+            </div>
+            <button class="btn-primary" style="width: 100%; margin-top: 16px;">Start Workout</button>
+        </div>
     </div>
 </div>

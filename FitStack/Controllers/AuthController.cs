@@ -240,7 +240,8 @@ namespace FitStack.Controllers
             {
                 UserId = user.Id,
                 Email = user.Email ?? string.Empty,
-                PhoneNumber = user.PhoneNumber ?? string.Empty
+                PhoneNumber = user.PhoneNumber ?? string.Empty,
+                LoginAttempts = user.LoginAttempts
             };
 
             return View("VerifyRegistrationPage", model);

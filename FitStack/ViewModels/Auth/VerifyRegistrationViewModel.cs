@@ -12,6 +12,7 @@ namespace FitStack.ViewModels.Auth
         public string Email { get; set; } = string.Empty; // Initialize with empty string
 
         public string? PhoneNumber { get; set; } // Nullable
+        public int LoginAttempts { get; set; }
 
         // Add validation method
         public bool IsValid()

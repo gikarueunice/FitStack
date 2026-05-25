@@ -100,8 +100,7 @@ namespace FitStackDBL.Services
                     LastLoginAt = @LastLoginAt,
                     IsActive = @IsActive,
                     ProfilePictureUrl = @ProfilePictureUrl,
-                    LoginAttempts = @LoginAttempts,
-                    LastLoginAttempt = @LastLoginAttempt
+                    LoginAttempts = @LoginAttempts
                 WHERE Id = @Id";
 
             using var connection = new SqlConnection(_connectionString);
@@ -116,45 +115,45 @@ namespace FitStackDBL.Services
             return rowsAffected > 0;
         }
 
-        public async Task<bool> HasExceededLoginAttemptsAsync(int userId)
-        {
-            const string sql = @"
-                SELECT 
-                    CASE 
-                        WHEN LoginAttempts >= 5 AND LastLoginAttempt > DATEADD(minute, -15, GETUTCDATE()) 
-                        THEN 1 
-                        ELSE 0 
-                    END
-                FROM Users 
-                WHERE Id = @UserId";
+        //public async Task<bool> HasExceededLoginAttemptsAsync(int userId)
+        //{
+        //    const string sql = @"
+        //        SELECT 
+        //            CASE 
+        //                WHEN LoginAttempts >= 5 AND LastLoginAttempt > DATEADD(minute, -15, GETUTCDATE()) 
+        //                THEN 1 
+        //                ELSE 0 
+        //            END
+        //        FROM Users 
+        //        WHERE Id = @UserId";
 
-            using var connection = new SqlConnection(_connectionString);
-            return await connection.ExecuteScalarAsync<bool>(sql, new { UserId = userId });
-        }
+        //    using var connection = new SqlConnection(_connectionString);
+        //    return await connection.ExecuteScalarAsync<bool>(sql, new { UserId = userId });
+        //}
 
-        public async Task ResetLoginAttemptsAsync(int userId)
-        {
-            const string sql = @"
-                UPDATE Users 
-                SET LoginAttempts = 0, 
-                    LastLoginAttempt = NULL 
-                WHERE Id = @UserId";
+        //public async Task ResetLoginAttemptsAsync(int userId)
+        //{
+        //    const string sql = @"
+        //        UPDATE Users 
+        //        SET LoginAttempts = 0, 
+        //            LastLoginAttempt = NULL 
+        //        WHERE Id = @UserId";
 
-            using var connection = new SqlConnection(_connectionString);
-            await connection.ExecuteAsync(sql, new { UserId = userId });
-        }
+        //    using var connection = new SqlConnection(_connectionString);
+        //    await connection.ExecuteAsync(sql, new { UserId = userId });
+        //}
 
-        public async Task IncrementLoginAttemptsAsync(int userId)
-        {
-            const string sql = @"
-                UPDATE Users 
-                SET LoginAttempts = ISNULL(LoginAttempts, 0) + 1,
-                    LastLoginAttempt = GETUTCDATE()
-                WHERE Id = @UserId";
+        //public async Task IncrementLoginAttemptsAsync(int userId)
+        //{
+        //    const string sql = @"
+        //        UPDATE Users 
+        //        SET LoginAttempts = ISNULL(LoginAttempts, 0) + 1,
+        //            LastLoginAttempt = GETUTCDATE()
+        //        WHERE Id = @UserId";
 
-            using var connection = new SqlConnection(_connectionString);
-            await connection.ExecuteAsync(sql, new { UserId = userId });
-        }
+        //    using var connection = new SqlConnection(_connectionString);
+        //    await connection.ExecuteAsync(sql, new { UserId = userId });
+        //}
 
         public async Task<Users?> GetUserByRefreshTokenAsync(string refreshToken)
         {
@@ -259,6 +258,46 @@ namespace FitStackDBL.Services
             using var connection = new SqlConnection(_connectionString);
             return await connection.QuerySingleOrDefaultAsync<Users>(
                 sql, new { PhoneNumber = phoneNumber, OTP = otp });
+        }
+        public async Task<bool> HasExceededLoginAttemptsAsync(int userId)
+        {
+            const string sql = @"
+        SELECT CASE 
+            WHEN IsLocked = 1 AND LockedUntil > GETUTCDATE() THEN 1
+            WHEN LoginAttempts >= 5 AND LastLoginAttempt > DATEADD(minute, -15, GETUTCDATE()) THEN 1
+            ELSE 0
+        END
+        FROM Users WHERE Id = @UserId";
+
+            using var connection = new SqlConnection(_connectionString);
+            var result = await connection.ExecuteScalarAsync<int>(sql, new { UserId = userId });
+            return result == 1;
+        }
+
+        public async Task ResetLoginAttemptsAsync(int userId)
+        {
+            const string sql = @"
+        UPDATE Users 
+        SET LoginAttempts = 0, 
+            LastLoginAttempt = NULL,
+            IsLocked = 0,
+            LockedUntil = NULL
+        WHERE Id = @UserId";
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(sql, new { UserId = userId });
+        }
+
+        public async Task IncrementLoginAttemptsAsync(int userId)
+        {
+            const string sql = @"
+        UPDATE Users 
+        SET LoginAttempts = ISNULL(LoginAttempts, 0) + 1,
+            LastLoginAttempt = GETUTCDATE()
+        WHERE Id = @UserId";
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(sql, new { UserId = userId });
         }
     }
 }

@@ -40,5 +40,6 @@ namespace FitStackDBL.Model
         public UserProfile? Profile { get; set; }
         public string? Password { get; internal set; }
         public bool IsPhoneVerified { get; set; }
+        public int LoginAttempts { get; set; }
     }
 }

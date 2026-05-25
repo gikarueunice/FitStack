@@ -1,5 +1,98 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model FitStack.ViewModels.Dashboard.WeeklyProgressViewModel
 @{
+    ViewData["Title"] = "Progress";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
+
+<style>
+    .progress-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .progress-stat {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+    }
+    .stat-change { font-size: 14px; margin-top: 5px; }
+    .positive { color: #10B981; }
+    .negative { color: #EF4444; }
+    .chart-container {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 25px;
+    }
+    .chart-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+</style>
+
+<div class="progress-stats">
+    <div class="progress-stat">
+        <div class="stat-change positive">↑ 8%</div>
+        <div class="nutrition-value">-3.2 kg</div>
+        <div class="nutrition-label">Weight Loss</div>
+    </div>
+    <div class="progress-stat">
+        <div class="stat-change positive">↑ 15%</div>
+        <div class="nutrition-value">+5 kg</div>
+        <div class="nutrition-label">Strength Gain</div>
+    </div>
+    <div class="progress-stat">
+        <div class="stat-change positive">↑ 12%</div>
+        <div class="nutrition-value">-4 cm</div>
+        <div class="nutrition-label">Waist Size</div>
+    </div>
+    <div class="progress-stat">
+        <div class="stat-change positive">↑ 20%</div>
+        <div class="nutrition-value">+3 min</div>
+        <div class="nutrition-label">Endurance</div>
+    </div>
+</div>
+
+<div class="chart-container">
+    <div class="chart-title">Weight Progress (Last 3 Months)</div>
+    <canvas id="weightChart" height="300"></canvas>
+</div>
+
+<div class="chart-container">
+    <div class="chart-title">Workout Consistency</div>
+    <canvas id="workoutChart" height="300"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Weight Chart
+    const weightCtx = document.getElementById('weightChart').getContext('2d');
+    new Chart(weightCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            datasets: [{
+                label: 'Weight (kg)',
+                data: [82, 81, 79.5, 78.5, 78],
+                borderColor: '#4F46E5',
+                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        }
+    });
+
+    // Workout Chart
+    const workoutCtx = document.getElementById('workoutChart').getContext('2d');
+    new Chart(workoutCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [{
+                label: 'Workouts Completed',
+                data: [4, 5, 3, 5],
+                backgroundColor: '#10B981',
+                borderRadius: 10
+            }]
+        }
+    });
+</script>

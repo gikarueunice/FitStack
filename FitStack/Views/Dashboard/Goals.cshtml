@@ -4,23 +4,67 @@
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
 
-<div class="card">
-    <div class="card-header">
-        <h2>My Fitness Goals</h2>
-        <button class="btn btn-primary" onclick="openAddGoalModal()">+ Add New Goal</button>
-    </div>
-    <div style="display: grid; gap: 20px;">
-        <!-- Goals will be listed here -->
-        <div class="activity-item">
-            <div class="activity-icon">🎯</div>
-            <div class="activity-details">
-                <div class="activity-title">Weekly Workout Goal</div>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 60%"></div>
-                    </div>
-                </div>
+<style>
+    .goals-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 24px;
+    }
+
+    .goal-card {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+</style>
+
+<div class="goals-container">
+    <div class="goal-card">
+        <h2 style="margin-bottom: 8px;">Weekly Workout Goal</h2>
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>Progress</span>
+                <span>3/5 workouts</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 60%"></div>
             </div>
         </div>
+        <div style="margin-top: 16px;">
+            <span style="color: #6B7280;">Deadline: Sunday</span>
+        </div>
+    </div>
+
+    <div class="goal-card">
+        <h2 style="margin-bottom: 8px;">Weight Loss Goal</h2>
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>Progress</span>
+                <span>2.5/5 kg</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 50%"></div>
+            </div>
+        </div>
+        <div style="margin-top: 16px;">
+            <span style="color: #6B7280;">Deadline: June 30, 2026</span>
+        </div>
+    </div>
+
+    <div class="goal-card" style="background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); color: white;">
+        <h2 style="margin-bottom: 8px;">Add New Goal</h2>
+        <p>Set a new fitness target to stay motivated!</p>
+        <button class="btn-primary" style="margin-top: 16px; background: white; color: #4F46E5;">+ Create Goal</button>
     </div>
 </div>

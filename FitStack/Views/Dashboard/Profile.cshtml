@@ -1,5 +1,125 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model FitStack.ViewModels.Dashboard.UserProfileViewModel
 @{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
+
+<style>
+    .profile-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 30px;
+    }
+
+    .profile-sidebar {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        object-fit: cover;
+        border: 3px solid #4F46E5;
+    }
+
+    .profile-name {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .profile-email {
+        color: #6B7280;
+        margin-bottom: 20px;
+    }
+
+    .profile-stats {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        padding: 15px 0;
+        border-top: 1px solid #F3F4F6;
+        border-bottom: 1px solid #F3F4F6;
+    }
+
+    .profile-main {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #E5E7EB;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .btn-save {
+        background: #4F46E5;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-sidebar">
+        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop" class="profile-avatar">
+        <div class="profile-name">Alex Johnson</div>
+        <div class="profile-email">alex.johnson@example.com</div>
+        <div class="profile-stats">
+            <div><strong>128</strong><br>Workouts</div>
+            <div><strong>45</strong><br>Streak</div>
+            <div><strong>234</strong><br>Followers</div>
+        </div>
+        <button class="btn-save" onclick="changeAvatar()">Change Avatar</button>
+    </div>
+
+    <div class="profile-main">
+        <h2 style="margin-bottom: 25px;">Personal Information</h2>
+        <form>
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-input" value="Alex Johnson">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-input" value="alex.johnson@example.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" class="form-input" value="+1 234 567 8900">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <input type="date" class="form-input" value="1990-05-15">
+            </div>
+            <button type="submit" class="btn-save">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function changeAvatar() {
+        alert("Avatar change functionality coming soon!");
+    }
+</script>

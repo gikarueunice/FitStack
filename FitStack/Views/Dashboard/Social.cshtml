@@ -1,5 +1,434 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Community";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
+
+<style>
+    .community-container {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 25px;
+    }
+
+    /* Social Feed Styles */
+    .feed-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .create-post {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    .post-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .post-input {
+        flex: 1;
+        padding: 15px;
+        border: 1px solid #E5E7EB;
+        border-radius: 15px;
+        resize: none;
+        font-family: inherit;
+    }
+    .post-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #F3F4F6;
+    }
+    .post-action {
+        background: none;
+        border: none;
+        padding: 8px 16px;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .post-action:hover { background: #F3F4F6; }
+
+    /* Post Styles */
+    .post {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
+    .post:hover { transform: translateY(-2px); }
+    .post-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    .post-user-info { flex: 1; }
+    .post-user-name { font-weight: 600; margin-bottom: 2px; }
+    .post-time { font-size: 12px; color: #6B7280; }
+    .post-content { margin-bottom: 15px; line-height: 1.5; }
+    .post-stats {
+        display: flex;
+        gap: 20px;
+        padding: 12px 0;
+        border-top: 1px solid #F3F4F6;
+        border-bottom: 1px solid #F3F4F6;
+    }
+    .post-stat { font-size: 14px; color: #6B7280; }
+    .post-interactions {
+        display: flex;
+        gap: 20px;
+        margin-top: 12px;
+    }
+    .interaction-btn {
+        background: none;
+        border: none;
+        padding: 8px 16px;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .interaction-btn.liked { color: #EF4444; }
+    .interaction-btn:hover { background: #F3F4F6; }
+
+    /* Sidebar Styles */
+    .sidebar-card {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+    .sidebar-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #F3F4F6;
+    }
+    .friend-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid #F3F4F6;
+    }
+    .friend-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .friend-info { flex: 1; }
+    .friend-name { font-weight: 600; margin-bottom: 2px; }
+    .friend-status { font-size: 12px; color: #10B981; }
+    .friend-btn {
+        padding: 6px 12px;
+        background: #4F46E5;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .leaderboard-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid #F3F4F6;
+    }
+    .rank {
+        width: 30px;
+        font-weight: 700;
+        color: #4F46E5;
+    }
+    .rank.gold { color: #F59E0B; }
+    .rank.silver { color: #9CA3AF; }
+    .rank.bronze { color: #CD7F32; }
+    .leaderboard-name { flex: 1; font-weight: 500; }
+    .leaderboard-score { font-weight: 600; color: #4F46E5; }
+
+    @@media (max-width: 768px) {
+        .community-container { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="community-container">
+    <!-- Main Feed Column -->
+    <div>
+        <!-- Create Post -->
+        <div class="feed-card">
+            <div class="create-post">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop" class="post-avatar">
+                <textarea class="post-input" placeholder="Share your fitness achievement... 🎉" rows="3"></textarea>
+            </div>
+            <div class="post-actions">
+                <button class="post-action" onclick="addPhoto()">
+                    <span>📷</span> Photo/Video
+                </button>
+                <button class="post-action" onclick="addWorkout()">
+                    <span>🏋️</span> Workout
+                </button>
+                <button class="post-action" onclick="addAchievement()">
+                    <span>🏆</span> Achievement
+                </button>
+                <button class="post-action" style="background: #4F46E5; color: white;" onclick="createPost()">
+                    Post
+                </button>
+            </div>
+        </div>
+
+        <!-- Post 1 -->
+        <div class="post">
+            <div class="post-header">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=45&h=45&fit=crop" class="post-avatar">
+                <div class="post-user-info">
+                    <div class="post-user-name">Sarah Parker</div>
+                    <div class="post-time">2 hours ago • 🌍 Public</div>
+                </div>
+            </div>
+            <div class="post-content">
+                Just completed my first 10k run! 🏃‍♀️ New personal best! Never thought I could do this 3 months ago. 
+                So proud of this journey! 💪
+            </div>
+            <div class="post-stats">
+                <span class="post-stat">❤️ 245 likes</span>
+                <span class="post-stat">💬 32 comments</span>
+                <span class="post-stat">🔄 15 shares</span>
+            </div>
+            <div class="post-interactions">
+                <button class="interaction-btn" onclick="likePost(this)">
+                    <span>❤️</span> Like
+                </button>
+                <button class="interaction-btn" onclick="commentPost()">
+                    <span>💬</span> Comment
+                </button>
+                <button class="interaction-btn" onclick="sharePost()">
+                    <span>🔄</span> Share
+                </button>
+            </div>
+        </div>
+
+        <!-- Post 2 -->
+        <div class="post">
+            <div class="post-header">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=45&h=45&fit=crop" class="post-avatar">
+                <div class="post-user-info">
+                    <div class="post-user-name">Mike Chen</div>
+                    <div class="post-time">Yesterday • 🌍 Public</div>
+                </div>
+            </div>
+            <div class="post-content">
+                30 days streak achieved! 🔥 Consistency is key! 
+                Feeling stronger and more energetic every single day.
+            </div>
+            <div class="post-stats">
+                <span class="post-stat">❤️ 189 likes</span>
+                <span class="post-stat">💬 28 comments</span>
+                <span class="post-stat">🔄 10 shares</span>
+            </div>
+            <div class="post-interactions">
+                <button class="interaction-btn liked" onclick="likePost(this)">
+                    <span>❤️</span> Liked
+                </button>
+                <button class="interaction-btn" onclick="commentPost()">
+                    <span>💬</span> Comment
+                </button>
+                <button class="interaction-btn" onclick="sharePost()">
+                    <span>🔄</span> Share
+                </button>
+            </div>
+        </div>
+
+        <!-- Post 3 -->
+        <div class="post">
+            <div class="post-header">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=45&h=45&fit=crop" class="post-avatar">
+                <div class="post-user-info">
+                    <div class="post-user-name">Emily Rodriguez</div>
+                    <div class="post-time">2 days ago • 🌍 Public</div>
+                </div>
+            </div>
+            <div class="post-content">
+                New personal record in deadlift! 🏋️‍♀️ 120kg! Hard work pays off. 
+                Thank you all for the motivation and support!
+            </div>
+            <div class="post-stats">
+                <span class="post-stat">❤️ 312 likes</span>
+                <span class="post-stat">💬 45 comments</span>
+                <span class="post-stat">🔄 22 shares</span>
+            </div>
+            <div class="post-interactions">
+                <button class="interaction-btn" onclick="likePost(this)">
+                    <span>❤️</span> Like
+                </button>
+                <button class="interaction-btn" onclick="commentPost()">
+                    <span>💬</span> Comment
+                </button>
+                <button class="interaction-btn" onclick="sharePost()">
+                    <span>🔄</span> Share
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Column -->
+    <div>
+        <!-- Active Friends -->
+        <div class="sidebar-card">
+            <div class="sidebar-title">Active Friends 🌟</div>
+            <div class="friend-item">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=45&h=45&fit=crop" class="friend-avatar">
+                <div class="friend-info">
+                    <div class="friend-name">Sarah Parker</div>
+                    <div class="friend-status">Working out now 💪</div>
+                </div>
+                <button class="friend-btn" onclick="challengeFriend(1)">Challenge</button>
+            </div>
+            <div class="friend-item">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=45&h=45&fit=crop" class="friend-avatar">
+                <div class="friend-info">
+                    <div class="friend-name">Mike Chen</div>
+                    <div class="friend-status">Completed workout ✅</div>
+                </div>
+                <button class="friend-btn" onclick="challengeFriend(2)">Challenge</button>
+            </div>
+            <div class="friend-item">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=45&h=45&fit=crop" class="friend-avatar">
+                <div class="friend-info">
+                    <div class="friend-name">Emily Rodriguez</div>
+                    <div class="friend-status">Online now 🟢</div>
+                </div>
+                <button class="friend-btn" onclick="challengeFriend(3)">Challenge</button>
+            </div>
+            <a href="#" style="display: block; text-align: center; margin-top: 15px; color: #4F46E5;">See all friends →</a>
+        </div>
+
+        <!-- Weekly Leaderboard -->
+        <div class="sidebar-card">
+            <div class="sidebar-title">Weekly Leaderboard 🏆</div>
+            <div class="leaderboard-item">
+                <span class="rank gold">🥇</span>
+                <span class="leaderboard-name">Sarah Parker</span>
+                <span class="leaderboard-score">2,450 pts</span>
+            </div>
+            <div class="leaderboard-item">
+                <span class="rank silver">🥈</span>
+                <span class="leaderboard-name">Mike Chen</span>
+                <span class="leaderboard-score">2,120 pts</span>
+            </div>
+            <div class="leaderboard-item">
+                <span class="rank bronze">🥉</span>
+                <span class="leaderboard-name">Emily Rodriguez</span>
+                <span class="leaderboard-score">1,980 pts</span>
+            </div>
+            <div class="leaderboard-item">
+                <span class="rank">4</span>
+                <span class="leaderboard-name">You</span>
+                <span class="leaderboard-score">1,850 pts</span>
+            </div>
+            <div class="leaderboard-item">
+                <span class="rank">5</span>
+                <span class="leaderboard-name">David Kim</span>
+                <span class="leaderboard-score">1,670 pts</span>
+            </div>
+        </div>
+
+        <!-- Active Challenges -->
+        <div class="sidebar-card">
+            <div class="sidebar-title">Active Challenges 🎯</div>
+            <div class="friend-item">
+                <div class="friend-info">
+                    <div class="friend-name">Summer Shape Up</div>
+                    <div class="friend-status">20 workouts • 12/20 done</div>
+                </div>
+                <button class="friend-btn" onclick="viewChallenge()">Join</button>
+            </div>
+            <div class="friend-item">
+                <div class="friend-info">
+                    <div class="friend-name">10K Steps Daily</div>
+                    <div class="friend-status">7 day streak • 128 participants</div>
+                </div>
+                <button class="friend-btn" onclick="viewChallenge()">Join</button>
+            </div>
+            <div class="friend-item">
+                <div class="friend-info">
+                    <div class="friend-name">Push-up Challenge</div>
+                    <div class="friend-status">1000 push-ups • 450/1000</div>
+                </div>
+                <button class="friend-btn" onclick="viewChallenge()">Join</button>
+            </div>
+        </div>
+
+        <!-- Trending Hashtags -->
+        <div class="sidebar-card">
+            <div class="sidebar-title">Trending 🔥</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#FitTrack</span>
+                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#FitnessMotivation</span>
+                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#WorkoutDaily</span>
+                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#HealthyLifestyle</span>
+                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#GymLife</span>
+                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#FitnessJourney</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentPostLikes = {};
+
+    function createPost() {
+        alert("Post created successfully! 🎉");
+    }
+
+    function addPhoto() {
+        alert("Add photo/video to your post");
+    }
+
+    function addWorkout() {
+        alert("Share your workout details");
+    }
+
+    function addAchievement() {
+        alert("Share your achievement!");
+    }
+
+    function likePost(button) {
+        button.classList.toggle('liked');
+        if (button.classList.contains('liked')) {
+            button.innerHTML = '<span>❤️</span> Liked';
+        } else {
+            button.innerHTML = '<span>❤️</span> Like';
+        }
+    }
+
+    function commentPost() {
+        alert("Add a comment...");
+    }
+
+    function sharePost() {
+        alert("Share this post with your friends!");
+    }
+
+    function challengeFriend(friendId) {
+        alert(`Challenge sent to friend! 💪`);
+    }
+
+    function viewChallenge() {
+        alert("View challenge details");
+    }
+</script>

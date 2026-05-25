@@ -1,5 +1,147 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Schedules";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
+
+<style>
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    .week-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    .week-day {
+        text-align: center;
+        padding: 15px;
+        background: white;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .week-day.active {
+        background: linear-gradient(135deg, #4F46E5, #7C3AED);
+        color: white;
+    }
+    .day-name { font-weight: 600; margin-bottom: 8px; }
+    .day-date { font-size: 20px; font-weight: 700; }
+    .schedule-list { margin-top: 30px; }
+    .schedule-item {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: transform 0.3s;
+    }
+    .schedule-item:hover { transform: translateX(5px); }
+    .schedule-time {
+        min-width: 100px;
+        padding: 10px;
+        background: #F3F4F6;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 600;
+    }
+    .schedule-info { flex: 1; }
+    .schedule-title { font-weight: 600; margin-bottom: 5px; }
+    .schedule-desc { color: #6B7280; font-size: 14px; }
+    .schedule-status {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .status-completed { background: #10B981; color: white; }
+    .status-pending { background: #F59E0B; color: white; }
+    .status-upcoming { background: #3B82F6; color: white; }
+</style>
+
+<div class="calendar-header">
+    <h1 style="font-size: 28px;">Weekly Schedule</h1>
+    <div>
+        <button class="btn-primary" style="margin-right: 10px;" onclick="previousWeek()">←</button>
+        <button class="btn-primary" onclick="nextWeek()">→</button>
+    </div>
+</div>
+
+<div class="week-days">
+    <div class="week-day active">
+        <div class="day-name">Monday</div>
+        <div class="day-date">15</div>
+    </div>
+    <div class="week-day">
+        <div class="day-name">Tuesday</div>
+        <div class="day-date">16</div>
+    </div>
+    <div class="week-day">
+        <div class="day-name">Wednesday</div>
+        <div class="day-date">17</div>
+    </div>
+    <div class="week-day">
+        <div class="day-name">Thursday</div>
+        <div class="day-date">18</div>
+    </div>
+    <div class="week-day">
+        <div class="day-name">Friday</div>
+        <div class="day-date">19</div>
+    </div>
+    <div class="week-day">
+        <div class="day-name">Saturday</div>
+        <div class="day-date">20</div>
+    </div>
+    <div class="week-day">
+        <div class="day-name">Sunday</div>
+        <div class="day-date">21</div>
+    </div>
+</div>
+
+<div class="schedule-list">
+    <div class="schedule-item">
+        <div class="schedule-time">06:00 AM</div>
+        <div class="schedule-info">
+            <div class="schedule-title">Morning Run 🏃</div>
+            <div class="schedule-desc">5km run in the park</div>
+        </div>
+        <span class="schedule-status status-completed">Completed</span>
+    </div>
+
+    <div class="schedule-item">
+        <div class="schedule-time">12:30 PM</div>
+        <div class="schedule-info">
+            <div class="schedule-title">Lunch Break 🥗</div>
+            <div class="schedule-desc">Healthy meal prep</div>
+        </div>
+        <span class="schedule-status status-completed">Completed</span>
+    </div>
+
+    <div class="schedule-item">
+        <div class="schedule-time">05:00 PM</div>
+        <div class="schedule-info">
+            <div class="schedule-title">Full Body HIIT 💪</div>
+            <div class="schedule-desc">30 minutes high intensity workout</div>
+        </div>
+        <span class="schedule-status status-pending">Pending</span>
+    </div>
+
+    <div class="schedule-item">
+        <div class="schedule-time">08:00 PM</div>
+        <div class="schedule-info">
+            <div class="schedule-title">Meditation Session 🧘</div>
+            <div class="schedule-desc">15 minutes mindfulness practice</div>
+        </div>
+        <span class="schedule-status status-upcoming">Upcoming</span>
+    </div>
+</div>
+
+<script>
+    function previousWeek() { alert("Previous week"); }
+    function nextWeek() { alert("Next week"); }
+</script>

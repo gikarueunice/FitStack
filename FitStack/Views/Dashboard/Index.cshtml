@@ -5,82 +5,155 @@
 }
 
 <style>
-    /* Dashboard Grid */
+    /* Dashboard Grid - Fixed layout */
+    .dashboard-container {
+        display: block;
+        width: 100%;
+    }
+
     .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        display: flex;
+        flex-direction: column;
         gap: 24px;
     }
 
-    .card {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
+    /* Two Column Layout */
+    .dashboard-two-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        padding-top: 35px;
     }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
+    /* Full Width Row */
+    .dashboard-full-width {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 0;
+    }
+
+    /* Card Styles */
+    .card {
+        background: white;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        height: auto;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
 
     .card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #F3F4F6;
+        padding: 50px;
     }
 
     .card-title {
         font-size: 1.1rem;
         font-weight: 600;
-        color: var(--dark);
+        color: #1F2937;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .card-title i {
+        color: #4F46E5;
+        font-size: 1.2rem;
     }
 
     .card-link {
-        color: var(--primary);
+        color: #4F46E5;
         text-decoration: none;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s;
     }
 
-    /* Stats Cards */
+    .card-link:hover {
+        color: #4338CA;
+        transform: translateX(3px);
+    }
+
+    /* Stats Cards - Fixed width */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-        margin-bottom: 24px;
+        gap: 20px;
+        margin-bottom: 0;
     }
 
     .stat-card {
         background: white;
-        border-radius: 16px;
+        border-radius: 20px;
         padding: 20px;
         display: flex;
         align-items: center;
         gap: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
     .stat-icon {
-        width: 48px;
-        height: 48px;
+        width: 55px;
+        height: 55px;
         background: linear-gradient(135deg, #4F46E5, #7C3AED);
-        border-radius: 12px;
+        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .stat-info {
+        flex: 1;
+        min-width: 0;
     }
 
     .stat-info h3 {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         font-weight: 700;
         margin-bottom: 4px;
+        color: #1F2937;
     }
 
     .stat-info p {
-        color: var(--gray);
+        color: #6B7280;
         font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    /* Left and Right Columns */
+    .left-column {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
     }
 
     /* Progress Bar */
@@ -93,20 +166,84 @@
         justify-content: space-between;
         margin-bottom: 8px;
         font-size: 0.85rem;
+        font-weight: 500;
     }
 
     .progress-bar {
-        height: 8px;
-        background: var(--light-gray);
-        border-radius: 4px;
+        height: 10px;
+        background: #F3F4F6;
+        border-radius: 10px;
         overflow: hidden;
     }
 
     .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, var(--primary), var(--primary-light));
-        border-radius: 4px;
-        transition: width 0.3s;
+        background: linear-gradient(90deg, #4F46E5, #818CF8);
+        border-radius: 10px;
+        transition: width 0.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Activities List */
+    .activities-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: #F9FAFB;
+        border-radius: 16px;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .activity-item:hover {
+        background: #F3F4F6;
+        transform: translateX(5px);
+    }
+
+    .activity-icon {
+        width: 45px;
+        height: 45px;
+        background: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        flex-shrink: 0;
+    }
+
+    .activity-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: #1F2937;
+    }
+
+    .activity-meta {
+        font-size: 0.75rem;
+        color: #6B7280;
+    }
+
+    .activity-time {
+        font-size: 0.7rem;
+        color: #9CA3AF;
+        font-weight: 500;
+        flex-shrink: 0;
     }
 
     /* Goals Grid */
@@ -116,145 +253,76 @@
         gap: 16px;
     }
 
-    /* Activities List */
-    .activities-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .activity-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px;
-        background: var(--light-gray);
-        border-radius: 12px;
-    }
-
-    .activity-icon {
-        width: 40px;
-        height: 40px;
-        background: white;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-    }
-
-    .activity-details {
-        flex: 1;
-    }
-
-    .activity-title {
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
-
-    .activity-meta {
-        font-size: 0.75rem;
-        color: var(--gray);
-    }
-
-    /* Achievements */
-    .achievements-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-    }
-
-    .achievement-badge {
-        text-align: center;
-        padding: 12px;
-        background: var(--light-gray);
-        border-radius: 12px;
-    }
-
-        .achievement-badge .badge-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-    /* Social Feed */
-    .social-feed {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .social-post {
-        padding: 16px;
-        border-bottom: 1px solid var(--light-gray);
-    }
-
-    .post-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
-    }
-
-    .post-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-    }
-
-    .post-user {
-        font-weight: 600;
-    }
-
-    .post-time {
-        font-size: 0.75rem;
-        color: var(--gray);
-    }
-
-    .post-content {
-        margin-bottom: 12px;
-    }
-
-    .post-actions {
-        display: flex;
-        gap: 16px;
-    }
-
-    .post-action {
-        background: none;
-        border: none;
-        color: var(--gray);
-        cursor: pointer;
-        font-size: 0.85rem;
-    }
-
     /* Wellness Metrics */
     .wellness-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 16px;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
     }
 
     .wellness-item {
         text-align: center;
+        padding: 12px;
+        background: #F9FAFB;
+        border-radius: 16px;
+        transition: all 0.3s;
+    }
+
+    .wellness-item:hover {
+        background: #F3F4F6;
+        transform: scale(1.02);
     }
 
     .wellness-value {
         font-size: 1.5rem;
         font-weight: 700;
-        color: var(--primary);
+        color: #4F46E5;
     }
 
     /* Recovery Card */
     .recovery-card {
         background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
         color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .recovery-card .card-header {
+        border-bottom-color: rgba(255,255,255,0.2);
     }
 
     .recovery-score {
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .recovery-status {
+        display: inline-block;
+        padding: 4px 12px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-bottom: 12px;
+    }
+
+    /* Streak Card */
+    .streak-card {
+        background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .streak-icon {
+        font-size: 3rem;
+        opacity: 0.3;
+        position: absolute;
+        right: 20px;
+        top: 20px;
     }
 
     /* Challenges */
@@ -268,278 +336,519 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: 12px;
+        background: #F9FAFB;
+        border-radius: 16px;
+        transition: all 0.3s;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .challenge-item:hover {
+        background: #F3F4F6;
+        transform: translateX(3px);
+    }
+
+    /* Achievements */
+    .achievements-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .achievement-badge {
+        text-align: center;
+        padding: 12px;
+        background: #F9FAFB;
+        border-radius: 16px;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .achievement-badge:hover {
+        transform: scale(1.05);
+        background: #F3F4F6;
+    }
+
+    .achievement-badge .badge-icon {
+        font-size: 2rem;
+        margin-bottom: 8px;
+    }
+
+    /* Social Feed */
+    .social-feed {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .social-feed::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .social-feed::-webkit-scrollbar-track {
+        background: #F3F4F6;
+        border-radius: 10px;
+    }
+
+    .social-feed::-webkit-scrollbar-thumb {
+        background: #4F46E5;
+        border-radius: 10px;
+    }
+
+    .social-post {
+        padding: 16px;
+        background: #F9FAFB;
+        border-radius: 16px;
+        transition: all 0.3s;
+    }
+
+    .social-post:hover {
+        background: #F3F4F6;
+        transform: translateX(3px);
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .post-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #4F46E5;
+        flex-shrink: 0;
+    }
+
+    .post-user {
+        font-weight: 600;
+        color: #1F2937;
+    }
+
+    .post-time {
+        font-size: 0.7rem;
+        color: #6B7280;
+    }
+
+    .post-content {
+        margin-bottom: 12px;
+        color: #4B5563;
+        line-height: 1.5;
+    }
+
+    .post-actions {
+        display: flex;
+        gap: 20px;
+    }
+
+    .post-action {
+        background: none;
+        border: none;
+        color: #6B7280;
+        cursor: pointer;
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .post-action:hover {
+        background: #E5E7EB;
+        color: #4F46E5;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, #4F46E5, #7C3AED);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+        flex-shrink: 0;
+    }
+
+    .btn-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 1px solid #4F46E5;
+        color: #4F46E5;
+        padding: 6px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        flex-shrink: 0;
+    }
+
+    .btn-outline:hover {
+        background: #4F46E5;
+        color: white;
     }
 
     /* Responsive */
-    @@media (max-width: 768px) {
+    @@media (max-width: 1200px) {
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
         }
         
-        .dashboard-grid {
+        .dashboard-full-width {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 992px) {
+        .dashboard-two-columns {
+            grid-template-columns: 1fr;
+        }
+        
+        .dashboard-full-width {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .card {
+            padding: 16px;
+        }
+
+        .stat-card {
+            padding: 15px;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            font-size: 1.4rem;
+        }
+
+        .stat-info h3 {
+            font-size: 1.4rem;
+        }
+        
+        .wellness-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .achievements-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .stats-grid {
             grid-template-columns: 1fr;
         }
     }
 </style>
 
-<div class="dashboard-grid">
-    <!-- Left Column -->
-    <div style="display: flex; flex-direction: column; gap: 24px;">
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">🔥</div>
-                <div class="stat-info">
-                    <h3>@Model.DailyStats.CaloriesBurned</h3>
-                    <p>Calories Burned</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">👟</div>
-                <div class="stat-info">
-                    <h3>@Model.DailyStats.Steps.ToString("N0")</h3>
-                    <p>Steps</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">⏱️</div>
-                <div class="stat-info">
-                    <h3>@Model.DailyStats.ActiveMinutes</h3>
-                    <p>Active Minutes</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">💧</div>
-                <div class="stat-info">
-                    <h3>@Model.DailyStats.WaterIntake/8</h3>
-                    <p>Water (glasses)</p>
-                </div>
+<div class="dashboard-container">
+    <!-- Stats Cards Row -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-info">
+                <h3>@Model.DailyStats.CaloriesBurned.ToString("N0")</h3>
+                <p>Calories Burned</p>
             </div>
         </div>
-
-        <!-- Daily Progress -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Today's Progress</h3>
-                <a href="#" class="card-link">View All →</a>
-            </div>
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span>Steps Goal</span>
-                    <span>@Model.DailyStats.Steps.ToString("N0") / @Model.DailyStats.StepGoal.ToString("N0")</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: @((double)Model.DailyStats.Steps / Model.DailyStats.StepGoal * 100)%"></div>
-                </div>
-            </div>
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span>Active Minutes</span>
-                    <span>@Model.DailyStats.ActiveMinutes / @Model.DailyStats.ActiveMinutesGoal</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: @((double)Model.DailyStats.ActiveMinutes / Model.DailyStats.ActiveMinutesGoal * 100)%"></div>
-                </div>
-            </div>
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span>Water Intake</span>
-                    <span>@Model.DailyStats.WaterIntake / @Model.DailyStats.WaterGoal glasses</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: @((double)Model.DailyStats.WaterIntake / Model.DailyStats.WaterGoal * 100)%"></div>
-                </div>
+        <div class="stat-card">
+            <div class="stat-icon">👟</div>
+            <div class="stat-info">
+                <h3>@Model.DailyStats.Steps.ToString("N0")</h3>
+                <p>Steps Today</p>
             </div>
         </div>
-
-        <!-- Active Goals -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Active Goals</h3>
-                <a href="#" class="card-link">Add Goal →</a>
-            </div>
-            <div class="goals-grid">
-                @foreach (var goal in Model.ActiveGoals)
-                {
-                    <div class="progress-container">
-                        <div class="progress-label">
-                            <span><i class="fas @(goal.Icon == "🏋️" ? "fa-dumbbell" : goal.Icon == "👟" ? "fa-shoe-prints" : "fa-weight-hanging")"></i> @goal.Title</span>
-                            <span>@goal.Current / @goal.Target @goal.Unit</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: @goal.Progress%; background: @goal.Color;"></div>
-                        </div>
-                    </div>
-                }
+        <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-info">
+                <h3>@Model.DailyStats.ActiveMinutes</h3>
+                <p>Active Minutes</p>
             </div>
         </div>
-
-        <!-- Recent Activities -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Recent Activities</h3>
-                <a href="#" class="card-link">Log Activity →</a>
-            </div>
-            <div class="activities-list">
-                @foreach (var activity in Model.RecentActivities)
-                {
-                    <div class="activity-item">
-                        <div class="activity-icon">@activity.Icon</div>
-                        <div class="activity-details">
-                            <div class="activity-title">@activity.Title</div>
-                            <div class="activity-meta">@activity.Duration min • @activity.Calories cal</div>
-                        </div>
-                        <div class="activity-time">@activity.Timestamp.ToString("h:mm tt")</div>
-                    </div>
-                }
+        <div class="stat-card">
+            <div class="stat-icon">💧</div>
+            <div class="stat-info">
+                <h3>@Model.DailyStats.WaterIntake / @Model.DailyStats.WaterGoal</h3>
+                <p>Water (glasses)</p>
             </div>
         </div>
     </div>
 
-    <!-- Right Column -->
-    <div style="display: flex; flex-direction: column; gap: 24px;">
-        <!-- User Streak Card -->
-        <div class="card" style="background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); color: white;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <div style="font-size: 2rem; font-weight: 700;">@Model.UserProfile.StreakDays</div>
-                    <div>Day Streak 🔥</div>
-                    <div style="font-size: 0.85rem; margin-top: 8px;">Level @Model.UserProfile.Level</div>
+    <!-- Two Column Layout -->
+    <div class="dashboard-two-columns">
+        <!-- Left Column -->
+        <div class="left-column">
+            <!-- Daily Progress -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-line"></i>
+                        Today's Progress
+                    </h3>
+                    <a href="#" class="card-link">View Details →</a>
                 </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 0.85rem;">Next Level</div>
-                    <div style="font-size: 1.2rem; font-weight: 600;">@Model.UserProfile.XP / @Model.UserProfile.NextLevelXP XP</div>
-                    <div class="progress-bar" style="margin-top: 8px; width: 150px;">
-                        <div class="progress-fill" style="width: @((double)Model.UserProfile.XP / Model.UserProfile.NextLevelXP * 100)%;"></div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>🎯 Daily Steps</span>
+                        <span>@Model.DailyStats.Steps.ToString("N0") / @Model.DailyStats.StepGoal.ToString("N0")</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: @((double)Model.DailyStats.Steps / Model.DailyStats.StepGoal * 100)%"></div>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>⏱️ Active Minutes</span>
+                        <span>@Model.DailyStats.ActiveMinutes / @Model.DailyStats.ActiveMinutesGoal min</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: @((double)Model.DailyStats.ActiveMinutes / Model.DailyStats.ActiveMinutesGoal * 100)%"></div>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>💧 Water Intake</span>
+                        <span>@Model.DailyStats.WaterIntake / @Model.DailyStats.WaterGoal glasses</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: @((double)Model.DailyStats.WaterIntake / Model.DailyStats.WaterGoal * 100)%"></div>
                     </div>
                 </div>
             </div>
+
+            <!-- Active Goals -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-bullseye"></i>
+                        Active Goals
+                    </h3>
+                    <a href="/dashboard/goals" class="card-link">Manage Goals →</a>
+                </div>
+                <div class="goals-grid">
+                    @foreach (var goal in Model.ActiveGoals)
+                    {
+                        <div class="progress-container">
+                            <div class="progress-label">
+                                <span><i class="fas @(goal.Icon == "🏋️" ? "fa-dumbbell" : goal.Icon == "👟" ? "fa-shoe-prints" : "fa-weight-hanging")"></i> @goal.Title</span>
+                                <span>@goal.Current / @goal.Target @goal.Unit</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: @goal.Progress%; background: @goal.Color;"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-history"></i>
+                        Recent Activities
+                    </h3>
+                    <a href="#" class="card-link">Log Activity →</a>
+                </div>
+                <div class="activities-list">
+                    @foreach (var activity in Model.RecentActivities.Take(3))
+                    {
+                        <div class="activity-item">
+                            <div class="activity-icon">@activity.Icon</div>
+                            <div class="activity-details">
+                                <div class="activity-title">@activity.Title</div>
+                                <div class="activity-meta">@activity.Duration min • @activity.Calories cal</div>
+                            </div>
+                            <div class="activity-time">@activity.Timestamp.ToString("h:mm tt")</div>
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
 
-        <!-- Wellness Metrics -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Wellness Metrics</h3>
-                <a href="#" class="card-link">Details →</a>
-            </div>
-            <div class="wellness-grid">
-                <div class="wellness-item">
-                    <div class="wellness-value">@Model.WellnessMetrics.HRV ms</div>
-                    <div style="font-size: 0.85rem;">HRV</div>
-                </div>
-                <div class="wellness-item">
-                    <div class="wellness-value">@Model.WellnessMetrics.RestingHeartRate</div>
-                    <div style="font-size: 0.85rem;">Resting HR</div>
-                </div>
-                <div class="wellness-item">
-                    <div class="wellness-value">@Model.WellnessMetrics.SleepScore%</div>
-                    <div style="font-size: 0.85rem;">Sleep Score</div>
-                </div>
-                <div class="wellness-item">
-                    <div class="wellness-value">@Model.WellnessMetrics.EnergyLevel%</div>
-                    <div style="font-size: 0.85rem;">Energy</div>
-                </div>
-                <div class="wellness-item">
-                    <div class="wellness-value">@Model.WellnessMetrics.StressLevel%</div>
-                    <div style="font-size: 0.85rem;">Stress</div>
-                </div>
-                <div class="wellness-item">
-                    <div class="wellness-value">😊 @Model.WellnessMetrics.Mood</div>
-                    <div style="font-size: 0.85rem;">Mood</div>
-                </div>
-            </div>
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span>Meditation Goal</span>
-                    <span>@Model.WellnessMetrics.MeditationMinutes / @Model.WellnessMetrics.MindfulnessGoal min</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: @((double)Model.WellnessMetrics.MeditationMinutes / Model.WellnessMetrics.MindfulnessGoal * 100)%"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recovery Insights -->
-        <div class="card recovery-card">
-            <div class="card-header">
-                <h3 class="card-title">Recovery Insights</h3>
-            </div>
-            <div class="recovery-score">@Model.RecoveryInsights.ReadinessScore</div>
-            <div style="margin-bottom: 16px;">@Model.RecoveryInsights.RecoveryStatus</div>
-            <div style="font-size: 0.9rem;">@Model.RecoveryInsights.Recommendation</div>
-            @if (Model.RecoveryInsights.RecommendedRestDay)
-            {
-                <div style="margin-top: 12px; padding: 8px; background: rgba(255,255,255,0.2); border-radius: 8px;">
-                    ⚠️ Recommended rest day today
-                </div>
-            }
-        </div>
-
-        <!-- Today's Workout Plan -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Today's Workout Plan</h3>
-                <a href="#" class="card-link">View All →</a>
-            </div>
-            @foreach (var workout in Model.WorkoutPlans.Where(w => w.IsToday))
-            {
-                <div class="activity-item">
-                    <div class="activity-icon">💪</div>
-                    <div class="activity-details">
-                        <div class="activity-title">@workout.Name</div>
-                        <div class="activity-meta">@workout.Duration min • @workout.CaloriesEstimate cal • @workout.Difficulty</div>
-                    </div>
-                    <button class="btn btn-primary" style="padding: 8px 16px;">Start</button>
-                </div>
-            }
-            @foreach (var workout in Model.WorkoutPlans.Where(w => !w.IsToday).Take(2))
-            {
-                <div class="activity-item">
-                    <div class="activity-icon">📅</div>
-                    <div class="activity-details">
-                        <div class="activity-title">@workout.Name</div>
-                        <div class="activity-meta">@workout.Duration min • @workout.Difficulty</div>
-                    </div>
-                </div>
-            }
-        </div>
-
-        <!-- Active Challenges -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Active Challenges 🏆</h3>
-                <a href="#" class="card-link">Join More →</a>
-            </div>
-            <div class="challenges-list">
-                @foreach (var challenge in Model.ActiveChallenges)
-                {
-                    <div class="challenge-item">
+        <!-- Right Column -->
+        <div class="right-column">
+            <!-- Streak Card -->
+            <div class="card streak-card">
+                <div class="streak-icon">🔥</div>
+                <div style="position: relative; z-index: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                         <div>
-                            <div style="font-weight: 600;">@challenge.Name</div>
-                            <div style="font-size: 0.75rem; color: var(--gray);">@challenge.Participants participants</div>
+                            <div style="font-size: 3rem; font-weight: 800;">@Model.UserProfile.StreakDays</div>
+                            <div style="font-size: 1rem; opacity: 0.9;">Day Streak</div>
+                            <div style="font-size: 0.85rem; margin-top: 8px;">Level @Model.UserProfile.Level</div>
                         </div>
                         <div style="text-align: right;">
-                            <div>@challenge.YourProgress / @challenge.Target</div>
-                            <div class="progress-bar" style="width: 100px;">
-                                <div class="progress-fill" style="width: @((double)challenge.YourProgress / challenge.Target * 100)%"></div>
+                            <div style="font-size: 0.85rem; opacity: 0.8;">Next Level</div>
+                            <div style="font-size: 1.2rem; font-weight: 600;">@Model.UserProfile.XP / @Model.UserProfile.NextLevelXP XP</div>
+                            <div class="progress-bar" style="margin-top: 8px; width: 150px; background: rgba(255,255,255,0.2);">
+                                <div class="progress-fill" style="width: @((double)Model.UserProfile.XP / Model.UserProfile.NextLevelXP * 100)%; background: white;"></div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Wellness Metrics -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-heartbeat"></i>
+                        Wellness Metrics
+                    </h3>
+                    <a href="#" class="card-link">View All →</a>
+                </div>
+                <div class="wellness-grid">
+                    <div class="wellness-item">
+                        <div class="wellness-value">@Model.WellnessMetrics.HRV ms</div>
+                        <div style="font-size: 0.8rem; color: #6B7280;">HRV</div>
+                    </div>
+                    <div class="wellness-item">
+                        <div class="wellness-value">@Model.WellnessMetrics.RestingHeartRate</div>
+                        <div style="font-size: 0.8rem; color: #6B7280;">Resting HR</div>
+                    </div>
+                    <div class="wellness-item">
+                        <div class="wellness-value">@Model.WellnessMetrics.SleepScore%</div>
+                        <div style="font-size: 0.8rem; color: #6B7280;">Sleep Score</div>
+                    </div>
+                    <div class="wellness-item">
+                        <div class="wellness-value">@Model.WellnessMetrics.EnergyLevel%</div>
+                        <div style="font-size: 0.8rem; color: #6B7280;">Energy</div>
+                    </div>
+                    <div class="wellness-item">
+                        <div class="wellness-value">@Model.WellnessMetrics.StressLevel%</div>
+                        <div style="font-size: 0.8rem; color: #6B7280;">Stress</div>
+                    </div>
+                    <div class="wellness-item">
+                        <div class="wellness-value">😊 @Model.WellnessMetrics.Mood</div>
+                        <div style="font-size: 0.8rem; color: #6B7280;">Mood</div>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span><i class="fas fa-spa"></i> Meditation Goal</span>
+                        <span>@Model.WellnessMetrics.MeditationMinutes / @Model.WellnessMetrics.MindfulnessGoal min</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: @((double)Model.WellnessMetrics.MeditationMinutes / Model.WellnessMetrics.MindfulnessGoal * 100)%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recovery Insights -->
+            <div class="card recovery-card">
+                <div class="card-header">
+                    <h3 class="card-title" style="color: white;">
+                        <i class="fas fa-charging-station"></i>
+                        Recovery Insights
+                    </h3>
+                </div>
+                <div class="recovery-score">@Model.RecoveryInsights.ReadinessScore</div>
+                <div class="recovery-status">@Model.RecoveryInsights.RecoveryStatus</div>
+                <div style="font-size: 0.9rem; margin-bottom: 8px;">@Model.RecoveryInsights.Recommendation</div>
+                @if (Model.RecoveryInsights.RecommendedRestDay)
+                {
+                    <div style="margin-top: 12px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 12px;">
+                        ⚠️ Recommended rest day today - listen to your body!
+                    </div>
                 }
+            </div>
+
+            <!-- Today's Workout Plan -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-dumbbell"></i>
+                        Today's Workout
+                    </h3>
+                    <a href="#" class="card-link">View Schedule →</a>
+                </div>
+                @foreach (var workout in Model.WorkoutPlans.Where(w => w.IsToday))
+                {
+                    <div class="activity-item">
+                        <div class="activity-icon">💪</div>
+                        <div class="activity-details">
+                            <div class="activity-title">@workout.Name</div>
+                            <div class="activity-meta">@workout.Duration min • @workout.CaloriesEstimate cal • @workout.Difficulty</div>
+                        </div>
+                        <button class="btn-primary" onclick="startWorkout('@workout.Name')">Start</button>
+                    </div>
+                }
+                @foreach (var workout in Model.WorkoutPlans.Where(w => !w.IsToday).Take(2))
+                {
+                    <div class="activity-item" style="opacity: 0.7;">
+                        <div class="activity-icon">📅</div>
+                        <div class="activity-details">
+                            <div class="activity-title">@workout.Name</div>
+                            <div class="activity-meta">@workout.Duration min • @workout.Difficulty</div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Active Challenges -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-trophy"></i>
+                        Active Challenges
+                    </h3>
+                    <a href="#" class="card-link">Join More →</a>
+                </div>
+                <div class="challenges-list">
+                    @foreach (var challenge in Model.ActiveChallenges)
+                    {
+                        <div class="challenge-item">
+                            <div>
+                                <div style="font-weight: 600;">@challenge.Name</div>
+                                <div style="font-size: 0.75rem; color: #6B7280;">@challenge.Participants participants</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div>@challenge.YourProgress / @challenge.Target</div>
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill" style="width: @((double)challenge.YourProgress / challenge.Target * 100)%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Full Width Row -->
-    <div style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px;">
+    <div class="dashboard-full-width">
         <!-- Social Feed -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Community Feed</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-users"></i>
+                    Community Feed
+                </h3>
                 <a href="#" class="card-link">Post Update →</a>
             </div>
             <div class="social-feed">
-                @foreach (var post in Model.SocialFeed)
+                @foreach (var post in Model.SocialFeed.Take(3))
                 {
                     <div class="social-post">
                         <div class="post-header">
@@ -551,15 +860,17 @@
                         </div>
                         <div class="post-content">@post.Content</div>
                         <div class="post-actions">
-                            <button class="post-action">
+                            <button class="post-action" onclick="likePost(this)">
                                 <i class="fas @(post.IsLiked ? "fa-heart" : "fa-heart")" style="color: @(post.IsLiked ? "#EF4444" : "")"></i>
-                                @post.Likes
+                                <span>@post.Likes</span>
                             </button>
-                            <button class="post-action">
-                                <i class="fas fa-comment"></i> @post.Comments
+                            <button class="post-action" onclick="commentPost()">
+                                <i class="fas fa-comment"></i>
+                                <span>@post.Comments</span>
                             </button>
-                            <button class="post-action">
-                                <i class="fas fa-share"></i> Share
+                            <button class="post-action" onclick="sharePost()">
+                                <i class="fas fa-share"></i>
+                                <span>Share</span>
                             </button>
                         </div>
                     </div>
@@ -570,7 +881,10 @@
         <!-- Personalized Recommendations -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Recommended For You</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-magic"></i>
+                    Recommended For You
+                </h3>
                 <a href="#" class="card-link">View All →</a>
             </div>
             <div style="display: flex; flex-direction: column; gap: 16px;">
@@ -581,9 +895,9 @@
                         <div class="activity-details">
                             <div class="activity-title">@rec.Title</div>
                             <div class="activity-meta">@rec.Duration • @rec.Difficulty</div>
-                            <div style="font-size: 0.8rem; color: var(--gray); margin-top: 4px;">@rec.Description</div>
+                            <div style="font-size: 0.8rem; color: #6B7280; margin-top: 4px;">@rec.Description</div>
                         </div>
-                        <button class="btn btn-outline" style="padding: 6px 12px;">Try Now</button>
+                        <button class="btn-outline" onclick="tryRecommendation('@rec.Title')">Try Now</button>
                     </div>
                 }
             </div>
@@ -592,16 +906,19 @@
         <!-- Recent Achievements -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Recent Achievements</h3>
+                <h3 class="card-title">
+                    <i class="fas fa-trophy"></i>
+                    Recent Achievements
+                </h3>
                 <a href="#" class="card-link">All Badges →</a>
             </div>
             <div class="achievements-grid">
                 @foreach (var achievement in Model.RecentAchievements)
                 {
-                    <div class="achievement-badge">
+                    <div class="achievement-badge" onclick="viewAchievement('@achievement.Name')">
                         <div class="badge-icon">@achievement.Icon</div>
-                        <div style="font-weight: 600; font-size: 0.85rem;">@achievement.Name</div>
-                        <div style="font-size: 0.7rem; color: var(--gray);">@achievement.EarnedAt.ToString("MMM d")</div>
+                        <div style="font-weight: 600; font-size: 0.85rem; margin-top: 8px;">@achievement.Name</div>
+                        <div style="font-size: 0.7rem; color: #6B7280; margin-top: 4px;">@achievement.EarnedAt.ToString("MMM d, yyyy")</div>
                     </div>
                 }
             </div>
@@ -609,12 +926,44 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        // Real-time updates simulation
-        setInterval(() => {
-            // You can add AJAX calls here to update stats in real-time
-            console.log("Checking for real-time updates...");
-        }, 30000);
-    </script>
-}
+<script>
+    function startWorkout(workoutName) {
+        alert(`🎉 Starting ${workoutName}! Get ready to crush your workout! 💪`);
+    }
+
+    function likePost(button) {
+        const icon = button.querySelector('i');
+        const likesSpan = button.querySelector('span');
+        let currentLikes = parseInt(likesSpan.innerText);
+        
+        if (icon.style.color !== 'rgb(239, 68, 68)') {
+            icon.style.color = '#EF4444';
+            likesSpan.innerText = currentLikes + 1;
+        } else {
+            icon.style.color = '';
+            likesSpan.innerText = currentLikes - 1;
+        }
+        
+        button.style.transform = 'scale(1.1)';
+        setTimeout(() => { button.style.transform = 'scale(1)'; }, 200);
+    }
+
+    function commentPost() {
+        const comment = prompt("Write your comment:");
+        if (comment && comment.trim()) {
+            alert("💬 Comment posted!");
+        }
+    }
+
+    function sharePost() {
+        alert("🔗 Share link copied to clipboard!");
+    }
+
+    function tryRecommendation(title) {
+        alert(`✨ Trying: ${title}! Let's get started!`);
+    }
+
+    function viewAchievement(name) {
+        alert(`🏆 Achievement: ${name}\n\nGreat job on earning this badge!`);
+    }
+</script>
