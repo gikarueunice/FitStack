@@ -4,11 +4,14 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>c084b5ee-c38a-4b21-907e-b9a727945fe5</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
 		<PackageReference Include="Dapper" Version="2.1.72" />
+		<PackageReference Include="DotEnv.Core" Version="3.1.0" />
+		<PackageReference Include="dotenv.net" Version="4.0.2" />
 		<PackageReference Include="MediatR" Version="12.4.0" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
