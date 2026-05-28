@@ -32,7 +32,7 @@ namespace FitStack.Controllers
         {
             return View();
         }
-        public IActionResult Setting()
+        public IActionResult Settings()
         {
             return View();
         }

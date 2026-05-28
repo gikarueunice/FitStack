@@ -1,6 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Page Not Found - FitTrack";
     Layout = null;
+
+    // Check if user is authenticated
+    var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
 }
 
 <!DOCTYPE html>
@@ -48,8 +51,8 @@
                 font-weight: 800;
                 background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
                 -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
                 background-clip: text;
+                -webkit-text-fill-color: transparent;
                 line-height: 1;
                 margin-bottom: 20px;
             }
@@ -74,6 +77,60 @@
                 line-height: 1.6;
             }
 
+            /* Countdown Timer Styles */
+            .countdown-container {
+                background: #F3F4F6;
+                border-radius: 60px;
+                padding: 8px;
+                margin: 30px 0;
+                display: inline-flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .countdown-circle {
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, #4F46E5, #7C3AED);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 24px;
+                font-weight: 700;
+            }
+
+            .countdown-text {
+                font-size: 16px;
+                color: #4B5563;
+                padding-right: 20px;
+            }
+
+                .countdown-text strong {
+                    color: #4F46E5;
+                    font-size: 20px;
+                }
+
+            /* Progress Bar */
+            .progress-bar-container {
+                width: 100%;
+                height: 4px;
+                background: #E5E7EB;
+                border-radius: 4px;
+                margin: 20px 0;
+                overflow: hidden;
+            }
+
+            .progress-bar-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #4F46E5, #7C3AED);
+                border-radius: 4px;
+                transition: width 1s linear;
+                width: 0%;
+            }
+
+            /* Buttons */
             .error-actions {
                 display: flex;
                 gap: 16px;
@@ -82,7 +139,7 @@
                 flex-wrap: wrap;
             }
 
-            .btn-primary, .btn-secondary {
+            .btn-primary, .btn-secondary, .btn-outline {
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
@@ -92,6 +149,7 @@
                 text-decoration: none;
                 transition: all 0.3s;
                 cursor: pointer;
+                border: none;
             }
 
             .btn-primary {
@@ -115,6 +173,50 @@
                     transform: translateY(-2px);
                 }
 
+            .btn-outline {
+                background: transparent;
+                border: 2px solid #4F46E5;
+                color: #4F46E5;
+            }
+
+                .btn-outline:hover {
+                    background: #4F46E5;
+                    color: white;
+                    transform: translateY(-2px);
+                }
+
+            /* Login Required Message */
+            .login-required {
+                background: #FEF2F2;
+                border: 1px solid #FECACA;
+                border-radius: 12px;
+                padding: 12px;
+                margin-top: 15px;
+                font-size: 14px;
+                color: #991B1B;
+                display: none;
+            }
+
+                .login-required.show {
+                    display: block;
+                    animation: shake 0.5s ease-in-out;
+                }
+
+            @@keyframes shake {
+                0%, 100% {
+                    transform: translateX(0);
+                }
+
+                25% {
+                    transform: translateX(-5px);
+                }
+
+                75% {
+                    transform: translateX(5px);
+                }
+            }
+
+            /* Suggestions */
             .suggestions {
                 text-align: left;
                 background: #F9FAFB;
@@ -152,53 +254,7 @@
                             text-decoration: underline;
                         }
 
-            .search-box {
-                position: relative;
-                margin-top: 20px;
-            }
-
-            .search-input {
-                width: 100%;
-                padding: 14px 20px;
-                border: 2px solid #E5E7EB;
-                border-radius: 12px;
-                font-size: 14px;
-                font-family: inherit;
-                transition: all 0.3s;
-            }
-
-                .search-input:focus {
-                    outline: none;
-                    border-color: #4F46E5;
-                    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-                }
-
-            .search-button {
-                position: absolute;
-                right: 8px;
-                top: 50%;
-                transform: translateY(-50%);
-                background: #4F46E5;
-                border: none;
-                border-radius: 8px;
-                padding: 8px 16px;
-                color: white;
-                cursor: pointer;
-                font-weight: 500;
-            }
-
-            .workout-tip {
-                background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
-                padding: 16px;
-                border-radius: 12px;
-                margin-top: 20px;
-            }
-
-                .workout-tip p {
-                    font-size: 14px;
-                    color: #92400E;
-                }
-
+            /* Footer */
             .footer {
                 margin-top: 30px;
                 font-size: 12px;
@@ -241,9 +297,18 @@
                     font-size: 24px;
                 }
 
-                .btn-primary, .btn-secondary {
-                    padding: 10px 20px;
-                    font-size: 14px;
+                .countdown-circle {
+                    width: 50px;
+                    height: 50px;
+                    font-size: 20px;
+                }
+
+                .error-actions {
+                    flex-direction: column;
+                }
+
+                .btn-primary, .btn-secondary, .btn-outline {
+                    justify-content: center;
                 }
             }
     </style>
@@ -251,7 +316,7 @@
 <body>
     <div class="error-container">
         <div class="error-card">
-            <div class="error-icon">🏋️</div>
+            <div class="error-icon">🔍</div>
             <div class="error-code">404</div>
             <h1 class="error-title">Oops! Page Not Found</h1>
             <p class="error-message">
@@ -259,53 +324,88 @@
                 Don't worry, even the best fitness journeys have a few wrong turns.
             </p>
 
-            <div class="error-actions">
-                <a href="/" class="btn-primary">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M3 10H17M17 10L13 6M17 10L13 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    Back to Home
-                </a>
-                <a href="/dashboard" class="btn-secondary">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M3 9L10 3L17 9V16H13V11H7V16H3V9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    Go to Dashboard
-                </a>
+            <!-- Countdown Timer -->
+            <div class="countdown-container">
+                <div class="countdown-circle" id="countdownNumber">5</div>
+                <div class="countdown-text">
+                    Redirecting you back in <strong id="countdownSeconds">5</strong> seconds
+                </div>
             </div>
 
+            <!-- Progress Bar -->
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+
+            <!-- Buttons - Conditional based on authentication -->
+            <div class="error-actions">
+                <button onclick="goBack()" class="btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="margin-right: 8px;">
+                        <path d="M15 10H5M5 10L10 5M5 10L10 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Go Back
+                </button>
+
+                @if (isAuthenticated)
+                {
+                    <a href="/dashboard" class="btn-secondary">
+                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                    </a>
+                }
+                else
+                {
+                    <button onclick="showLoginRequired()" class="btn-outline">
+                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                    </button>
+                }
+            </div>
+
+            <!-- Login Required Message -->
+            <div id="loginRequiredMessage" class="login-required">
+                <i class="fas fa-exclamation-triangle"></i>
+                Please <a href="/auth/login" style="color: #991B1B; font-weight: 600;">login</a> or
+                <a href="/auth/register" style="color: #991B1B; font-weight: 600;">create an account</a> to access the dashboard.
+            </div>
+
+            <!-- Helpful Suggestions -->
             <div class="suggestions">
-                <h4>💡 While you're here, try these:</h4>
+                <h4>💡 While you wait, try these:</h4>
                 <ul>
-                    <li>
-                        <span>🔍</span>
-                        <a href="/workout-plans">Check out our workout plans</a>
-                    </li>
-                    <li>
-                        <span>🥗</span>
-                        <a href="/nutrition-tips">Explore healthy recipes</a>
-                    </li>
-                    <li>
-                        <span>🏆</span>
-                        <a href="/challenges">Join community challenges</a>
-                    </li>
+                    @if (isAuthenticated)
+                    {
+                        <li>
+                            <span>🏠</span>
+                            <a href="/dashboard">Go to your dashboard</a>
+                        </li>
+                        <li>
+                            <span>🏋️</span>
+                            <a href="/dashboard/workoutplan">View your workout plans</a>
+                        </li>
+                        <li>
+                            <span>🏆</span>
+                            <a href="/dashboard/challenges">Check active challenges</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <span>🔑</span>
+                            <a href="/auth/login">Login to your account</a>
+                        </li>
+                        <li>
+                            <span>📝</span>
+                            <a href="/auth/register">Create a free account</a>
+                        </li>
+                        <li>
+                            <span>🏠</span>
+                            <a href="/">Return to homepage</a>
+                        </li>
+                    }
                     <li>
                         <span>📞</span>
-                        <a href="/support">Contact support</a>
+                        <a href="/contact">Contact support</a>
                     </li>
                 </ul>
-            </div>
-
-            <div class="search-box">
-                <input type="text" class="search-input" id="searchInput" placeholder="Search for workouts, exercises, or articles...">
-                <button class="search-button" onclick="performSearch()">Search</button>
-            </div>
-
-            <div class="workout-tip">
-                <p>
-                    💪 <strong>Daily Fitness Tip:</strong>
-                    Take a deep breath and stretch for 5 minutes. The page you're looking for will find its way back eventually!
-                </p>
             </div>
         </div>
         <div class="footer">
@@ -313,34 +413,104 @@
         </div>
     </div>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <script>
-            function performSearch() {
-                const searchTerm = document.getElementById('searchInput').value;
-                if (searchTerm.trim()) {
-                    window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+            // Get the previous page URL
+            let previousPage = document.referrer;
+            let countdown = 5;
+            let countdownInterval;
+            let progressInterval;
+            let isAuthenticated = @(isAuthenticated ? "true" : "false");
+
+            // Start countdown
+            function startCountdown() {
+                countdownInterval = setInterval(() => {
+                    countdown--;
+
+                    // Update countdown display
+                    document.getElementById('countdownNumber').textContent = countdown;
+                    document.getElementById('countdownSeconds').textContent = countdown;
+
+                    // Update progress bar
+                    const progressPercent = ((5 - countdown) / 5) * 100;
+                    const progressBar = document.getElementById('progressBar');
+                    progressBar.style.width = `${progressPercent}%`;
+
+                    // When countdown reaches 0, go back
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        clearInterval(progressInterval);
+                        goBack();
+                    }
+                }, 1000);
+            }
+
+            // Go back function
+            function goBack() {
+                if (previousPage && previousPage !== '') {
+                    window.location.href = previousPage;
+                } else {
+                    // If no previous page, redirect based on auth status
+                    if (isAuthenticated) {
+                        window.location.href = '/dashboard';
+                    } else {
+                        window.location.href = '/';
+                    }
                 }
             }
 
-            // Allow Enter key to trigger search
-            document.getElementById('searchInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
+            // Show login required message for non-authenticated users
+            function showLoginRequired() {
+                const messageDiv = document.getElementById('loginRequiredMessage');
+                messageDiv.classList.add('show');
+
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    messageDiv.classList.remove('show');
+                }, 5000);
+            }
+
+            // Animate progress bar
+            function animateProgressBar() {
+                let width = 0;
+                progressInterval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(progressInterval);
+                    } else {
+                        width += 20;
+                        document.getElementById('progressBar').style.width = `${width}%`;
+                    }
+                }, 1000);
+            }
+
+            // Initialize the page
+            document.addEventListener('DOMContentLoaded', function() {
+                startCountdown();
+                animateProgressBar();
+
+                // Random fitness tip
+                const tips = [
+                    "Even the best athletes miss their mark sometimes. What matters is getting back up!",
+                    "Consider this a rest day for your browsing muscles.",
+                    "Why not do 10 jumping jacks while you wait?",
+                    "This page might be taking a water break. Try again in a moment.",
+                    "404 not found, but your motivation is still 100%!",
+                    "Every rep counts, even the ones that don't go as planned.",
+                    "Take a deep breath and stretch for 30 seconds.",
+                    "Drink some water while we find your page."
+                ];
+
+                const randomTip = tips[Math.floor(Math.random() * tips.length)];
+                const tipElement = document.createElement('div');
+                tipElement.style.cssText = 'background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); padding: 12px; border-radius: 12px; margin-top: 16px; font-size: 14px; color: #92400E;';
+                tipElement.innerHTML = `💪 <strong>Daily Fitness Tip:</strong> ${randomTip}`;
+
+                const suggestions = document.querySelector('.suggestions');
+                if (suggestions) {
+                    suggestions.insertAdjacentElement('afterend', tipElement);
                 }
             });
-
-            // Random workout tips for the 404 page (refreshes on each visit)
-            const tips = [
-                "Even the best athletes miss their mark sometimes. What matters is getting back up!",
-                "Consider this a rest day for your browsing muscles.",
-                "Why not do 10 jumping jacks while we find the page?",
-                "This page might be taking a water break. Try again in a moment.",
-                "404 not found, but your motivation is still 100%!",
-                "Every rep counts, even the ones that don't go as planned."
-            ];
-
-            // Optional: Display random tip
-            const randomTip = tips[Math.floor(Math.random() * tips.length)];
-            document.querySelector('.workout-tip p').innerHTML = `💪 <strong>Daily Fitness Tip:</strong> ${randomTip}`;
     </script>
 </body>
 </html>
