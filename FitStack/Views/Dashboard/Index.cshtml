@@ -35,59 +35,58 @@
 
     /* Card Styles */
     .card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 24px;
         padding: 24px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        box-shadow: var(--shadow-sm);
         transition: all 0.3s ease;
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
         height: auto;
         overflow: hidden;
     }
 
-    .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
 
     .card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #F3F4F6;
-        padding: 50px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--border-color);
     }
 
     .card-title {
         font-size: 1.1rem;
         font-weight: 600;
-        color: #1F2937;
+        color: var(--text-primary);
         display: flex;
         align-items: center;
         gap: 8px;
     }
 
-    .card-title i {
-        color: #4F46E5;
-        font-size: 1.2rem;
-    }
+        .card-title i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
 
     .card-link {
-        color: #4F46E5;
+        color: var(--primary);
         text-decoration: none;
         font-size: 0.85rem;
         font-weight: 500;
         transition: all 0.3s;
     }
 
-    .card-link:hover {
-        color: #4338CA;
-        transform: translateX(3px);
-    }
+        .card-link:hover {
+            color: var(--primary-dark);
+            transform: translateX(3px);
+        }
 
-    /* Stats Cards - Fixed width */
+    /* Stats Cards */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -96,26 +95,26 @@
     }
 
     .stat-card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 20px;
         display: flex;
         align-items: center;
         gap: 16px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-sm);
         transition: all 0.3s;
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
     }
 
-    .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
 
     .stat-icon {
         width: 55px;
         height: 55px;
-        background: linear-gradient(135deg, #4F46E5, #7C3AED);
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         border-radius: 16px;
         display: flex;
         align-items: center;
@@ -130,18 +129,18 @@
         min-width: 0;
     }
 
-    .stat-info h3 {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: 4px;
-        color: #1F2937;
-    }
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
 
-    .stat-info p {
-        color: #6B7280;
-        font-size: 0.85rem;
-        font-weight: 500;
-    }
+        .stat-info p {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
 
     /* Left and Right Columns */
     .left-column {
@@ -167,18 +166,19 @@
         margin-bottom: 8px;
         font-size: 0.85rem;
         font-weight: 500;
+        color: var(--text-secondary);
     }
 
     .progress-bar {
         height: 10px;
-        background: #F3F4F6;
+        background: var(--border-color);
         border-radius: 10px;
         overflow: hidden;
     }
 
     .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, #4F46E5, #818CF8);
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
         border-radius: 10px;
         transition: width 0.5s ease;
         position: relative;
@@ -194,32 +194,46 @@
         overflow-y: auto;
     }
 
+        .activities-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .activities-list::-webkit-scrollbar-track {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+
+        .activities-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
     .activity-item {
         display: flex;
         align-items: center;
         gap: 12px;
         padding: 12px;
-        background: #F9FAFB;
+        background: var(--bg-tertiary);
         border-radius: 16px;
         transition: all 0.3s;
         cursor: pointer;
     }
 
-    .activity-item:hover {
-        background: #F3F4F6;
-        transform: translateX(5px);
-    }
+        .activity-item:hover {
+            background: var(--bg-hover);
+            transform: translateX(5px);
+        }
 
     .activity-icon {
         width: 45px;
         height: 45px;
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.4rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: var(--shadow-sm);
         flex-shrink: 0;
     }
 
@@ -231,17 +245,17 @@
     .activity-title {
         font-weight: 600;
         margin-bottom: 4px;
-        color: #1F2937;
+        color: var(--text-primary);
     }
 
     .activity-meta {
         font-size: 0.75rem;
-        color: #6B7280;
+        color: var(--text-tertiary);
     }
 
     .activity-time {
         font-size: 0.7rem;
-        color: #9CA3AF;
+        color: var(--text-muted);
         font-weight: 500;
         flex-shrink: 0;
     }
@@ -264,20 +278,24 @@
     .wellness-item {
         text-align: center;
         padding: 12px;
-        background: #F9FAFB;
+        background: var(--bg-tertiary);
         border-radius: 16px;
         transition: all 0.3s;
     }
 
-    .wellness-item:hover {
-        background: #F3F4F6;
-        transform: scale(1.02);
-    }
+        .wellness-item:hover {
+            background: var(--bg-hover);
+            transform: scale(1.02);
+        }
 
     .wellness-value {
         font-size: 1.5rem;
         font-weight: 700;
-        color: #4F46E5;
+        color: var(--primary);
+    }
+
+    .wellness-item div[style*="font-size: 0.8rem"] {
+        color: var(--text-tertiary) !important;
     }
 
     /* Recovery Card */
@@ -286,6 +304,10 @@
         color: white;
         position: relative;
         overflow: hidden;
+    }
+
+    body.dark-mode .recovery-card {
+        background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
     }
 
     .recovery-card .card-header {
@@ -311,7 +333,7 @@
 
     /* Streak Card */
     .streak-card {
-        background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
         color: white;
         position: relative;
         overflow: hidden;
@@ -337,17 +359,25 @@
         justify-content: space-between;
         align-items: center;
         padding: 12px;
-        background: #F9FAFB;
+        background: var(--bg-tertiary);
         border-radius: 16px;
         transition: all 0.3s;
         flex-wrap: wrap;
         gap: 10px;
     }
 
-    .challenge-item:hover {
-        background: #F3F4F6;
-        transform: translateX(3px);
-    }
+        .challenge-item:hover {
+            background: var(--bg-hover);
+            transform: translateX(3px);
+        }
+
+        .challenge-item div[style*="font-weight: 600"] {
+            color: var(--text-primary) !important;
+        }
+
+        .challenge-item div[style*="font-size: 0.75rem"] {
+            color: var(--text-tertiary) !important;
+        }
 
     /* Achievements */
     .achievements-grid {
@@ -359,21 +389,29 @@
     .achievement-badge {
         text-align: center;
         padding: 12px;
-        background: #F9FAFB;
+        background: var(--bg-tertiary);
         border-radius: 16px;
         transition: all 0.3s;
         cursor: pointer;
     }
 
-    .achievement-badge:hover {
-        transform: scale(1.05);
-        background: #F3F4F6;
-    }
+        .achievement-badge:hover {
+            transform: scale(1.05);
+            background: var(--bg-hover);
+        }
 
-    .achievement-badge .badge-icon {
-        font-size: 2rem;
-        margin-bottom: 8px;
-    }
+        .achievement-badge .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .achievement-badge div[style*="font-weight: 600"] {
+            color: var(--text-primary) !important;
+        }
+
+        .achievement-badge div[style*="font-size: 0.7rem"] {
+            color: var(--text-tertiary) !important;
+        }
 
     /* Social Feed */
     .social-feed {
@@ -384,31 +422,31 @@
         overflow-y: auto;
     }
 
-    .social-feed::-webkit-scrollbar {
-        width: 4px;
-    }
+        .social-feed::-webkit-scrollbar {
+            width: 4px;
+        }
 
-    .social-feed::-webkit-scrollbar-track {
-        background: #F3F4F6;
-        border-radius: 10px;
-    }
+        .social-feed::-webkit-scrollbar-track {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
 
-    .social-feed::-webkit-scrollbar-thumb {
-        background: #4F46E5;
-        border-radius: 10px;
-    }
+        .social-feed::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
 
     .social-post {
         padding: 16px;
-        background: #F9FAFB;
+        background: var(--bg-tertiary);
         border-radius: 16px;
         transition: all 0.3s;
     }
 
-    .social-post:hover {
-        background: #F3F4F6;
-        transform: translateX(3px);
-    }
+        .social-post:hover {
+            background: var(--bg-hover);
+            transform: translateX(3px);
+        }
 
     .post-header {
         display: flex;
@@ -422,23 +460,23 @@
         height: 45px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid #4F46E5;
+        border: 2px solid var(--primary);
         flex-shrink: 0;
     }
 
     .post-user {
         font-weight: 600;
-        color: #1F2937;
+        color: var(--text-primary);
     }
 
     .post-time {
         font-size: 0.7rem;
-        color: #6B7280;
+        color: var(--text-tertiary);
     }
 
     .post-content {
         margin-bottom: 12px;
-        color: #4B5563;
+        color: var(--text-secondary);
         line-height: 1.5;
     }
 
@@ -450,7 +488,7 @@
     .post-action {
         background: none;
         border: none;
-        color: #6B7280;
+        color: var(--text-tertiary);
         cursor: pointer;
         font-size: 0.85rem;
         padding: 6px 12px;
@@ -461,14 +499,14 @@
         gap: 6px;
     }
 
-    .post-action:hover {
-        background: #E5E7EB;
-        color: #4F46E5;
-    }
+        .post-action:hover {
+            background: var(--bg-secondary);
+            color: var(--primary);
+        }
 
     /* Buttons */
     .btn-primary {
-        background: linear-gradient(135deg, #4F46E5, #7C3AED);
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         color: white;
         border: none;
         padding: 8px 16px;
@@ -479,15 +517,15 @@
         flex-shrink: 0;
     }
 
-    .btn-primary:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
-    }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
 
     .btn-outline {
         background: transparent;
-        border: 1px solid #4F46E5;
-        color: #4F46E5;
+        border: 1px solid var(--primary);
+        color: var(--primary);
         padding: 6px 12px;
         border-radius: 10px;
         cursor: pointer;
@@ -495,17 +533,17 @@
         flex-shrink: 0;
     }
 
-    .btn-outline:hover {
-        background: #4F46E5;
-        color: white;
-    }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
 
     /* Responsive */
     @@media (max-width: 1200px) {
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
         }
-        
+
         .dashboard-full-width {
             grid-template-columns: repeat(2, 1fr);
         }
@@ -515,7 +553,7 @@
         .dashboard-two-columns {
             grid-template-columns: 1fr;
         }
-        
+
         .dashboard-full-width {
             grid-template-columns: 1fr;
         }
@@ -526,7 +564,7 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
-        
+
         .card {
             padding: 16px;
         }
@@ -544,7 +582,7 @@
         .stat-info h3 {
             font-size: 1.4rem;
         }
-        
+
         .wellness-grid {
             grid-template-columns: repeat(2, 1fr);
         }
@@ -721,27 +759,27 @@
                 <div class="wellness-grid">
                     <div class="wellness-item">
                         <div class="wellness-value">@Model.WellnessMetrics.HRV ms</div>
-                        <div style="font-size: 0.8rem; color: #6B7280;">HRV</div>
+                        <div style="font-size: 0.8rem;">HRV</div>
                     </div>
                     <div class="wellness-item">
                         <div class="wellness-value">@Model.WellnessMetrics.RestingHeartRate</div>
-                        <div style="font-size: 0.8rem; color: #6B7280;">Resting HR</div>
+                        <div style="font-size: 0.8rem;">Resting HR</div>
                     </div>
                     <div class="wellness-item">
                         <div class="wellness-value">@Model.WellnessMetrics.SleepScore%</div>
-                        <div style="font-size: 0.8rem; color: #6B7280;">Sleep Score</div>
+                        <div style="font-size: 0.8rem;">Sleep Score</div>
                     </div>
                     <div class="wellness-item">
                         <div class="wellness-value">@Model.WellnessMetrics.EnergyLevel%</div>
-                        <div style="font-size: 0.8rem; color: #6B7280;">Energy</div>
+                        <div style="font-size: 0.8rem;">Energy</div>
                     </div>
                     <div class="wellness-item">
                         <div class="wellness-value">@Model.WellnessMetrics.StressLevel%</div>
-                        <div style="font-size: 0.8rem; color: #6B7280;">Stress</div>
+                        <div style="font-size: 0.8rem;">Stress</div>
                     </div>
                     <div class="wellness-item">
                         <div class="wellness-value">😊 @Model.WellnessMetrics.Mood</div>
-                        <div style="font-size: 0.8rem; color: #6B7280;">Mood</div>
+                        <div style="font-size: 0.8rem;">Mood</div>
                     </div>
                 </div>
                 <div class="progress-container">
@@ -821,7 +859,7 @@
                         <div class="challenge-item">
                             <div>
                                 <div style="font-weight: 600;">@challenge.Name</div>
-                                <div style="font-size: 0.75rem; color: #6B7280;">@challenge.Participants participants</div>
+                                <div style="font-size: 0.75rem;">@challenge.Participants participants</div>
                             </div>
                             <div style="text-align: right;">
                                 <div>@challenge.YourProgress / @challenge.Target</div>
@@ -895,7 +933,7 @@
                         <div class="activity-details">
                             <div class="activity-title">@rec.Title</div>
                             <div class="activity-meta">@rec.Duration • @rec.Difficulty</div>
-                            <div style="font-size: 0.8rem; color: #6B7280; margin-top: 4px;">@rec.Description</div>
+                            <div style="font-size: 0.8rem; margin-top: 4px;">@rec.Description</div>
                         </div>
                         <button class="btn-outline" onclick="tryRecommendation('@rec.Title')">Try Now</button>
                     </div>
@@ -918,7 +956,7 @@
                     <div class="achievement-badge" onclick="viewAchievement('@achievement.Name')">
                         <div class="badge-icon">@achievement.Icon</div>
                         <div style="font-weight: 600; font-size: 0.85rem; margin-top: 8px;">@achievement.Name</div>
-                        <div style="font-size: 0.7rem; color: #6B7280; margin-top: 4px;">@achievement.EarnedAt.ToString("MMM d, yyyy")</div>
+                        <div style="font-size: 0.7rem; margin-top: 4px;">@achievement.EarnedAt.ToString("MMM d, yyyy")</div>
                     </div>
                 }
             </div>
@@ -935,7 +973,7 @@
         const icon = button.querySelector('i');
         const likesSpan = button.querySelector('span');
         let currentLikes = parseInt(likesSpan.innerText);
-        
+
         if (icon.style.color !== 'rgb(239, 68, 68)') {
             icon.style.color = '#EF4444';
             likesSpan.innerText = currentLikes + 1;
@@ -943,7 +981,7 @@
             icon.style.color = '';
             likesSpan.innerText = currentLikes - 1;
         }
-        
+
         button.style.transform = 'scale(1.1)';
         setTimeout(() => { button.style.transform = 'scale(1)'; }, 200);
     }

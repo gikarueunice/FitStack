@@ -11,32 +11,170 @@
         gap: 20px;
         margin-bottom: 30px;
     }
+
     .badge-card {
         background: linear-gradient(135deg, #4F46E5, #7C3AED);
         color: white;
         border-radius: 20px;
         padding: 25px;
         text-align: center;
+        transition: transform 0.3s;
     }
-    .badge-count { font-size: 48px; font-weight: 700; }
-    .badge-label { font-size: 14px; opacity: 0.9; margin-top: 5px; }
+
+        .badge-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .badge-count {
+        font-size: 48px;
+        font-weight: 700;
+    }
+
+    .badge-label {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-top: 5px;
+    }
+
     .achievements-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 25px;
     }
+
     .achievement-card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 25px;
         text-align: center;
-        transition: transform 0.3s;
+        transition: all 0.3s;
+        border: 1px solid var(--border-color);
+        cursor: pointer;
     }
-    .achievement-card.locked { opacity: 0.5; }
-    .achievement-icon { font-size: 60px; margin-bottom: 15px; }
-    .achievement-name { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
-    .achievement-desc { font-size: 14px; color: #6B7280; }
-    .achievement-date { font-size: 12px; color: #10B981; margin-top: 15px; }
+
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.6;
+            filter: grayscale(0.3);
+        }
+
+            .achievement-card.locked:hover {
+                transform: translateY(-2px);
+            }
+
+    .achievement-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+    }
+
+    .achievement-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+    }
+
+    .achievement-desc {
+        font-size: 14px;
+        color: var(--text-tertiary);
+        line-height: 1.5;
+    }
+
+    .achievement-date {
+        font-size: 12px;
+        color: var(--secondary);
+        margin-top: 15px;
+        font-weight: 500;
+    }
+
+    .locked .achievement-date {
+        color: var(--text-muted);
+    }
+
+    /* Dark mode specific adjustments for badge cards */
+    body.dark-mode .badge-card {
+        background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    }
+
+        body.dark-mode .badge-card:nth-child(2) {
+            background: linear-gradient(135deg, #D97706, #B45309);
+        }
+
+        body.dark-mode .badge-card:nth-child(3) {
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+    /* Animation for new achievements */
+    @@keyframes achievementUnlock {
+        0% {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .achievement-card.new {
+        animation: achievementUnlock 0.5s ease-out;
+    }
+
+    /* Progress bar for locked achievements */
+    .achievement-progress {
+        margin-top: 15px;
+        padding-top: 10px;
+    }
+
+    .progress-text {
+        font-size: 12px;
+        color: var(--text-tertiary);
+        margin-bottom: 5px;
+    }
+
+    .progress-bar {
+        height: 6px;
+        background: var(--border-color);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .achievement-stats {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .achievements-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .badge-card {
+            padding: 20px;
+        }
+
+        .badge-count {
+            font-size: 36px;
+        }
+    }
 </style>
 
 <div class="achievement-stats">
@@ -55,31 +193,83 @@
 </div>
 
 <div class="achievements-grid">
-    <div class="achievement-card">
+    <div class="achievement-card" onclick="showAchievementDetail('Early Bird')">
         <div class="achievement-icon">🏃</div>
         <div class="achievement-name">Early Bird</div>
         <div class="achievement-desc">Completed 10 workouts before 6 AM</div>
-        <div class="achievement-date">Earned: May 15, 2026</div>
+        <div class="achievement-date">🎉 Earned: May 15, 2026</div>
     </div>
 
-    <div class="achievement-card">
+    <div class="achievement-card" onclick="showAchievementDetail('30 Day Streak')">
         <div class="achievement-icon">🔥</div>
         <div class="achievement-name">30 Day Streak</div>
         <div class="achievement-desc">Worked out for 30 consecutive days</div>
-        <div class="achievement-date">Earned: May 10, 2026</div>
+        <div class="achievement-date">🎉 Earned: May 10, 2026</div>
     </div>
 
-    <div class="achievement-card">
+    <div class="achievement-card" onclick="showAchievementDetail('Strength Master')">
         <div class="achievement-icon">💪</div>
         <div class="achievement-name">Strength Master</div>
         <div class="achievement-desc">Lifted over 1000 kg total</div>
-        <div class="achievement-date">Earned: April 28, 2026</div>
+        <div class="achievement-date">🎉 Earned: April 28, 2026</div>
     </div>
 
-    <div class="achievement-card locked">
+    <div class="achievement-card locked" onclick="showAchievementDetail('Marathon Finisher')">
         <div class="achievement-icon">🏆</div>
         <div class="achievement-name">Marathon Finisher</div>
         <div class="achievement-desc">Complete a full marathon</div>
-        <div class="achievement-date">Locked - 26.2 km to go</div>
+        <div class="achievement-progress">
+            <div class="progress-text">Progress: 18/42 km (43%)</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 43%"></div>
+            </div>
+        </div>
+        <div class="achievement-date">🔒 Locked - 24 km to go</div>
+    </div>
+
+    <!-- Additional achievements -->
+    <div class="achievement-card" onclick="showAchievementDetail('Protein Power')">
+        <div class="achievement-icon">🥩</div>
+        <div class="achievement-name">Protein Power</div>
+        <div class="achievement-desc">Logged over 100 protein-rich meals</div>
+        <div class="achievement-date">🎉 Earned: May 20, 2026</div>
+    </div>
+
+    <div class="achievement-card locked" onclick="showAchievementDetail('Gym Legend')">
+        <div class="achievement-icon">🏋️</div>
+        <div class="achievement-name">Gym Legend</div>
+        <div class="achievement-desc">Visit the gym 200 times</div>
+        <div class="achievement-progress">
+            <div class="progress-text">Progress: 145/200 (72.5%)</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 72.5%"></div>
+            </div>
+        </div>
+        <div class="achievement-date">🔒 Locked - 55 visits to go</div>
     </div>
 </div>
+
+<script>
+    // Function to show achievement details
+    function showAchievementDetail(achievementName) {
+        alert(`🏆 Achievement: ${achievementName}\n\nGreat job on your fitness journey! Keep pushing forward! 💪`);
+    }
+
+    // Add animation for newly earned achievements (simulated)
+    document.addEventListener('DOMContentLoaded', function() {
+        // This would typically come from your backend
+        const newlyEarned = ['Protein Power'];
+
+        const cards = document.querySelectorAll('.achievement-card');
+        cards.forEach(card => {
+            const nameElement = card.querySelector('.achievement-name');
+            if (nameElement && newlyEarned.includes(nameElement.innerText)) {
+                card.classList.add('new');
+                // Remove animation class after animation ends
+                setTimeout(() => {
+                    card.classList.remove('new');
+                }, 500);
+            }
+        });
+    });
+</script>

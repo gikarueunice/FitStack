@@ -9,139 +9,501 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
     }
+
+        .calendar-header h1 {
+            font-size: 28px;
+            color: var(--text-primary);
+        }
+
     .week-days {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         gap: 15px;
         margin-bottom: 20px;
     }
+
     .week-day {
         text-align: center;
         padding: 15px;
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 15px;
         cursor: pointer;
         transition: all 0.3s;
+        border: 1px solid var(--border-color);
     }
-    .week-day.active {
-        background: linear-gradient(135deg, #4F46E5, #7C3AED);
-        color: white;
+
+        .week-day:hover {
+            transform: translateY(-3px);
+            background: var(--bg-tertiary);
+        }
+
+        .week-day.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-color: transparent;
+        }
+
+    .day-name {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: inherit;
     }
-    .day-name { font-weight: 600; margin-bottom: 8px; }
-    .day-date { font-size: 20px; font-weight: 700; }
-    .schedule-list { margin-top: 30px; }
+
+    .day-date {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .schedule-list {
+        margin-top: 30px;
+    }
+
     .schedule-item {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 15px;
         padding: 20px;
         margin-bottom: 15px;
         display: flex;
         align-items: center;
         gap: 20px;
-        transition: transform 0.3s;
+        transition: all 0.3s;
+        border: 1px solid var(--border-color);
+        flex-wrap: wrap;
     }
-    .schedule-item:hover { transform: translateX(5px); }
+
+        .schedule-item:hover {
+            transform: translateX(5px);
+            background: var(--bg-tertiary);
+        }
+
     .schedule-time {
         min-width: 100px;
         padding: 10px;
-        background: #F3F4F6;
+        background: var(--bg-tertiary);
         border-radius: 12px;
         text-align: center;
         font-weight: 600;
+        color: var(--text-primary);
     }
-    .schedule-info { flex: 1; }
-    .schedule-title { font-weight: 600; margin-bottom: 5px; }
-    .schedule-desc { color: #6B7280; font-size: 14px; }
+
+    .schedule-info {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .schedule-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--text-primary);
+    }
+
+    .schedule-desc {
+        color: var(--text-tertiary);
+        font-size: 14px;
+    }
+
     .schedule-status {
         padding: 5px 15px;
         border-radius: 20px;
         font-size: 12px;
         font-weight: 600;
+        white-space: nowrap;
     }
-    .status-completed { background: #10B981; color: white; }
-    .status-pending { background: #F59E0B; color: white; }
-    .status-upcoming { background: #3B82F6; color: white; }
+
+    .status-completed {
+        background: var(--secondary);
+        color: white;
+    }
+
+    .status-pending {
+        background: var(--warning);
+        color: white;
+    }
+
+    .status-upcoming {
+        background: var(--info);
+        color: white;
+    }
+
+    .status-cancelled {
+        background: var(--danger);
+        color: white;
+    }
+
+    /* Add Schedule Button */
+    .add-schedule-btn {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .add-schedule-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+    /* Empty State */
+    .empty-schedule {
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--bg-secondary);
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+    }
+
+    .empty-schedule-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-schedule h3 {
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .empty-schedule p {
+        color: var(--text-tertiary);
+    }
+
+    /* Responsive */
+    @@media (max-width: 1024px) {
+        .week-days {
+            gap: 10px;
+        }
+
+        .week-day {
+            padding: 10px;
+        }
+
+        .day-date {
+            font-size: 16px;
+        }
+
+        .day-name {
+            font-size: 12px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .week-days {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .schedule-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .schedule-time {
+            width: 100%;
+        }
+
+        .schedule-status {
+            align-self: flex-start;
+        }
+
+        .calendar-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .week-days {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
 </style>
 
 <div class="calendar-header">
-    <h1 style="font-size: 28px;">Weekly Schedule</h1>
-    <div>
-        <button class="btn-primary" style="margin-right: 10px;" onclick="previousWeek()">←</button>
-        <button class="btn-primary" onclick="nextWeek()">→</button>
+    <h1>
+        <i class="fas fa-calendar-alt" style="color: var(--primary); margin-right: 10px;"></i>
+        Weekly Schedule
+    </h1>
+    <div style="display: flex; gap: 10px;">
+        <button class="btn-primary" onclick="previousWeek()" style="background: var(--bg-tertiary); color: var(--text-primary);">
+            <i class="fas fa-chevron-left"></i> Previous
+        </button>
+        <button class="btn-primary" onclick="nextWeek()" style="background: var(--bg-tertiary); color: var(--text-primary);">
+            Next <i class="fas fa-chevron-right"></i>
+        </button>
+        <button class="add-schedule-btn" onclick="openAddScheduleModal()">
+            <i class="fas fa-plus"></i> Add Schedule
+        </button>
     </div>
 </div>
 
-<div class="week-days">
-    <div class="week-day active">
-        <div class="day-name">Monday</div>
-        <div class="day-date">15</div>
-    </div>
-    <div class="week-day">
-        <div class="day-name">Tuesday</div>
-        <div class="day-date">16</div>
-    </div>
-    <div class="week-day">
-        <div class="day-name">Wednesday</div>
-        <div class="day-date">17</div>
-    </div>
-    <div class="week-day">
-        <div class="day-name">Thursday</div>
-        <div class="day-date">18</div>
-    </div>
-    <div class="week-day">
-        <div class="day-name">Friday</div>
-        <div class="day-date">19</div>
-    </div>
-    <div class="week-day">
-        <div class="day-name">Saturday</div>
-        <div class="day-date">20</div>
-    </div>
-    <div class="week-day">
-        <div class="day-name">Sunday</div>
-        <div class="day-date">21</div>
-    </div>
+<div class="week-days" id="weekDays">
+    <!-- Week days will be dynamically generated by JavaScript -->
 </div>
 
-<div class="schedule-list">
-    <div class="schedule-item">
-        <div class="schedule-time">06:00 AM</div>
-        <div class="schedule-info">
-            <div class="schedule-title">Morning Run 🏃</div>
-            <div class="schedule-desc">5km run in the park</div>
-        </div>
-        <span class="schedule-status status-completed">Completed</span>
-    </div>
+<div class="schedule-list" id="scheduleList">
+    <!-- Schedule items will be dynamically generated by JavaScript -->
+</div>
 
-    <div class="schedule-item">
-        <div class="schedule-time">12:30 PM</div>
-        <div class="schedule-info">
-            <div class="schedule-title">Lunch Break 🥗</div>
-            <div class="schedule-desc">Healthy meal prep</div>
-        </div>
-        <span class="schedule-status status-completed">Completed</span>
-    </div>
-
-    <div class="schedule-item">
-        <div class="schedule-time">05:00 PM</div>
-        <div class="schedule-info">
-            <div class="schedule-title">Full Body HIIT 💪</div>
-            <div class="schedule-desc">30 minutes high intensity workout</div>
-        </div>
-        <span class="schedule-status status-pending">Pending</span>
-    </div>
-
-    <div class="schedule-item">
-        <div class="schedule-time">08:00 PM</div>
-        <div class="schedule-info">
-            <div class="schedule-title">Meditation Session 🧘</div>
-            <div class="schedule-desc">15 minutes mindfulness practice</div>
-        </div>
-        <span class="schedule-status status-upcoming">Upcoming</span>
+<!-- Add Schedule Modal -->
+<div id="addScheduleModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: var(--bg-secondary); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%;">
+        <h2 style="margin-bottom: 20px; color: var(--text-primary);">
+            <i class="fas fa-plus-circle" style="color: var(--primary);"></i> Add New Schedule
+        </h2>
+        <form id="addScheduleForm" onsubmit="addSchedule(event)">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label class="form-label" style="color: var(--text-secondary);">Title</label>
+                <input type="text" class="form-input" id="scheduleTitle" required placeholder="e.g., Morning Run" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label class="form-label" style="color: var(--text-secondary);">Description</label>
+                <textarea class="form-input" id="scheduleDesc" rows="2" placeholder="Describe your activity..." style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);"></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label class="form-label" style="color: var(--text-secondary);">Day</label>
+                <select class="form-input" id="scheduleDay" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label class="form-label" style="color: var(--text-secondary);">Time</label>
+                <input type="time" class="form-input" id="scheduleTime" required style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button type="submit" class="btn-save" style="flex: 1;">Add Schedule</button>
+                <button type="button" class="btn-outline" onclick="closeAddScheduleModal()" style="flex: 1;">Cancel</button>
+            </div>
+        </form>
     </div>
 </div>
 
 <script>
-    function previousWeek() { alert("Previous week"); }
-    function nextWeek() { alert("Next week"); }
+    // Current week offset (0 = current week)
+    let weekOffset = 0;
+    let currentDate = new Date();
+    let schedules = [
+        { day: "Monday", time: "06:00 AM", title: "Morning Run 🏃", desc: "5km run in the park", status: "completed" },
+        { day: "Monday", time: "12:30 PM", title: "Lunch Break 🥗", desc: "Healthy meal prep", status: "completed" },
+        { day: "Monday", time: "05:00 PM", title: "Full Body HIIT 💪", desc: "30 minutes high intensity workout", status: "pending" },
+        { day: "Monday", time: "08:00 PM", title: "Meditation Session 🧘", desc: "15 minutes mindfulness practice", status: "upcoming" },
+        { day: "Tuesday", time: "07:00 AM", title: "Yoga Flow 🧘‍♀️", desc: "Morning yoga routine", status: "upcoming" },
+        { day: "Wednesday", time: "06:00 PM", title: "Strength Training 💪", desc: "Upper body focus", status: "upcoming" },
+        { day: "Thursday", time: "07:00 AM", title: "Cardio Blast 🔥", desc: "HIIT cardio session", status: "upcoming" },
+        { day: "Friday", time: "05:00 PM", title: "Leg Day 🦵", desc: "Lower body workout", status: "upcoming" },
+        { day: "Saturday", time: "08:00 AM", title: "Long Run 🏃", desc: "10km endurance run", status: "upcoming" },
+        { day: "Sunday", time: "09:00 AM", title: "Rest Day 🧘", desc: "Active recovery and stretching", status: "upcoming" }
+    ];
+
+    // Get week dates
+    function getWeekDates() {
+        const dates = [];
+        const today = new Date();
+        const currentDay = today.getDay();
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - currentDay + (currentDay === 0 ? -6 : 1) + (weekOffset * 7));
+
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(startOfWeek);
+            date.setDate(startOfWeek.getDate() + i);
+            dates.push(date);
+        }
+        return dates;
+    }
+
+    // Format date
+    function formatDate(date) {
+        return date.getDate();
+    }
+
+    // Get day name
+    function getDayName(date) {
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return days[date.getDay()];
+    }
+
+    // Render week days
+    function renderWeekDays() {
+        const weekDates = getWeekDates();
+        const today = new Date();
+        const todayDate = today.getDate();
+        const todayMonth = today.getMonth();
+        const todayYear = today.getFullYear();
+
+        const weekDaysHtml = weekDates.map(date => {
+            const dayName = getDayName(date);
+            const dayDate = formatDate(date);
+            const isToday = date.getDate() === todayDate &&
+                           date.getMonth() === todayMonth &&
+                           date.getFullYear() === todayYear;
+
+            return `
+                <div class="week-day ${isToday ? 'active' : ''}" onclick="selectDay('${dayName}')">
+                    <div class="day-name">${dayName}</div>
+                    <div class="day-date">${dayDate}</div>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('weekDays').innerHTML = weekDaysHtml;
+    }
+
+    // Select day
+    function selectDay(dayName) {
+        // Update active state
+        document.querySelectorAll('.week-day').forEach(day => {
+            day.classList.remove('active');
+        });
+        event.target.closest('.week-day').classList.add('active');
+
+        renderSchedule(dayName);
+    }
+
+    // Render schedule for selected day
+    function renderSchedule(dayName) {
+        const daySchedules = schedules.filter(s => s.day === dayName);
+
+        if (daySchedules.length === 0) {
+            document.getElementById('scheduleList').innerHTML = `
+                <div class="empty-schedule">
+                    <div class="empty-schedule-icon">📅</div>
+                    <h3>No schedules for ${dayName}</h3>
+                    <p>Click the "Add Schedule" button to create a new schedule.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const scheduleHtml = daySchedules.map(schedule => {
+            let statusClass = '';
+            let statusText = '';
+
+            switch(schedule.status) {
+                case 'completed':
+                    statusClass = 'status-completed';
+                    statusText = 'Completed';
+                    break;
+                case 'pending':
+                    statusClass = 'status-pending';
+                    statusText = 'Pending';
+                    break;
+                default:
+                    statusClass = 'status-upcoming';
+                    statusText = 'Upcoming';
+            }
+
+            return `
+                <div class="schedule-item">
+                    <div class="schedule-time">${schedule.time}</div>
+                    <div class="schedule-info">
+                        <div class="schedule-title">${schedule.title}</div>
+                        <div class="schedule-desc">${schedule.desc}</div>
+                    </div>
+                    <span class="schedule-status ${statusClass}">${statusText}</span>
+                    <button class="btn-outline" onclick="deleteSchedule('${schedule.title}', '${schedule.day}')" style="padding: 5px 12px;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('scheduleList').innerHTML = scheduleHtml;
+    }
+
+    // Previous week
+    function previousWeek() {
+        weekOffset--;
+        renderWeekDays();
+        // Get current active day or default to Monday
+        const activeDay = document.querySelector('.week-day.active .day-name')?.innerText || 'Monday';
+        renderSchedule(activeDay);
+    }
+
+    // Next week
+    function nextWeek() {
+        weekOffset++;
+        renderWeekDays();
+        const activeDay = document.querySelector('.week-day.active .day-name')?.innerText || 'Monday';
+        renderSchedule(activeDay);
+    }
+
+    // Open add schedule modal
+    function openAddScheduleModal() {
+        document.getElementById('addScheduleModal').style.display = 'flex';
+    }
+
+    // Close add schedule modal
+    function closeAddScheduleModal() {
+        document.getElementById('addScheduleModal').style.display = 'none';
+        document.getElementById('addScheduleForm').reset();
+    }
+
+    // Add schedule
+    function addSchedule(event) {
+        event.preventDefault();
+
+        const title = document.getElementById('scheduleTitle').value;
+        const desc = document.getElementById('scheduleDesc').value;
+        const day = document.getElementById('scheduleDay').value;
+        const time = document.getElementById('scheduleTime').value;
+
+        // Convert 24h to 12h format
+        const time12h = new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+        schedules.push({
+            day: day,
+            time: time12h,
+            title: title,
+            desc: desc,
+            status: 'upcoming'
+        });
+
+        alert(`✅ Schedule added for ${day} at ${time12h}`);
+        closeAddScheduleModal();
+
+        // Refresh current view
+        const activeDay = document.querySelector('.week-day.active .day-name')?.innerText || 'Monday';
+        renderSchedule(activeDay);
+    }
+
+    // Delete schedule
+    function deleteSchedule(title, day) {
+        if (confirm(`Delete "${title}" from your schedule?`)) {
+            const index = schedules.findIndex(s => s.title === title && s.day === day);
+            if (index !== -1) {
+                schedules.splice(index, 1);
+                alert(`🗑️ "${title}" has been removed from your schedule.`);
+                renderSchedule(day);
+            }
+        }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        renderWeekDays();
+        renderSchedule('Monday');
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('addScheduleModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAddScheduleModal();
+        }
+    });
 </script>

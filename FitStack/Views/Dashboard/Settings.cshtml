@@ -6,151 +6,634 @@
 <style>
     .settings-container {
         max-width: 800px;
+        margin: 0 auto;
     }
 
     .settings-section {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 25px;
         margin-bottom: 25px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
     }
+
+        .settings-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
 
     .section-title {
         font-size: 20px;
         font-weight: 600;
         margin-bottom: 20px;
         padding-bottom: 15px;
-        border-bottom: 2px solid #F3F4F6;
+        border-bottom: 2px solid var(--border-color);
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
+
+        .section-title i {
+            color: var(--primary);
+        }
 
     .setting-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 15px 0;
-        border-bottom: 1px solid #F3F4F6;
+        border-bottom: 1px solid var(--border-color);
+        flex-wrap: wrap;
+        gap: 15px;
     }
 
         .setting-item:last-child {
             border-bottom: none;
         }
 
+    .setting-info {
+        flex: 1;
+    }
+
     .setting-label {
-        font-weight: 500;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 5px;
     }
 
     .setting-desc {
         font-size: 14px;
-        color: #6B7280;
-        margin-top: 5px;
+        color: var(--text-tertiary);
     }
 
+    /* Toggle Switch */
     .toggle-switch {
-        width: 50px;
-        height: 26px;
-        background: #E5E7EB;
+        width: 52px;
+        height: 28px;
+        background: var(--border-color);
         border-radius: 30px;
         cursor: pointer;
         position: relative;
-        transition: 0.3s;
+        transition: all 0.3s;
+        flex-shrink: 0;
     }
 
         .toggle-switch.active {
-            background: #4F46E5;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         }
 
         .toggle-switch:after {
             content: '';
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             background: white;
             border-radius: 50%;
             position: absolute;
             top: 2px;
-            left: 3px;
-            transition: 0.3s;
+            left: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
 
         .toggle-switch.active:after {
-            left: 25px;
+            left: 26px;
         }
+
+    /* Buttons */
+    .btn-setting {
+        padding: 8px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        border: none;
+        font-size: 14px;
+    }
+
+    .btn-primary-setting {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+    }
+
+        .btn-primary-setting:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+    .btn-danger-setting {
+        background: var(--danger);
+        color: white;
+    }
+
+        .btn-danger-setting:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+        }
+
+    /* Language Selector */
+    .language-select {
+        padding: 10px 15px;
+        border-radius: 10px;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    /* Theme Preview */
+    .theme-preview {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .theme-option {
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+    }
+
+        .theme-option.light {
+            background: #FFFFFF;
+            color: #1F2937;
+            border-color: var(--border-color);
+        }
+
+        .theme-option.dark {
+            background: #1F2937;
+            color: #FFFFFF;
+            border-color: var(--border-color);
+        }
+
+        .theme-option.system {
+            background: linear-gradient(135deg, #FFFFFF 50%, #1F2937 50%);
+            color: #1F2937;
+            border-color: var(--border-color);
+        }
+
+        .theme-option.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .settings-container {
+            max-width: 100%;
+        }
+
+        .settings-section {
+            padding: 20px;
+        }
+
+        .setting-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .toggle-switch {
+            align-self: flex-start;
+        }
+
+        .theme-preview {
+            flex-wrap: wrap;
+        }
+    }
 </style>
 
 <div class="settings-container">
+    <!-- Appearance Settings -->
     <div class="settings-section">
-        <div class="section-title">Notifications</div>
+        <div class="section-title">
+            <i class="fas fa-palette"></i>
+            Appearance
+        </div>
         <div class="setting-item">
-            <div>
+            <div class="setting-info">
+                <div class="setting-label">Theme Mode</div>
+                <div class="setting-desc">Choose your preferred theme appearance</div>
+            </div>
+            <div class="theme-preview">
+                <div class="theme-option light" onclick="setTheme('light')">
+                    <i class="fas fa-sun"></i> Light
+                </div>
+                <div class="theme-option dark" onclick="setTheme('dark')">
+                    <i class="fas fa-moon"></i> Dark
+                </div>
+                <div class="theme-option system" onclick="setTheme('system')">
+                    <i class="fas fa-desktop"></i> System
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Settings -->
+    <div class="settings-section">
+        <div class="section-title">
+            <i class="fas fa-bell"></i>
+            Notifications
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
                 <div class="setting-label">Push Notifications</div>
                 <div class="setting-desc">Receive workout reminders and updates</div>
             </div>
-            <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
+            <div class="toggle-switch active" id="pushNotifications" onclick="toggleSetting(this, 'pushNotifications')"></div>
         </div>
         <div class="setting-item">
-            <div>
+            <div class="setting-info">
                 <div class="setting-label">Email Notifications</div>
                 <div class="setting-desc">Weekly progress reports and tips</div>
             </div>
-            <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
+            <div class="toggle-switch active" id="emailNotifications" onclick="toggleSetting(this, 'emailNotifications')"></div>
         </div>
         <div class="setting-item">
-            <div>
+            <div class="setting-info">
                 <div class="setting-label">SMS Notifications</div>
                 <div class="setting-desc">OTP and important alerts</div>
             </div>
-            <div class="toggle-switch" onclick="toggleSetting(this)"></div>
+            <div class="toggle-switch" id="smsNotifications" onclick="toggleSetting(this, 'smsNotifications')"></div>
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Workout Reminders</div>
+                <div class="setting-desc">Daily reminders for scheduled workouts</div>
+            </div>
+            <div class="toggle-switch active" id="workoutReminders" onclick="toggleSetting(this, 'workoutReminders')"></div>
         </div>
     </div>
 
+    <!-- Privacy Settings -->
     <div class="settings-section">
-        <div class="section-title">Privacy</div>
+        <div class="section-title">
+            <i class="fas fa-lock"></i>
+            Privacy & Security
+        </div>
         <div class="setting-item">
-            <div>
+            <div class="setting-info">
                 <div class="setting-label">Private Profile</div>
                 <div class="setting-desc">Only followers can see your activity</div>
             </div>
-            <div class="toggle-switch" onclick="toggleSetting(this)"></div>
+            <div class="toggle-switch" id="privateProfile" onclick="toggleSetting(this, 'privateProfile')"></div>
         </div>
         <div class="setting-item">
-            <div>
+            <div class="setting-info">
                 <div class="setting-label">Share Progress</div>
                 <div class="setting-desc">Allow sharing achievements on social media</div>
             </div>
-            <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
+            <div class="toggle-switch active" id="shareProgress" onclick="toggleSetting(this, 'shareProgress')"></div>
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Show Online Status</div>
+                <div class="setting-desc">Let others see when you're active</div>
+            </div>
+            <div class="toggle-switch active" id="onlineStatus" onclick="toggleSetting(this, 'onlineStatus')"></div>
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Two-Factor Authentication</div>
+                <div class="setting-desc">Add an extra layer of security</div>
+            </div>
+            <button class="btn-setting btn-primary-setting" onclick="setup2FA()">
+                <i class="fas fa-shield-alt"></i> Setup 2FA
+            </button>
         </div>
     </div>
 
+    <!-- Preferences -->
     <div class="settings-section">
-        <div class="section-title">Account</div>
+        <div class="section-title">
+            <i class="fas fa-sliders-h"></i>
+            Preferences
+        </div>
         <div class="setting-item">
-            <div>
+            <div class="setting-info">
+                <div class="setting-label">Language</div>
+                <div class="setting-desc">Choose your preferred language</div>
+            </div>
+            <select class="language-select" id="languageSelect" onchange="changeLanguage()">
+                <option value="en">🇺🇸 English</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="ja">🇯🇵 日本語</option>
+            </select>
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Unit System</div>
+                <div class="setting-desc">Metric (kg, km) or Imperial (lbs, miles)</div>
+            </div>
+            <select class="language-select" id="unitSelect" onchange="changeUnit()">
+                <option value="metric">📏 Metric (kg, km)</option>
+                <option value="imperial">⚖️ Imperial (lbs, miles)</option>
+            </select>
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Data Export</div>
+                <div class="setting-desc">Download all your fitness data</div>
+            </div>
+            <button class="btn-setting btn-primary-setting" onclick="exportData()">
+                <i class="fas fa-download"></i> Export Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Account Settings -->
+    <div class="settings-section">
+        <div class="section-title">
+            <i class="fas fa-user-cog"></i>
+            Account
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
                 <div class="setting-label">Change Password</div>
                 <div class="setting-desc">Update your account password</div>
             </div>
-            <button class="btn-save" onclick="changePassword()">Change</button>
+            <button class="btn-setting btn-primary-setting" onclick="changePassword()">
+                <i class="fas fa-key"></i> Change
+            </button>
         </div>
         <div class="setting-item">
-            <div>
+            <div class="setting-info">
+                <div class="setting-label">Email Preferences</div>
+                <div class="setting-desc">Manage your email subscription settings</div>
+            </div>
+            <button class="btn-setting btn-primary-setting" onclick="emailPreferences()">
+                <i class="fas fa-envelope"></i> Manage
+            </button>
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
                 <div class="setting-label">Delete Account</div>
                 <div class="setting-desc">Permanently delete your account and data</div>
             </div>
-            <button class="btn-save" style="background: #EF4444;" onclick="deleteAccount()">Delete</button>
+            <button class="btn-setting btn-danger-setting" onclick="deleteAccount()">
+                <i class="fas fa-trash-alt"></i> Delete Account
+            </button>
+        </div>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Session Management</div>
+                <div class="setting-desc">View and manage active sessions</div>
+            </div>
+            <button class="btn-setting btn-primary-setting" onclick="manageSessions()">
+                <i class="fas fa-desktop"></i> Manage Sessions
+            </button>
         </div>
     </div>
 </div>
 
 <script>
-    function toggleSetting(element) {
-        element.classList.toggle('active');
+    // Load saved settings from localStorage
+    function loadSettings() {
+        // Load notification settings
+        const pushNotifications = localStorage.getItem('pushNotifications');
+        if (pushNotifications !== null) {
+            const element = document.getElementById('pushNotifications');
+            if (pushNotifications === 'true') {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        }
+
+        const emailNotifications = localStorage.getItem('emailNotifications');
+        if (emailNotifications !== null) {
+            const element = document.getElementById('emailNotifications');
+            if (emailNotifications === 'true') {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        }
+
+        const smsNotifications = localStorage.getItem('smsNotifications');
+        if (smsNotifications !== null) {
+            const element = document.getElementById('smsNotifications');
+            if (smsNotifications === 'true') {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        }
+
+        const workoutReminders = localStorage.getItem('workoutReminders');
+        if (workoutReminders !== null) {
+            const element = document.getElementById('workoutReminders');
+            if (workoutReminders === 'true') {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        }
+
+        // Load privacy settings
+        const privateProfile = localStorage.getItem('privateProfile');
+        if (privateProfile !== null) {
+            const element = document.getElementById('privateProfile');
+            if (privateProfile === 'true') {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        }
+
+        const shareProgress = localStorage.getItem('shareProgress');
+        if (shareProgress !== null) {
+            const element = document.getElementById('shareProgress');
+            if (shareProgress === 'true') {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        }
+
+        const onlineStatus = localStorage.getItem('onlineStatus');
+        if (onlineStatus !== null) {
+            const element = document.getElementById('onlineStatus');
+            if (onlineStatus === 'true') {
+                element.classList.add('active');
+            } else {
+                element.classList.remove('active');
+            }
+        }
+
+        // Load language preference
+        const language = localStorage.getItem('language');
+        if (language) {
+            document.getElementById('languageSelect').value = language;
+        }
+
+        // Load unit preference
+        const unit = localStorage.getItem('unit');
+        if (unit) {
+            document.getElementById('unitSelect').value = unit;
+        }
+
+        // Load theme preference
+        const theme = localStorage.getItem('theme');
+        if (theme) {
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.classList.remove('active');
+                if (opt.classList.contains(theme)) {
+                    opt.classList.add('active');
+                }
+            });
+        }
     }
 
+    // Toggle setting
+    function toggleSetting(element, settingName) {
+        element.classList.toggle('active');
+        const isActive = element.classList.contains('active');
+        localStorage.setItem(settingName, isActive);
+
+        // Show feedback
+        const settingLabel = element.closest('.setting-item').querySelector('.setting-label').innerText;
+        const status = isActive ? 'enabled' : 'disabled';
+        showToast(`${settingLabel} ${status}`);
+    }
+
+    // Theme management
+    function setTheme(theme) {
+        document.querySelectorAll('.theme-option').forEach(opt => {
+            opt.classList.remove('active');
+        });
+        event.target.closest('.theme-option').classList.add('active');
+
+        if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark');
+        } else if (theme === 'light') {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('theme', 'light');
+        } else if (theme === 'system') {
+            const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            localStorage.setItem('theme', 'system');
+        }
+
+        showToast(`Theme changed to ${theme} mode`);
+    }
+
+    // Change language
+    function changeLanguage() {
+        const language = document.getElementById('languageSelect').value;
+        localStorage.setItem('language', language);
+        showToast(`Language changed to ${language.toUpperCase()}`);
+    }
+
+    // Change unit system
+    function changeUnit() {
+        const unit = document.getElementById('unitSelect').value;
+        localStorage.setItem('unit', unit);
+        showToast(`Unit system changed to ${unit === 'metric' ? 'Metric' : 'Imperial'}`);
+    }
+
+    // Account actions
     function changePassword() {
-        alert("Password change functionality coming soon!");
+        // You can implement a password change modal here
+        alert("🔐 Password change functionality will open a secure modal.");
+    }
+
+    function emailPreferences() {
+        alert("📧 Email preferences settings coming soon!");
+    }
+
+    function setup2FA() {
+        alert("🔒 Two-Factor Authentication setup will be available soon.");
+    }
+
+    function exportData() {
+        alert("📊 Your data export is being prepared. You will receive an email when ready.");
+    }
+
+    function manageSessions() {
+        alert("💻 Active sessions management coming soon!");
     }
 
     function deleteAccount() {
-        if (confirm("Are you sure you want to delete your account? This action cannot be undone!")) {
-            alert("Account deletion request submitted.");
+        if (confirm("⚠️ WARNING: This action is irreversible!\n\nAre you absolutely sure you want to delete your account? All your data, progress, and achievements will be permanently lost.")) {
+            if (confirm("Please confirm one more time: Type 'DELETE' to confirm")) {
+                const confirmation = prompt("Type 'DELETE' to confirm account deletion:");
+                if (confirmation === 'DELETE') {
+                    alert("Your account has been scheduled for deletion. We're sad to see you go! 😢");
+                    // Redirect to logout or home page
+                    // window.location.href = '/auth/logout';
+                } else {
+                    alert("Account deletion cancelled.");
+                }
+            }
         }
     }
+
+    // Toast notification
+    function showToast(message) {
+        // Create toast element if it doesn't exist
+        let toast = document.getElementById('toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: var(--bg-secondary);
+                color: var(--text-primary);
+                padding: 12px 20px;
+                border-radius: 12px;
+                font-size: 14px;
+                z-index: 9999;
+                box-shadow: var(--shadow-md);
+                border: 1px solid var(--border-color);
+                animation: slideInRight 0.3s ease;
+                transition: opacity 0.3s;
+            `;
+            document.body.appendChild(toast);
+
+            // Add animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @@keyframes slideInRight {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        toast.textContent = message;
+        toast.style.display = 'block';
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.style.display = 'none';
+                toast.style.opacity = '1';
+            }, 300);
+        }, 2000);
+    }
+
+    // Initialize settings on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSettings();
+    });
 </script>

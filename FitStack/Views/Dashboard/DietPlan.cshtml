@@ -13,21 +13,28 @@
     }
 
     .nutrition-card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 20px;
         text-align: center;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s;
     }
+
+        .nutrition-card:hover {
+            transform: translateY(-3px);
+        }
 
     .nutrition-value {
         font-size: 36px;
         font-weight: 700;
-        color: #4F46E5;
+        color: var(--primary);
     }
 
     .nutrition-label {
-        color: #6B7280;
+        color: var(--text-tertiary);
         margin-top: 5px;
+        font-size: 14px;
     }
 
     .meals-container {
@@ -37,11 +44,18 @@
     }
 
     .meal-card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s;
+        border: 1px solid var(--border-color);
     }
+
+        .meal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
 
     .meal-header {
         padding: 20px;
@@ -67,17 +81,132 @@
     .meal-item {
         display: flex;
         justify-content: space-between;
-        padding: 10px 0;
-        border-bottom: 1px solid #F3F4F6;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
     }
 
         .meal-item:last-child {
             border-bottom: none;
         }
 
+        .meal-item span:first-child {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
     .calories {
-        color: #6B7280;
+        color: var(--text-tertiary);
         font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* Dark mode specific adjustments for meal headers */
+    body.dark-mode .meal-header {
+        background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    }
+
+    body.dark-mode .meal-card:nth-child(2) .meal-header {
+        background: linear-gradient(135deg, #D97706, #B45309);
+    }
+
+    body.dark-mode .meal-card:nth-child(3) .meal-header {
+        background: linear-gradient(135deg, #059669, #047857);
+    }
+
+    /* Add Water Intake Section */
+    .water-intake {
+        margin-top: 30px;
+        background: var(--bg-secondary);
+        border-radius: 20px;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+    }
+
+    .water-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .water-glasses {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    .glass {
+        width: 60px;
+        height: 80px;
+        background: var(--bg-tertiary);
+        border-radius: 0 0 30px 30px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 10px;
+        border: 2px solid var(--border-color);
+        color: var(--text-tertiary);
+    }
+
+        .glass.active {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+            border-color: #3B82F6;
+            transform: scale(1.05);
+        }
+
+        .glass:hover {
+            transform: scale(1.05);
+        }
+
+    /* Meal swap buttons */
+    .meal-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .swap-btn {
+        flex: 1;
+        padding: 8px;
+        background: var(--bg-tertiary);
+        border: none;
+        border-radius: 10px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 13px;
+    }
+
+        .swap-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .nutrition-summary {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .meals-container {
+            grid-template-columns: 1fr;
+        }
+
+        .glass {
+            width: 50px;
+            height: 70px;
+        }
     }
 </style>
 
@@ -97,6 +226,7 @@
 </div>
 
 <div class="meals-container">
+    <!-- Breakfast -->
     <div class="meal-card">
         <div class="meal-header">
             <div class="meal-title">🌅 Breakfast</div>
@@ -111,9 +241,14 @@
                 <span>Green Tea</span>
                 <span class="calories">0 cal</span>
             </div>
+            <div class="meal-actions">
+                <button class="swap-btn" onclick="swapMeal('breakfast')">🔄 Swap Meal</button>
+                <button class="swap-btn" onclick="logMeal('breakfast')">✅ Log Meal</button>
+            </div>
         </div>
     </div>
 
+    <!-- Lunch -->
     <div class="meal-card">
         <div class="meal-header" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
             <div class="meal-title">🌞 Lunch</div>
@@ -128,9 +263,14 @@
                 <span>Quinoa</span>
                 <span class="calories">120 cal</span>
             </div>
+            <div class="meal-actions">
+                <button class="swap-btn" onclick="swapMeal('lunch')">🔄 Swap Meal</button>
+                <button class="swap-btn" onclick="logMeal('lunch')">✅ Log Meal</button>
+            </div>
         </div>
     </div>
 
+    <!-- Dinner -->
     <div class="meal-card">
         <div class="meal-header" style="background: linear-gradient(135deg, #10B981, #059669);">
             <div class="meal-title">🌙 Dinner</div>
@@ -145,6 +285,92 @@
                 <span>Sweet Potato</span>
                 <span class="calories">180 cal</span>
             </div>
+            <div class="meal-actions">
+                <button class="swap-btn" onclick="swapMeal('dinner')">🔄 Swap Meal</button>
+                <button class="swap-btn" onclick="logMeal('dinner')">✅ Log Meal</button>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Water Intake Tracker -->
+<div class="water-intake">
+    <div class="water-title">
+        <span>💧</span> Water Intake Tracker
+        <span style="font-size: 14px; color: var(--text-tertiary);">Goal: 8 glasses</span>
+    </div>
+    <div class="water-glasses" id="waterGlasses">
+        <div class="glass" data-glass="1" onclick="toggleWaterGlass(1)">1</div>
+        <div class="glass" data-glass="2" onclick="toggleWaterGlass(2)">2</div>
+        <div class="glass" data-glass="3" onclick="toggleWaterGlass(3)">3</div>
+        <div class="glass" data-glass="4" onclick="toggleWaterGlass(4)">4</div>
+        <div class="glass" data-glass="5" onclick="toggleWaterGlass(5)">5</div>
+        <div class="glass" data-glass="6" onclick="toggleWaterGlass(6)">6</div>
+        <div class="glass" data-glass="7" onclick="toggleWaterGlass(7)">7</div>
+        <div class="glass" data-glass="8" onclick="toggleWaterGlass(8)">8</div>
+    </div>
+    <div style="margin-top: 15px; text-align: center;">
+        <span id="waterCount">0</span>/8 glasses consumed
+    </div>
+</div>
+
+<script>
+    // Water intake tracking
+    let waterGlasses = 0;
+
+    function toggleWaterGlass(glassNumber) {
+        const glass = document.querySelector(`.glass[data-glass='${glassNumber}']`);
+
+        if (glass.classList.contains('active')) {
+            glass.classList.remove('active');
+            waterGlasses--;
+        } else {
+            glass.classList.add('active');
+            waterGlasses++;
+        }
+
+        document.getElementById('waterCount').innerText = waterGlasses;
+
+        // Save to localStorage
+        localStorage.setItem('waterIntake', waterGlasses);
+
+        // Animation feedback
+        if (waterGlasses === 8) {
+            alert("🎉 Great job! You've reached your water intake goal for today!");
+        }
+    }
+
+    // Load saved water intake
+    function loadWaterIntake() {
+        const saved = localStorage.getItem('waterIntake');
+        if (saved) {
+            waterGlasses = parseInt(saved);
+            for (let i = 1; i <= waterGlasses; i++) {
+                const glass = document.querySelector(`.glass[data-glass='${i}']`);
+                if (glass) glass.classList.add('active');
+            }
+            document.getElementById('waterCount').innerText = waterGlasses;
+        }
+    }
+
+    function swapMeal(meal) {
+        alert(`🍽️ Swap meal feature for ${meal} coming soon! You'll get alternative meal options.`);
+    }
+
+    function logMeal(meal) {
+        alert(`✅ ${meal} has been logged! Keep track of your nutrition.`);
+    }
+
+    // Reset daily intake (optional)
+    function resetDailyIntake() {
+        if (confirm('Reset all meal logs and water intake for today?')) {
+            localStorage.removeItem('waterIntake');
+            location.reload();
+        }
+    }
+
+    // Load saved data on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadWaterIntake();
+    });
+</script>

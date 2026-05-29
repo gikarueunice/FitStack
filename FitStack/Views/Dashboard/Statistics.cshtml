@@ -10,20 +10,50 @@
         gap: 20px;
         margin-bottom: 30px;
     }
+
     .stat-overview-card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 20px;
         text-align: center;
-        transition: transform 0.3s;
+        transition: all 0.3s;
+        border: 1px solid var(--border-color);
     }
-    .stat-overview-card:hover { transform: translateY(-5px); }
-    .stat-icon { font-size: 40px; margin-bottom: 10px; }
-    .stat-value { font-size: 32px; font-weight: 700; color: #4F46E5; }
-    .stat-label { color: #6B7280; font-size: 14px; margin-top: 5px; }
-    .stat-change { font-size: 12px; margin-top: 8px; }
-    .positive { color: #10B981; }
-    .negative { color: #EF4444; }
+
+        .stat-overview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+    .stat-icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+
+    .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .stat-label {
+        color: var(--text-tertiary);
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .stat-change {
+        font-size: 12px;
+        margin-top: 8px;
+    }
+
+    .positive {
+        color: var(--secondary);
+    }
+
+    .negative {
+        color: var(--danger);
+    }
 
     .stats-grid {
         display: grid;
@@ -31,12 +61,21 @@
         gap: 25px;
         margin-bottom: 25px;
     }
+
     .stat-card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 25px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
     }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
     .card-title {
         font-size: 18px;
         font-weight: 600;
@@ -44,63 +83,164 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        color: var(--text-primary);
     }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
     .period-selector {
         display: flex;
         gap: 10px;
         margin-bottom: 20px;
+        flex-wrap: wrap;
     }
+
     .period-btn {
         padding: 8px 16px;
-        background: #F3F4F6;
-        border: none;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
         border-radius: 10px;
         cursor: pointer;
         transition: all 0.3s;
+        color: var(--text-secondary);
     }
-    .period-btn.active {
-        background: #4F46E5;
-        color: white;
+
+        .period-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .period-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+    canvas {
+        max-height: 300px;
+        width: 100%;
     }
-    canvas { max-height: 300px; width: 100%; }
+
     .stat-details {
         margin-top: 20px;
         padding-top: 20px;
-        border-top: 1px solid #F3F4F6;
+        border-top: 1px solid var(--border-color);
     }
+
     .detail-item {
         display: flex;
         justify-content: space-between;
         padding: 10px 0;
     }
-    .detail-label { color: #6B7280; }
-    .detail-value { font-weight: 600; }
+
+    .detail-label {
+        color: var(--text-tertiary);
+    }
+
+    .detail-value {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    /* Table Styles */
+    .stats-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .stats-table th {
+            text-align: left;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .stats-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .stats-table tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+    /* Export Button */
+    .export-btn {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        margin-bottom: 20px;
+    }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+    /* Responsive */
+    @@media (max-width: 1024px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-overview {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .stats-overview {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
 </style>
+
+<!-- Export Button -->
+<div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+    <button class="export-btn" onclick="exportStatistics()">
+        <i class="fas fa-download"></i> Export Statistics
+    </button>
+</div>
 
 <div class="stats-overview">
     <div class="stat-overview-card">
         <div class="stat-icon">🏋️</div>
         <div class="stat-value">128</div>
         <div class="stat-label">Total Workouts</div>
-        <div class="stat-change positive">↑ 12% from last month</div>
+        <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 12% from last month</div>
     </div>
     <div class="stat-overview-card">
         <div class="stat-icon">🔥</div>
         <div class="stat-value">12,450</div>
         <div class="stat-label">Calories Burned</div>
-        <div class="stat-change positive">↑ 8% from last month</div>
+        <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 8% from last month</div>
     </div>
     <div class="stat-overview-card">
         <div class="stat-icon">⏱️</div>
         <div class="stat-value">86</div>
         <div class="stat-label">Total Hours</div>
-        <div class="stat-change positive">↑ 15% from last month</div>
+        <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 15% from last month</div>
     </div>
     <div class="stat-overview-card">
         <div class="stat-icon">📅</div>
         <div class="stat-value">45</div>
         <div class="stat-label">Day Streak</div>
-        <div class="stat-change positive">↑ 5 days</div>
+        <div class="stat-change positive"><i class="fas fa-arrow-up"></i> 5 days</div>
     </div>
 </div>
 
@@ -108,7 +248,7 @@
     <!-- Workout Frequency Chart -->
     <div class="stat-card">
         <div class="card-title">
-            <span>📊</span> Workout Frequency
+            <i class="fas fa-chart-bar"></i> Workout Frequency
         </div>
         <div class="period-selector">
             <button class="period-btn active" onclick="changeChart('weekly', this)">Weekly</button>
@@ -121,7 +261,7 @@
     <!-- Calories Burned Chart -->
     <div class="stat-card">
         <div class="card-title">
-            <span>🔥</span> Calories Burned Trend
+            <i class="fas fa-fire"></i> Calories Burned Trend
         </div>
         <canvas id="caloriesChart"></canvas>
         <div class="stat-details">
@@ -139,7 +279,7 @@
     <!-- Workout Distribution -->
     <div class="stat-card">
         <div class="card-title">
-            <span>🥧</span> Workout Distribution
+            <i class="fas fa-chart-pie"></i> Workout Distribution
         </div>
         <canvas id="distributionChart"></canvas>
         <div class="stat-details">
@@ -153,7 +293,7 @@
     <!-- Progress Over Time -->
     <div class="stat-card">
         <div class="card-title">
-            <span>📈</span> Weight Progress
+            <i class="fas fa-chart-line"></i> Weight Progress
         </div>
         <canvas id="weightProgressChart"></canvas>
         <div class="stat-details">
@@ -167,54 +307,55 @@
             </div>
             <div class="detail-item">
                 <span class="detail-label">Total lost</span>
-                <span class="detail-value positive">-4 kg 🎉</span>
+                <span class="detail-value positive"><i class="fas fa-trophy"></i> -4 kg 🎉</span>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Detailed Statistics Table -->
-<div class="stat-card" style="grid-column: span 2;">
+<div class="stat-card">
     <div class="card-title">
-        <span>📋</span> Monthly Summary
+        <i class="fas fa-table"></i> Monthly Summary
     </div>
-    <table style="width: 100%; border-collapse: collapse;">
+    <table class="stats-table">
         <thead>
-            <tr><th style="text-align: left; padding: 12px; background: #F3F4F6;">Month</th>
-                <th style="text-align: center; padding: 12px; background: #F3F4F6;">Workouts</th>
-                <th style="text-align: center; padding: 12px; background: #F3F4F6;">Calories</th>
-                <th style="text-align: center; padding: 12px; background: #F3F4F6;">Hours</th>
-                <th style="text-align: center; padding: 12px; background: #F3F4F6;">Progress</th>
+            <tr>
+                <th>Month</th>
+                <th style="text-align: center;">Workouts</th>
+                <th style="text-align: center;">Calories</th>
+                <th style="text-align: center;">Hours</th>
+                <th style="text-align: center;">Progress</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #F3F4F6;">January</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;">22</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;">2,150</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;">14.5</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;"><span class="positive">↑ 5%</span></td>
+                <td>January</td>
+                <td style="text-align: center;">22</td>
+                <td style="text-align: center;">2,150</td>
+                <td style="text-align: center;">14.5</td>
+                <td style="text-align: center;"><span class="positive"><i class="fas fa-arrow-up"></i> 5%</span></td>
             </tr>
             <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #F3F4F6;">February</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;">24</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;">2,450</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;">16.2</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;"><span class="positive">↑ 8%</span></td>
+                <td>February</td>
+                <td style="text-align: center;">24</td>
+                <td style="text-align: center;">2,450</td>
+                <td style="text-align: center;">16.2</td>
+                <td style="text-align: center;"><span class="positive"><i class="fas fa-arrow-up"></i> 8%</span></td>
             </tr>
             <tr>
-                <td style="padding: 12px; border-bottom: 1px solid #F3F4F6;">March</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;">28</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;">2,890</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;">18.5</td>
-                <td style="text-align: center; padding: 12px; border-bottom: 1px solid #F3F4F6;"><span class="positive">↑ 12%</span></td>
+                <td>March</td>
+                <td style="text-align: center;">28</td>
+                <td style="text-align: center;">2,890</td>
+                <td style="text-align: center;">18.5</td>
+                <td style="text-align: center;"><span class="positive"><i class="fas fa-arrow-up"></i> 12%</span></td>
             </tr>
             <tr>
-                <td style="padding: 12px;">April</td>
-                <td style="text-align: center; padding: 12px;">30</td>
-                <td style="text-align: center; padding: 12px;">3,120</td>
-                <td style="text-align: center; padding: 12px;">20.1</td>
-                <td style="text-align: center; padding: 12px;"><span class="positive">↑ 15%</span></td>
+                <td>April</td>
+                <td style="text-align: center;">30</td>
+                <td style="text-align: center;">3,120</td>
+                <td style="text-align: center;">20.1</td>
+                <td style="text-align: center;"><span class="positive"><i class="fas fa-arrow-up"></i> 15%</span></td>
             </tr>
         </tbody>
     </table>
@@ -225,118 +366,249 @@
     let currentChart = 'weekly';
     let workoutChart, caloriesChart, distributionChart, weightChart;
 
-    // Initialize all charts
-    document.addEventListener('DOMContentLoaded', function() {
-        initWorkoutChart();
-        initCaloriesChart();
-        initDistributionChart();
-        initWeightChart();
-    });
+    // Get theme-aware colors for charts
+    function getChartColors() {
+    const isDark = document.body.classList.contains('dark-mode');
+    return {
+    textColor: isDark ? '#F9FAFB' : '#1F2937',
+    gridColor: isDark ? '#374151' : '#E5E7EB',
+    workoutColor: '#4F46E5',
+    caloriesColor: '#F59E0B',
+    weightColor: '#10B981'
+    };
+    }
 
+    // Update chart colors based on theme
+    function updateChartColors() {
+    const colors = getChartColors();
+
+    if (workoutChart) {
+    workoutChart.options.scales.y.ticks.color = colors.textColor;
+    workoutChart.options.scales.x.ticks.color = colors.textColor;
+    workoutChart.options.scales.y.grid.color = colors.gridColor;
+    workoutChart.options.scales.x.grid.color = colors.gridColor;
+    workoutChart.options.plugins.legend.labels.color = colors.textColor;
+    workoutChart.update();
+    }
+
+    if (caloriesChart) {
+    caloriesChart.options.scales.y.ticks.color = colors.textColor;
+    caloriesChart.options.scales.x.ticks.color = colors.textColor;
+    caloriesChart.options.scales.y.grid.color = colors.gridColor;
+    caloriesChart.options.scales.x.grid.color = colors.gridColor;
+    caloriesChart.options.plugins.legend.labels.color = colors.textColor;
+    caloriesChart.update();
+    }
+
+    if (distributionChart) {
+    distributionChart.options.plugins.legend.labels.color = colors.textColor;
+    distributionChart.update();
+    }
+
+    if (weightChart) {
+    weightChart.options.scales.y.ticks.color = colors.textColor;
+    weightChart.options.scales.x.ticks.color = colors.textColor;
+    weightChart.options.scales.y.grid.color = colors.gridColor;
+    weightChart.options.scales.x.grid.color = colors.gridColor;
+    weightChart.options.plugins.legend.labels.color = colors.textColor;
+    weightChart.update();
+    }
+    }
+
+    // Initialize all charts
     function initWorkoutChart() {
-        const ctx = document.getElementById('workoutFrequencyChart').getContext('2d');
-        workoutChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Workouts',
-                    data: [4, 5, 6, 4, 5, 3, 2],
-                    backgroundColor: '#4F46E5',
-                    borderRadius: 10
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: { legend: { position: 'bottom' } }
-            }
-        });
+    const ctx = document.getElementById('workoutFrequencyChart').getContext('2d');
+    const colors = getChartColors();
+
+    workoutChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [{
+    label: 'Workouts',
+    data: [4, 5, 6, 4, 5, 3, 2],
+    backgroundColor: colors.workoutColor,
+    borderRadius: 10
+    }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+    legend: {
+    position: 'bottom',
+    labels: { color: colors.textColor }
+    }
+    },
+    scales: {
+    y: {
+    ticks: { color: colors.textColor },
+    grid: { color: colors.gridColor }
+    },
+    x: {
+    ticks: { color: colors.textColor },
+    grid: { color: colors.gridColor }
+    }
+    }
+    }
+    });
     }
 
     function initCaloriesChart() {
-        const ctx = document.getElementById('caloriesChart').getContext('2d');
-        caloriesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                datasets: [{
-                    label: 'Calories Burned',
-                    data: [2150, 2450, 2890, 3120],
-                    borderColor: '#F59E0B',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true
-            }
-        });
+    const ctx = document.getElementById('caloriesChart').getContext('2d');
+    const colors = getChartColors();
+
+    caloriesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    datasets: [{
+    label: 'Calories Burned',
+    data: [2150, 2450, 2890, 3120],
+    borderColor: colors.caloriesColor,
+    backgroundColor: `${colors.caloriesColor}20`,
+    fill: true,
+    tension: 0.4,
+    pointBackgroundColor: colors.caloriesColor,
+    pointBorderColor: colors.caloriesColor
+    }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+    legend: {
+    labels: { color: colors.textColor }
+    }
+    },
+    scales: {
+    y: {
+    ticks: { color: colors.textColor },
+    grid: { color: colors.gridColor }
+    },
+    x: {
+    ticks: { color: colors.textColor },
+    grid: { color: colors.gridColor }
+    }
+    }
+    }
+    });
     }
 
     function initDistributionChart() {
-        const ctx = document.getElementById('distributionChart').getContext('2d');
-        distributionChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Strength Training', 'Cardio', 'HIIT', 'Yoga', 'Other'],
-                datasets: [{
-                    data: [45, 25, 15, 10, 5],
-                    backgroundColor: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: { legend: { position: 'bottom' } }
-            }
-        });
+    const ctx = document.getElementById('distributionChart').getContext('2d');
+    const colors = getChartColors();
+
+    distributionChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+    labels: ['Strength Training', 'Cardio', 'HIIT', 'Yoga', 'Other'],
+    datasets: [{
+    data: [45, 25, 15, 10, 5],
+    backgroundColor: ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'],
+    borderWidth: 0
+    }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+    legend: {
+    position: 'bottom',
+    labels: { color: colors.textColor }
+    }
+    }
+    }
+    });
     }
 
     function initWeightChart() {
-        const ctx = document.getElementById('weightProgressChart').getContext('2d');
-        weightChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-                datasets: [{
-                    label: 'Weight (kg)',
-                    data: [82, 81, 79.5, 78.5, 78],
-                    borderColor: '#10B981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true
-            }
-        });
+    const ctx = document.getElementById('weightProgressChart').getContext('2d');
+    const colors = getChartColors();
+
+    weightChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+    datasets: [{
+    label: 'Weight (kg)',
+    data: [82, 81, 79.5, 78.5, 78],
+    borderColor: colors.weightColor,
+    backgroundColor: `${colors.weightColor}20`,
+    fill: true,
+    tension: 0.4,
+    pointBackgroundColor: colors.weightColor,
+    pointBorderColor: colors.weightColor
+    }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+    legend: {
+    labels: { color: colors.textColor }
+    }
+    },
+    scales: {
+    y: {
+    ticks: { color: colors.textColor },
+    grid: { color: colors.gridColor }
+    },
+    x: {
+    ticks: { color: colors.textColor },
+    grid: { color: colors.gridColor }
+    }
+    }
+    }
+    });
     }
 
     function changeChart(period, element) {
-        currentChart = period;
-        document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
-        element.classList.add('active');
+    currentChart = period;
+    document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
 
-        let data;
-        switch(period) {
-            case 'weekly':
-                data = [4, 5, 6, 4, 5, 3, 2];
-                break;
-            case 'monthly':
-                data = [22, 24, 28, 30];
-                break;
-            case 'yearly':
-                data = [220, 245, 268, 290];
-                break;
-        }
-        
-        workoutChart.data.datasets[0].data = data;
-        workoutChart.update();
+    let data, labels;
+    switch(period) {
+    case 'weekly':
+    data = [4, 5, 6, 4, 5, 3, 2];
+    labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    break;
+    case 'monthly':
+    data = [22, 24, 28, 30];
+    labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+    break;
+    case 'yearly':
+    data = [220, 245, 268, 290, 310, 335, 360, 380, 400, 420, 440, 460];
+    labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    break;
     }
+
+    workoutChart.data.labels = labels;
+    workoutChart.data.datasets[0].data = data;
+    workoutChart.update();
+    }
+
+    function exportStatistics() {
+    alert("📊 Your statistics report is being generated. You will receive a download link shortly!");
+    }
+
+    // Initialize charts and observe theme changes
+    document.addEventListener('DOMContentLoaded', function() {
+    initWorkoutChart();
+    initCaloriesChart();
+    initDistributionChart();
+    initWeightChart();
+
+    // Listen for theme changes
+    const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+    if (mutation.attributeName === 'class') {
+    updateChartColors();
+    }
+    });
+    });
+
+    observer.observe(document.body, { attributes: true });
+    });
 </script>

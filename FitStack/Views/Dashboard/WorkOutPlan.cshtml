@@ -5,26 +5,119 @@
 }
 
 <style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+        .page-header h2 {
+            font-size: 28px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .page-header h2 i {
+                color: var(--primary);
+            }
+
+    .filter-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .filter-btn {
+        padding: 8px 16px;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: var(--text-secondary);
+    }
+
+        .filter-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
     .workouts-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 24px;
     }
 
     .workout-card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        transition: transform 0.3s;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s;
+        border: 1px solid var(--border-color);
     }
 
         .workout-card:hover {
             transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
         }
+
+    .workout-image {
+        height: 140px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .workout-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        background: rgba(0,0,0,0.6);
+        color: white;
+    }
 
     .workout-content {
         padding: 20px;
+    }
+
+    .workout-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+    }
+
+    .workout-description {
+        color: var(--text-tertiary);
+        margin: 8px 0;
+        line-height: 1.5;
+    }
+
+    .workout-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     .difficulty {
@@ -36,60 +129,465 @@
     }
 
     .easy {
-        background: #10B981;
+        background: var(--secondary);
         color: white;
     }
 
     .medium {
-        background: #F59E0B;
+        background: var(--warning);
         color: white;
     }
 
     .hard {
-        background: #EF4444;
+        background: var(--danger);
         color: white;
+    }
+
+    .workout-stats {
+        display: flex;
+        gap: 15px;
+        color: var(--text-tertiary);
+        font-size: 14px;
+    }
+
+        .workout-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+    .btn-start {
+        width: 100%;
+        margin-top: 16px;
+        padding: 12px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+    .btn-schedule {
+        width: 100%;
+        margin-top: 10px;
+        padding: 10px;
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .btn-schedule:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+    /* Workout Detail Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background: var(--bg-secondary);
+        border-radius: 20px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .modal-header h3 {
+            color: var(--text-primary);
+        }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text-tertiary);
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .exercise-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .exercise-name {
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .exercise-reps {
+        color: var(--text-tertiary);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .workouts-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .workout-meta {
+            flex-direction: column;
+            align-items: flex-start;
+        }
     }
 </style>
 
-<h2 style="margin-bottom: 24px;">Today's Recommended Workouts</h2>
+<div class="page-header">
+    <h2>
+        <i class="fas fa-dumbbell"></i>
+        Today's Recommended Workouts
+    </h2>
+    <div class="filter-buttons">
+        <button class="filter-btn active" onclick="filterWorkouts('all')">All</button>
+        <button class="filter-btn" onclick="filterWorkouts('easy')">Easy</button>
+        <button class="filter-btn" onclick="filterWorkouts('medium')">Medium</button>
+        <button class="filter-btn" onclick="filterWorkouts('hard')">Hard</button>
+    </div>
+</div>
 
-<div class="workouts-grid">
-    <div class="workout-card">
-        <div style="background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%); height: 120px;"></div>
+<div class="workouts-grid" id="workoutsGrid">
+    <!-- Full Body HIIT -->
+    <div class="workout-card" data-difficulty="hard">
+        <div class="workout-image" style="background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);">
+            <span class="workout-badge">🔥 Trending</span>
+        </div>
         <div class="workout-content">
-            <h3>Full Body HIIT</h3>
-            <p style="color: #6B7280; margin: 8px 0;">High-intensity interval training for full body conditioning</p>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+            <h3 class="workout-title">Full Body HIIT</h3>
+            <p class="workout-description">High-intensity interval training for full body conditioning. Burn maximum calories in minimum time.</p>
+            <div class="workout-meta">
                 <span class="difficulty hard">Hard</span>
-                <span>30 min • 350 cal</span>
+                <div class="workout-stats">
+                    <span><i class="fas fa-clock"></i> 30 min</span>
+                    <span><i class="fas fa-fire"></i> 350 cal</span>
+                </div>
             </div>
-            <button class="btn-primary" style="width: 100%; margin-top: 16px;">Start Workout</button>
+            <button class="btn-start" onclick="startWorkout('Full Body HIIT')">
+                <i class="fas fa-play"></i> Start Workout
+            </button>
+            <button class="btn-schedule" onclick="scheduleWorkout('Full Body HIIT')">
+                <i class="fas fa-calendar-plus"></i> Add to Schedule
+            </button>
         </div>
     </div>
 
-    <div class="workout-card">
-        <div style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); height: 120px;"></div>
+    <!-- Upper Body Strength -->
+    <div class="workout-card" data-difficulty="medium">
+        <div class="workout-image" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+            <span class="workout-badge">💪 Popular</span>
+        </div>
         <div class="workout-content">
-            <h3>Upper Body Strength</h3>
-            <p style="color: #6B7280; margin: 8px 0;">Build upper body strength with compound movements</p>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+            <h3 class="workout-title">Upper Body Strength</h3>
+            <p class="workout-description">Build upper body strength with compound movements. Perfect for chest, back, and shoulders.</p>
+            <div class="workout-meta">
                 <span class="difficulty medium">Medium</span>
-                <span>45 min • 300 cal</span>
+                <div class="workout-stats">
+                    <span><i class="fas fa-clock"></i> 45 min</span>
+                    <span><i class="fas fa-fire"></i> 300 cal</span>
+                </div>
             </div>
-            <button class="btn-primary" style="width: 100%; margin-top: 16px;">Start Workout</button>
+            <button class="btn-start" onclick="startWorkout('Upper Body Strength')">
+                <i class="fas fa-play"></i> Start Workout
+            </button>
+            <button class="btn-schedule" onclick="scheduleWorkout('Upper Body Strength')">
+                <i class="fas fa-calendar-plus"></i> Add to Schedule
+            </button>
         </div>
     </div>
 
-    <div class="workout-card">
-        <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); height: 120px;"></div>
+    <!-- Core Crusher -->
+    <div class="workout-card" data-difficulty="medium">
+        <div class="workout-image" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+            <span class="workout-badge">🎯 Core Focus</span>
+        </div>
         <div class="workout-content">
-            <h3>Core Crusher</h3>
-            <p style="color: #6B7280; margin: 8px 0;">Target your core with this intense abdominal workout</p>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+            <h3 class="workout-title">Core Crusher</h3>
+            <p class="workout-description">Target your core with this intense abdominal workout. Build six-pack abs and improve stability.</p>
+            <div class="workout-meta">
                 <span class="difficulty medium">Medium</span>
-                <span>20 min • 180 cal</span>
+                <div class="workout-stats">
+                    <span><i class="fas fa-clock"></i> 20 min</span>
+                    <span><i class="fas fa-fire"></i> 180 cal</span>
+                </div>
             </div>
-            <button class="btn-primary" style="width: 100%; margin-top: 16px;">Start Workout</button>
+            <button class="btn-start" onclick="startWorkout('Core Crusher')">
+                <i class="fas fa-play"></i> Start Workout
+            </button>
+            <button class="btn-schedule" onclick="scheduleWorkout('Core Crusher')">
+                <i class="fas fa-calendar-plus"></i> Add to Schedule
+            </button>
+        </div>
+    </div>
+
+    <!-- Cardio Blast - NEW -->
+    <div class="workout-card" data-difficulty="hard">
+        <div class="workout-image" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);">
+            <span class="workout-badge">⚡ Cardio</span>
+        </div>
+        <div class="workout-content">
+            <h3 class="workout-title">Cardio Blast</h3>
+            <p class="workout-description">High-energy cardio workout to boost endurance and burn calories fast.</p>
+            <div class="workout-meta">
+                <span class="difficulty hard">Hard</span>
+                <div class="workout-stats">
+                    <span><i class="fas fa-clock"></i> 25 min</span>
+                    <span><i class="fas fa-fire"></i> 320 cal</span>
+                </div>
+            </div>
+            <button class="btn-start" onclick="startWorkout('Cardio Blast')">
+                <i class="fas fa-play"></i> Start Workout
+            </button>
+            <button class="btn-schedule" onclick="scheduleWorkout('Cardio Blast')">
+                <i class="fas fa-calendar-plus"></i> Add to Schedule
+            </button>
+        </div>
+    </div>
+
+    <!-- Yoga Flow - NEW -->
+    <div class="workout-card" data-difficulty="easy">
+        <div class="workout-image" style="background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);">
+            <span class="workout-badge">🧘 Wellness</span>
+        </div>
+        <div class="workout-content">
+            <h3 class="workout-title">Yoga Flow</h3>
+            <p class="workout-description">Gentle yoga flow for flexibility, relaxation, and mindfulness. Perfect for recovery days.</p>
+            <div class="workout-meta">
+                <span class="difficulty easy">Easy</span>
+                <div class="workout-stats">
+                    <span><i class="fas fa-clock"></i> 30 min</span>
+                    <span><i class="fas fa-fire"></i> 120 cal</span>
+                </div>
+            </div>
+            <button class="btn-start" onclick="startWorkout('Yoga Flow')">
+                <i class="fas fa-play"></i> Start Workout
+            </button>
+            <button class="btn-schedule" onclick="scheduleWorkout('Yoga Flow')">
+                <i class="fas fa-calendar-plus"></i> Add to Schedule
+            </button>
+        </div>
+    </div>
+
+    <!-- Leg Day - NEW -->
+    <div class="workout-card" data-difficulty="hard">
+        <div class="workout-image" style="background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%);">
+            <span class="workout-badge">🦵 Leg Focus</span>
+        </div>
+        <div class="workout-content">
+            <h3 class="workout-title">Leg Day</h3>
+            <p class="workout-description">Build lower body strength with squats, lunges, and deadlifts.</p>
+            <div class="workout-meta">
+                <span class="difficulty hard">Hard</span>
+                <div class="workout-stats">
+                    <span><i class="fas fa-clock"></i> 40 min</span>
+                    <span><i class="fas fa-fire"></i> 380 cal</span>
+                </div>
+            </div>
+            <button class="btn-start" onclick="startWorkout('Leg Day')">
+                <i class="fas fa-play"></i> Start Workout
+            </button>
+            <button class="btn-schedule" onclick="scheduleWorkout('Leg Day')">
+                <i class="fas fa-calendar-plus"></i> Add to Schedule
+            </button>
         </div>
     </div>
 </div>
+
+<!-- Workout Detail Modal -->
+<div id="workoutModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Workout Details</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- Dynamic content will be inserted here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // Filter workouts by difficulty
+    function filterWorkouts(difficulty) {
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+
+        // Filter workouts
+        const workouts = document.querySelectorAll('.workout-card');
+        workouts.forEach(workout => {
+            if (difficulty === 'all' || workout.dataset.difficulty === difficulty) {
+                workout.style.display = 'block';
+            } else {
+                workout.style.display = 'none';
+            }
+        });
+    }
+
+    // Start workout
+    function startWorkout(workoutName) {
+        showWorkoutDetails(workoutName);
+    }
+
+    // Schedule workout
+    function scheduleWorkout(workoutName) {
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const day = prompt(`Schedule "${workoutName}" on which day?\n\n${days.join(', ')}`);
+
+        if (day && days.includes(day)) {
+            alert(`✅ "${workoutName}" scheduled for ${day}! Check your schedule.`);
+        } else if (day) {
+            alert("Please enter a valid day (Monday-Sunday)");
+        }
+    }
+
+    // Show workout details modal
+    function showWorkoutDetails(workoutName) {
+        const exercises = {
+            'Full Body HIIT': [
+                { name: 'Jumping Jacks', reps: '30 sec' },
+                { name: 'Burpees', reps: '12 reps' },
+                { name: 'Mountain Climbers', reps: '30 sec' },
+                { name: 'High Knees', reps: '30 sec' },
+                { name: 'Rest', reps: '15 sec' },
+                { name: 'Push-ups', reps: '15 reps' },
+                { name: 'Squat Jumps', reps: '12 reps' },
+                { name: 'Plank', reps: '30 sec' }
+            ],
+            'Upper Body Strength': [
+                { name: 'Push-ups', reps: '3x12' },
+                { name: 'Pull-ups', reps: '3x8' },
+                { name: 'Dumbbell Press', reps: '3x10' },
+                { name: 'Bent-over Rows', reps: '3x12' },
+                { name: 'Shoulder Press', reps: '3x10' },
+                { name: 'Bicep Curls', reps: '3x12' },
+                { name: 'Tricep Dips', reps: '3x15' }
+            ],
+            'Core Crusher': [
+                { name: 'Crunches', reps: '3x20' },
+                { name: 'Leg Raises', reps: '3x15' },
+                { name: 'Russian Twists', reps: '3x20' },
+                { name: 'Plank', reps: '3x30 sec' },
+                { name: 'Bicycle Crunches', reps: '3x20' },
+                { name: 'Heel Touches', reps: '3x20' }
+            ],
+            'Cardio Blast': [
+                { name: 'Jump Rope', reps: '2 min' },
+                { name: 'High Knees', reps: '45 sec' },
+                { name: 'Butt Kicks', reps: '45 sec' },
+                { name: 'Burpees', reps: '15 reps' },
+                { name: 'Mountain Climbers', reps: '45 sec' },
+                { name: 'Rest', reps: '20 sec' },
+                { name: 'Sprints', reps: '30 sec' }
+            ],
+            'Yoga Flow': [
+                { name: 'Cat-Cow Stretch', reps: '5 breaths' },
+                { name: 'Downward Dog', reps: '5 breaths' },
+                { name: 'Warrior I', reps: '5 breaths each side' },
+                { name: 'Warrior II', reps: '5 breaths each side' },
+                { name: 'Tree Pose', reps: '5 breaths each side' },
+                { name: 'Child\'s Pose', reps: '10 breaths' },
+                { name: 'Savasana', reps: '2 min' }
+            ],
+            'Leg Day': [
+                { name: 'Squats', reps: '4x12' },
+                { name: 'Lunges', reps: '3x12 each leg' },
+                { name: 'Deadlifts', reps: '3x10' },
+                { name: 'Leg Press', reps: '3x12' },
+                { name: 'Calf Raises', reps: '3x20' },
+                { name: 'Glute Bridges', reps: '3x15' }
+            ]
+        };
+
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+
+        modalTitle.textContent = workoutName;
+
+        const workoutExercises = exercises[workoutName] || [
+            { name: 'Warm-up', reps: '5 min' },
+            { name: 'Main Set', reps: '20 min' },
+            { name: 'Cool-down', reps: '5 min' }
+        ];
+
+        let exercisesHtml = '<div style="margin-bottom: 20px;"><strong>Exercises:</strong></div>';
+        workoutExercises.forEach(exercise => {
+            exercisesHtml += `
+                <div class="exercise-item">
+                    <span class="exercise-name">${exercise.name}</span>
+                    <span class="exercise-reps">${exercise.reps}</span>
+                </div>
+            `;
+        });
+
+        exercisesHtml += `
+            <div style="margin-top: 20px;">
+                <button class="btn-start" onclick="startWorkoutSession('${workoutName}')" style="width: 100%;">
+                    <i class="fas fa-play"></i> Begin Workout
+                </button>
+            </div>
+        `;
+
+        modalBody.innerHTML = exercisesHtml;
+        document.getElementById('workoutModal').style.display = 'flex';
+    }
+
+    function startWorkoutSession(workoutName) {
+        closeModal();
+        alert(`🎉 Starting "${workoutName}"! Get ready to crush your workout! 💪\n\nRemember to warm up first and stay hydrated!`);
+    }
+
+    function closeModal() {
+        document.getElementById('workoutModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('workoutModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+</script>

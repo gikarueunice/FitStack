@@ -12,10 +12,16 @@
     }
 
     .profile-sidebar {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 25px;
         text-align: center;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s;
+    }
+
+    .profile-sidebar:hover {
+        transform: translateY(-5px);
     }
 
     .profile-avatar {
@@ -24,17 +30,25 @@
         border-radius: 50%;
         margin: 0 auto 20px;
         object-fit: cover;
-        border: 3px solid #4F46E5;
+        border: 3px solid var(--primary);
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.05);
+        border-color: var(--primary-light);
     }
 
     .profile-name {
         font-size: 24px;
         font-weight: 700;
         margin-bottom: 5px;
+        color: var(--text-primary);
     }
 
     .profile-email {
-        color: #6B7280;
+        color: var(--text-tertiary);
         margin-bottom: 20px;
     }
 
@@ -43,14 +57,35 @@
         justify-content: space-around;
         margin: 20px 0;
         padding: 15px 0;
-        border-top: 1px solid #F3F4F6;
-        border-bottom: 1px solid #F3F4F6;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .profile-stats div {
+        color: var(--text-secondary);
+    }
+
+    .profile-stats strong {
+        color: var(--text-primary);
+        font-size: 18px;
     }
 
     .profile-main {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 25px;
+        border: 1px solid var(--border-color);
+        transition: transform 0.3s;
+    }
+
+    .profile-main:hover {
+        transform: translateY(-5px);
+    }
+
+    .profile-main h2 {
+        color: var(--text-primary);
+        margin-bottom: 25px;
+        font-size: 24px;
     }
 
     .form-group {
@@ -61,65 +96,363 @@
         display: block;
         margin-bottom: 8px;
         font-weight: 500;
+        color: var(--text-secondary);
     }
 
     .form-input {
         width: 100%;
         padding: 12px;
-        border: 1px solid #E5E7EB;
+        border: 1px solid var(--border-color);
         border-radius: 10px;
         font-size: 14px;
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+        transition: all 0.3s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-input:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
     }
 
     .btn-save {
-        background: #4F46E5;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         color: white;
         padding: 12px 30px;
         border: none;
         border-radius: 10px;
         cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+    }
+
+    /* Edit Icon Overlay */
+    .avatar-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .edit-avatar-icon {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: var(--primary);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 2px solid var(--bg-secondary);
+    }
+
+    .edit-avatar-icon:hover {
+        transform: scale(1.1);
+        background: var(--primary-dark);
+    }
+
+    /* Stats Cards */
+    .stats-grid-small {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .stat-card-small {
+        background: var(--bg-tertiary);
+        border-radius: 15px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+    .stat-card-small:hover {
+        transform: translateY(-3px);
+        background: var(--bg-hover);
+    }
+
+    .stat-value-small {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .stat-label-small {
+        font-size: 12px;
+        color: var(--text-tertiary);
+        margin-top: 5px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .profile-container {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .profile-sidebar, .profile-main {
+            padding: 20px;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+        }
+        
+        .profile-name {
+            font-size: 20px;
+        }
+        
+        .stats-grid-small {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
 <div class="profile-container">
+    <!-- Left Column - Profile Sidebar -->
     <div class="profile-sidebar">
-        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop" class="profile-avatar">
-        <div class="profile-name">Alex Johnson</div>
-        <div class="profile-email">alex.johnson@example.com</div>
-        <div class="profile-stats">
-            <div><strong>128</strong><br>Workouts</div>
-            <div><strong>45</strong><br>Streak</div>
-            <div><strong>234</strong><br>Followers</div>
+        <div class="avatar-container">
+            <img src="@(Model.ProfilePictureUrl ?? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop")" 
+                 class="profile-avatar" id="profileAvatar" onclick="changeAvatar()">
+            <div class="edit-avatar-icon" onclick="changeAvatar()">
+                <i class="fas fa-camera"></i>
+            </div>
         </div>
-        <button class="btn-save" onclick="changeAvatar()">Change Avatar</button>
+        <div class="profile-name">@(Model.FullName ?? "Alex Johnson")</div>
+        <div class="profile-email">@(Model.Email ?? "alex.johnson@example.com")</div>
+        
+        <div class="profile-stats">
+            <div><strong>@@(Model.TotalWorkouts ?? 128)</strong><br>Workouts</div>
+            <div><strong>@@(Model.StreakDays ?? 45)</strong><br>Streak</div>
+            <div><strong>@@(Model.Followers ?? 234)</strong><br>Followers</div>
+        </div>
+        
+        <div class="stats-grid-small">
+            <div class="stat-card-small">
+                <div class="stat-value-small">@@(Model.Level ?? 12)</div>
+                <div class="stat-label-small">Current Level</div>
+            </div>
+            <div class="stat-card-small">
+                <div class="stat-value-small">@@(Model.XP ?? 2450)</div>
+                <div class="stat-label-small">Total XP</div>
+            </div>
+        </div>
+        
+        <button class="btn-save" onclick="changeAvatar()" style="margin-top: 20px; width: 100%;">
+            <i class="fas fa-camera"></i> Change Avatar
+        </button>
     </div>
 
+    <!-- Right Column - Edit Profile Form -->
     <div class="profile-main">
-        <h2 style="margin-bottom: 25px;">Personal Information</h2>
-        <form>
+        <h2>
+            <i class="fas fa-user-edit" style="color: var(--primary); margin-right: 10px;"></i>
+            Personal Information
+        </h2>
+        
+        <form id="profileForm" onsubmit="saveProfile(event)">
             <div class="form-group">
-                <label class="form-label">Full Name</label>
-                <input type="text" class="form-input" value="Alex Johnson">
+                <label class="form-label">
+                    <i class="fas fa-user"></i> Full Name
+                </label>
+                <input type="text" class="form-input" id="fullName" value="@(Model.FullName ?? "Alex Johnson")" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-envelope"></i> Email Address
+                </label>
+                <input type="email" class="form-input" id="email" value="@(Model.Email ?? "alex.johnson@example.com")" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-phone"></i> Phone Number
+                </label>
+                <input type="tel" class="form-input" id="phone" value="@@(Model.PhoneNumber ?? "+1 234 567 8900")">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-calendar-alt"></i> Date of Birth
+                </label>
+                <input type="date" class="form-input" id="dob" value="@@(Model.DateOfBirth?.ToString("yyyy-MM-dd") ?? "1990-05-15")">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-venus-mars"></i> Gender
+                </label>
+                <select class="form-input" id="gender">
+                    <option value="Male" selected="@@(Model.Gender == "Male")">Male</option>
+                    <option value="Female" selected="@@(Model.Gender == "Female" )">Female</option>
+                    <option value="Non-binary" selected="@@(Model.Gender == "Non-binary")">Non-binary</option>
+                    <option value="Prefer not to say" selected="@@(Model.Gender == "Prefer not to say")">Prefer not to say</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-biohazard"></i> Bio
+                </label>
+                <textarea class="form-input" id="bio" rows="3" placeholder="Tell us about yourself...">@@(Model.Bio ?? "Fitness enthusiast on a journey to become the best version of myself! 💪")</textarea>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button type="button" class="btn-outline" onclick="resetForm()">
+                    <i class="fas fa-undo-alt"></i> Reset
+                </button>
+                <button type="button" class="btn-outline" onclick="changePassword()">
+                    <i class="fas fa-key"></i> Change Password
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div id="passwordModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: var(--bg-secondary); border-radius: 20px; padding: 30px; max-width: 450px; width: 90%;">
+        <h2 style="margin-bottom: 20px; color: var(--text-primary);">Change Password</h2>
+        <form id="passwordForm" onsubmit="updatePassword(event)">
+            <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input type="password" class="form-input" id="currentPassword" required>
             </div>
             <div class="form-group">
-                <label class="form-label">Email Address</label>
-                <input type="email" class="form-input" value="alex.johnson@example.com">
+                <label class="form-label">New Password</label>
+                <input type="password" class="form-input" id="newPassword" required>
+                <small style="color: var(--text-tertiary);">Minimum 8 characters with uppercase, lowercase, number</small>
             </div>
             <div class="form-group">
-                <label class="form-label">Phone Number</label>
-                <input type="tel" class="form-input" value="+1 234 567 8900">
+                <label class="form-label">Confirm New Password</label>
+                <input type="password" class="form-input" id="confirmPassword" required>
             </div>
-            <div class="form-group">
-                <label class="form-label">Date of Birth</label>
-                <input type="date" class="form-input" value="1990-05-15">
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button type="submit" class="btn-save" style="flex: 1;">Update Password</button>
+                <button type="button" class="btn-outline" onclick="closePasswordModal()" style="flex: 1;">Cancel</button>
             </div>
-            <button type="submit" class="btn-save">Save Changes</button>
         </form>
     </div>
 </div>
 
 <script>
-    function changeAvatar() {
-        alert("Avatar change functionality coming soon!");
+    // Save profile changes
+    function saveProfile(event) {
+        event.preventDefault();
+        
+        const formData = {
+            fullName: document.getElementById('fullName').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            dob: document.getElementById('dob').value,
+            gender: document.getElementById('gender').value,
+            bio: document.getElementById('bio').value
+        };
+        
+        console.log("Saving profile:", formData);
+        alert("✅ Profile updated successfully!");
+        
+        // Here you would send the data to your backend
+        // fetch('/api/profile/update', { method: 'POST', body: JSON.stringify(formData), ... })
     }
+    
+    // Reset form to original values
+    function resetForm() {
+        if (confirm("Reset all changes? Unsaved changes will be lost.")) {
+            location.reload();
+        }
+    }
+    
+    // Change avatar
+    function changeAvatar() {
+        // Create file input
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    document.getElementById('profileAvatar').src = evt.target.result;
+                    alert("📸 Avatar updated! Click save to confirm changes.");
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        input.click();
+    }
+    
+    // Change password
+    function changePassword() {
+        document.getElementById('passwordModal').style.display = 'flex';
+    }
+    
+    function closePasswordModal() {
+        document.getElementById('passwordModal').style.display = 'none';
+        document.getElementById('passwordForm').reset();
+    }
+    
+    function updatePassword(event) {
+        event.preventDefault();
+        
+        const currentPwd = document.getElementById('currentPassword').value;
+        const newPwd = document.getElementById('newPassword').value;
+        const confirmPwd = document.getElementById('confirmPassword').value;
+        
+        if (newPwd !== confirmPwd) {
+            alert("❌ New passwords do not match!");
+            return;
+        }
+        
+        if (newPwd.length < 8) {
+            alert("❌ Password must be at least 8 characters!");
+            return;
+        }
+        
+        // Password strength check
+        const hasUpper = /[A-Z]/.test(newPwd);
+        const hasLower = /[a-z]/.test(newPwd);
+        const hasNumber = /[0-9]/.test(newPwd);
+        
+        if (!hasUpper || !hasLower || !hasNumber) {
+            alert("❌ Password must contain uppercase, lowercase, and number!");
+            return;
+        }
+        
+        alert("✅ Password updated successfully! Please login again.");
+        closePasswordModal();
+        
+        // Here you would send to backend
+        // fetch('/api/profile/change-password', { method: 'POST', body: JSON.stringify({...}), ... })
+    }
+    
+    // Close modal when clicking outside
+    document.getElementById('passwordModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePasswordModal();
+        }
+    });
 </script>

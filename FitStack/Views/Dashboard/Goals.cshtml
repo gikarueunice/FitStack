@@ -5,6 +5,20 @@
 }
 
 <style>
+    .goals-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+        .goals-header h1 {
+            font-size: 28px;
+            color: var(--text-primary);
+        }
+
     .goals-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -12,59 +26,496 @@
     }
 
     .goal-card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 24px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
     }
 
-    .btn-primary {
-        background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        .goal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+    .goal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+
+    .goal-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .goal-category {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .category-fitness {
+        background: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+    }
+
+    .category-nutrition {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--secondary);
+    }
+
+    .category-wellness {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+    }
+
+    .goal-description {
+        color: var(--text-tertiary);
+        font-size: 14px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .progress-container {
+        margin: 20px 0;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+
+    .progress-bar {
+        height: 10px;
+        background: var(--border-color);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        border-radius: 10px;
+        transition: width 0.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+    @@keyframes shimmer {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(100%);
+        }
+    }
+
+    .goal-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .goal-stat {
+        text-align: center;
+    }
+
+    .goal-stat-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .goal-stat-label {
+        font-size: 12px;
+        color: var(--text-tertiary);
+    }
+
+    .goal-deadline {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+        font-size: 13px;
+        color: var(--text-tertiary);
+    }
+
+    .goal-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .btn-edit, .btn-delete, .btn-progress {
+        flex: 1;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+    }
+
+    .btn-edit {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+    }
+
+        .btn-edit:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+    .btn-delete {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: var(--danger);
+    }
+
+        .btn-delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+    .btn-progress {
+        background: var(--primary);
+        border: none;
         color: white;
+    }
+
+        .btn-progress:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+    /* Add New Goal Card */
+    .add-goal-card {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        cursor: pointer;
+    }
+
+        .add-goal-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .add-goal-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+
+    .add-goal-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .add-goal-text {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-bottom: 20px;
+    }
+
+    .btn-create {
+        background: white;
+        color: var(--primary);
         padding: 12px 24px;
         border: none;
         border-radius: 12px;
-        cursor: pointer;
         font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .btn-create:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+    /* Dark mode adjustments */
+    body.dark-mode .goal-card {
+        background: var(--bg-secondary);
+    }
+
+    body.dark-mode .btn-edit {
+        background: var(--bg-tertiary);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .goals-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .goals-container {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
+<div class="goals-header">
+    <h1>My Fitness Goals</h1>
+    <button class="btn-primary" onclick="openAddGoalModal()" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));">
+        <i class="fas fa-plus"></i> Add New Goal
+    </button>
+</div>
+
 <div class="goals-container">
+    <!-- Weekly Workout Goal -->
     <div class="goal-card">
-        <h2 style="margin-bottom: 8px;">Weekly Workout Goal</h2>
+        <div class="goal-header">
+            <div>
+                <div class="goal-title">Weekly Workout Goal</div>
+                <span class="goal-category category-fitness">🏋️ Fitness</span>
+            </div>
+            <i class="fas fa-dumbbell" style="font-size: 24px; color: var(--primary);"></i>
+        </div>
+        <div class="goal-description">
+            Complete 5 workouts per week to build consistency and strength.
+        </div>
         <div class="progress-container">
             <div class="progress-label">
                 <span>Progress</span>
-                <span>3/5 workouts</span>
+                <span>3 / 5 workouts</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" style="width: 60%"></div>
             </div>
         </div>
-        <div style="margin-top: 16px;">
-            <span style="color: #6B7280;">Deadline: Sunday</span>
+        <div class="goal-stats">
+            <div class="goal-stat">
+                <div class="goal-stat-value">60%</div>
+                <div class="goal-stat-label">Complete</div>
+            </div>
+            <div class="goal-stat">
+                <div class="goal-stat-value">2 left</div>
+                <div class="goal-stat-label">Remaining</div>
+            </div>
+            <div class="goal-stat">
+                <div class="goal-stat-value">4 days</div>
+                <div class="goal-stat-label">Left</div>
+            </div>
+        </div>
+        <div class="goal-deadline">
+            <i class="fas fa-calendar"></i>
+            <span>Deadline: Sunday, June 4, 2026</span>
+        </div>
+        <div class="goal-actions">
+            <button class="btn-edit" onclick="editGoal(1)"><i class="fas fa-edit"></i> Edit</button>
+            <button class="btn-progress" onclick="updateProgress(1)"><i class="fas fa-chart-line"></i> Update</button>
+            <button class="btn-delete" onclick="deleteGoal(1)"><i class="fas fa-trash"></i> Delete</button>
         </div>
     </div>
 
+    <!-- Weight Loss Goal -->
     <div class="goal-card">
-        <h2 style="margin-bottom: 8px;">Weight Loss Goal</h2>
+        <div class="goal-header">
+            <div>
+                <div class="goal-title">Weight Loss Goal</div>
+                <span class="goal-category category-nutrition">⚖️ Nutrition</span>
+            </div>
+            <i class="fas fa-weight-scale" style="font-size: 24px; color: var(--secondary);"></i>
+        </div>
+        <div class="goal-description">
+            Lose 5 kg through consistent workout and healthy eating habits.
+        </div>
         <div class="progress-container">
             <div class="progress-label">
                 <span>Progress</span>
-                <span>2.5/5 kg</span>
+                <span>2.5 / 5 kg</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" style="width: 50%"></div>
             </div>
         </div>
-        <div style="margin-top: 16px;">
-            <span style="color: #6B7280;">Deadline: June 30, 2026</span>
+        <div class="goal-stats">
+            <div class="goal-stat">
+                <div class="goal-stat-value">50%</div>
+                <div class="goal-stat-label">Complete</div>
+            </div>
+            <div class="goal-stat">
+                <div class="goal-stat-value">2.5 kg</div>
+                <div class="goal-stat-label">Left to lose</div>
+            </div>
+            <div class="goal-stat">
+                <div class="goal-stat-value">32 days</div>
+                <div class="goal-stat-label">Left</div>
+            </div>
+        </div>
+        <div class="goal-deadline">
+            <i class="fas fa-calendar"></i>
+            <span>Deadline: June 30, 2026</span>
+        </div>
+        <div class="goal-actions">
+            <button class="btn-edit" onclick="editGoal(2)"><i class="fas fa-edit"></i> Edit</button>
+            <button class="btn-progress" onclick="updateProgress(2)"><i class="fas fa-chart-line"></i> Update</button>
+            <button class="btn-delete" onclick="deleteGoal(2)"><i class="fas fa-trash"></i> Delete</button>
         </div>
     </div>
 
-    <div class="goal-card" style="background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); color: white;">
-        <h2 style="margin-bottom: 8px;">Add New Goal</h2>
-        <p>Set a new fitness target to stay motivated!</p>
-        <button class="btn-primary" style="margin-top: 16px; background: white; color: #4F46E5;">+ Create Goal</button>
+    <!-- Running Distance Goal -->
+    <div class="goal-card">
+        <div class="goal-header">
+            <div>
+                <div class="goal-title">Running Distance</div>
+                <span class="goal-category category-fitness">🏃 Cardio</span>
+            </div>
+            <i class="fas fa-person-running" style="font-size: 24px; color: var(--warning);"></i>
+        </div>
+        <div class="goal-description">
+            Run 50 km total distance this month to improve endurance.
+        </div>
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>Progress</span>
+                <span>18 / 50 km</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 36%"></div>
+            </div>
+        </div>
+        <div class="goal-stats">
+            <div class="goal-stat">
+                <div class="goal-stat-value">36%</div>
+                <div class="goal-stat-label">Complete</div>
+            </div>
+            <div class="goal-stat">
+                <div class="goal-stat-value">32 km</div>
+                <div class="goal-stat-label">Left to run</div>
+            </div>
+            <div class="goal-stat">
+                <div class="goal-stat-value">13 days</div>
+                <div class="goal-stat-label">Left</div>
+            </div>
+        </div>
+        <div class="goal-deadline">
+            <i class="fas fa-calendar"></i>
+            <span>Deadline: May 31, 2026</span>
+        </div>
+        <div class="goal-actions">
+            <button class="btn-edit" onclick="editGoal(3)"><i class="fas fa-edit"></i> Edit</button>
+            <button class="btn-progress" onclick="updateProgress(3)"><i class="fas fa-chart-line"></i> Update</button>
+            <button class="btn-delete" onclick="deleteGoal(3)"><i class="fas fa-trash"></i> Delete</button>
+        </div>
+    </div>
+
+    <!-- Add New Goal Card -->
+    <div class="goal-card add-goal-card" onclick="openAddGoalModal()">
+        <div class="add-goal-icon">✨</div>
+        <div class="add-goal-title">Create New Goal</div>
+        <div class="add-goal-text">Set a new fitness target to stay motivated and track your progress!</div>
+        <button class="btn-create">+ Create New Goal</button>
     </div>
 </div>
+
+<!-- Add Goal Modal (Hidden by default) -->
+<div id="addGoalModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div style="background: var(--bg-secondary); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%;">
+        <h2 style="margin-bottom: 20px; color: var(--text-primary);">Create New Goal</h2>
+        <form id="addGoalForm">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-secondary);">Goal Title</label>
+                <input type="text" class="form-input" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" placeholder="e.g., Run 5km">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-secondary);">Target Value</label>
+                <input type="number" class="form-input" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);" placeholder="e.g., 5">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-secondary);">Unit</label>
+                <select class="form-input" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                    <option>km</option>
+                    <option>kg</option>
+                    <option>workouts</option>
+                    <option>minutes</option>
+                    <option>calories</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-secondary);">Deadline</label>
+                <input type="date" class="form-input" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button type="button" onclick="closeAddGoalModal()" class="btn-secondary" style="flex: 1; padding: 12px; border-radius: 10px; background: var(--bg-tertiary); border: none; color: var(--text-secondary); cursor: pointer;">Cancel</button>
+                <button type="submit" class="btn-primary" style="flex: 1; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; color: white; cursor: pointer;">Create Goal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openAddGoalModal() {
+        document.getElementById('addGoalModal').style.display = 'flex';
+    }
+
+    function closeAddGoalModal() {
+        document.getElementById('addGoalModal').style.display = 'none';
+    }
+
+    function editGoal(goalId) {
+        alert(`✏️ Edit goal feature coming soon! Goal ID: ${goalId}`);
+    }
+
+    function updateProgress(goalId) {
+        let newProgress = prompt("Enter your current progress:");
+        if (newProgress && !isNaN(newProgress)) {
+            alert(`✅ Progress updated to ${newProgress}!`);
+            location.reload();
+        }
+    }
+
+    function deleteGoal(goalId) {
+        if (confirm("Are you sure you want to delete this goal?")) {
+            alert(`🗑️ Goal deleted!`);
+            location.reload();
+        }
+    }
+
+    // Handle add goal form submission
+    document.getElementById('addGoalForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert("✨ New goal created successfully!");
+        closeAddGoalModal();
+        location.reload();
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('addGoalModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAddGoalModal();
+        }
+    });
+</script>

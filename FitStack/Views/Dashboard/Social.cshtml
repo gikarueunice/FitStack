@@ -12,38 +12,53 @@
 
     /* Social Feed Styles */
     .feed-card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 25px;
         margin-bottom: 25px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
     }
+
     .create-post {
         display: flex;
         gap: 15px;
         margin-bottom: 20px;
     }
+
     .post-avatar {
         width: 50px;
         height: 50px;
         border-radius: 50%;
         object-fit: cover;
+        border: 2px solid var(--primary);
     }
+
     .post-input {
         flex: 1;
         padding: 15px;
-        border: 1px solid #E5E7EB;
+        border: 1px solid var(--border-color);
         border-radius: 15px;
         resize: none;
         font-family: inherit;
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
     }
+
+        .post-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
     .post-actions {
         display: flex;
         gap: 15px;
         margin-top: 15px;
         padding-top: 15px;
-        border-top: 1px solid #F3F4F6;
+        border-top: 1px solid var(--border-color);
+        flex-wrap: wrap;
     }
+
     .post-action {
         background: none;
         border: none;
@@ -54,42 +69,78 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        color: var(--text-secondary);
     }
-    .post-action:hover { background: #F3F4F6; }
+
+        .post-action:hover {
+            background: var(--bg-tertiary);
+            color: var(--primary);
+        }
 
     /* Post Styles */
     .post {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 20px;
         margin-bottom: 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        transition: transform 0.3s;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s;
+        border: 1px solid var(--border-color);
     }
-    .post:hover { transform: translateY(-2px); }
+
+        .post:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
     .post-header {
         display: flex;
         align-items: center;
         gap: 12px;
         margin-bottom: 15px;
     }
-    .post-user-info { flex: 1; }
-    .post-user-name { font-weight: 600; margin-bottom: 2px; }
-    .post-time { font-size: 12px; color: #6B7280; }
-    .post-content { margin-bottom: 15px; line-height: 1.5; }
+
+    .post-user-info {
+        flex: 1;
+    }
+
+    .post-user-name {
+        font-weight: 600;
+        margin-bottom: 2px;
+        color: var(--text-primary);
+    }
+
+    .post-time {
+        font-size: 12px;
+        color: var(--text-tertiary);
+    }
+
+    .post-content {
+        margin-bottom: 15px;
+        line-height: 1.5;
+        color: var(--text-secondary);
+    }
+
     .post-stats {
         display: flex;
         gap: 20px;
         padding: 12px 0;
-        border-top: 1px solid #F3F4F6;
-        border-bottom: 1px solid #F3F4F6;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
     }
-    .post-stat { font-size: 14px; color: #6B7280; }
+
+    .post-stat {
+        font-size: 14px;
+        color: var(--text-tertiary);
+    }
+
     .post-interactions {
         display: flex;
         gap: 20px;
         margin-top: 12px;
+        flex-wrap: wrap;
     }
+
     .interaction-btn {
         background: none;
         border: none;
@@ -100,69 +151,180 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        color: var(--text-tertiary);
     }
-    .interaction-btn.liked { color: #EF4444; }
-    .interaction-btn:hover { background: #F3F4F6; }
+
+        .interaction-btn.liked {
+            color: var(--danger);
+        }
+
+        .interaction-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--primary);
+        }
 
     /* Sidebar Styles */
     .sidebar-card {
-        background: white;
+        background: var(--bg-secondary);
         border-radius: 20px;
         padding: 20px;
         margin-bottom: 25px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
     }
+
+        .sidebar-card:hover {
+            transform: translateY(-2px);
+        }
+
     .sidebar-title {
         font-size: 18px;
         font-weight: 600;
         margin-bottom: 15px;
         padding-bottom: 10px;
-        border-bottom: 2px solid #F3F4F6;
+        border-bottom: 2px solid var(--border-color);
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
+
+        .sidebar-title i {
+            color: var(--primary);
+        }
+
     .friend-item {
         display: flex;
         align-items: center;
         gap: 12px;
         padding: 12px 0;
-        border-bottom: 1px solid #F3F4F6;
+        border-bottom: 1px solid var(--border-color);
     }
+
+        .friend-item:last-child {
+            border-bottom: none;
+        }
+
     .friend-avatar {
         width: 45px;
         height: 45px;
         border-radius: 50%;
         object-fit: cover;
+        border: 2px solid var(--primary);
     }
-    .friend-info { flex: 1; }
-    .friend-name { font-weight: 600; margin-bottom: 2px; }
-    .friend-status { font-size: 12px; color: #10B981; }
+
+    .friend-info {
+        flex: 1;
+    }
+
+    .friend-name {
+        font-weight: 600;
+        margin-bottom: 2px;
+        color: var(--text-primary);
+    }
+
+    .friend-status {
+        font-size: 12px;
+        color: var(--secondary);
+    }
+
     .friend-btn {
         padding: 6px 12px;
-        background: #4F46E5;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         color: white;
         border: none;
         border-radius: 8px;
         cursor: pointer;
+        transition: all 0.3s;
     }
+
+        .friend-btn:hover {
+            transform: scale(1.05);
+        }
 
     .leaderboard-item {
         display: flex;
         align-items: center;
         gap: 12px;
         padding: 12px 0;
-        border-bottom: 1px solid #F3F4F6;
+        border-bottom: 1px solid var(--border-color);
     }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
     .rank {
-        width: 30px;
+        width: 35px;
         font-weight: 700;
-        color: #4F46E5;
+        font-size: 18px;
     }
-    .rank.gold { color: #F59E0B; }
-    .rank.silver { color: #9CA3AF; }
-    .rank.bronze { color: #CD7F32; }
-    .leaderboard-name { flex: 1; font-weight: 500; }
-    .leaderboard-score { font-weight: 600; color: #4F46E5; }
+
+        .rank.gold {
+            color: #F59E0B;
+        }
+
+        .rank.silver {
+            color: #9CA3AF;
+        }
+
+        .rank.bronze {
+            color: #CD7F32;
+        }
+
+    .leaderboard-name {
+        flex: 1;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .leaderboard-score {
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    /* Trending Hashtags */
+    .hashtag {
+        display: inline-block;
+        padding: 6px 12px;
+        background: var(--bg-tertiary);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: var(--text-secondary);
+        font-size: 13px;
+    }
+
+        .hashtag:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+    /* Responsive */
+    @@media (max-width: 1024px) {
+        .community-container {
+            grid-template-columns: 1fr;
+        }
+    }
 
     @@media (max-width: 768px) {
-        .community-container { grid-template-columns: 1fr; }
+        .post-actions {
+            justify-content: center;
+        }
+
+        .post-interactions {
+            justify-content: center;
+        }
+
+        .create-post {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .post-input {
+            width: 100%;
+        }
     }
 </style>
 
@@ -173,115 +335,122 @@
         <div class="feed-card">
             <div class="create-post">
                 <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop" class="post-avatar">
-                <textarea class="post-input" placeholder="Share your fitness achievement... 🎉" rows="3"></textarea>
+                <textarea class="post-input" id="postContent" placeholder="Share your fitness achievement... 🎉" rows="3"></textarea>
             </div>
             <div class="post-actions">
                 <button class="post-action" onclick="addPhoto()">
-                    <span>📷</span> Photo/Video
+                    <i class="fas fa-camera"></i> Photo/Video
                 </button>
                 <button class="post-action" onclick="addWorkout()">
-                    <span>🏋️</span> Workout
+                    <i class="fas fa-dumbbell"></i> Workout
                 </button>
                 <button class="post-action" onclick="addAchievement()">
-                    <span>🏆</span> Achievement
+                    <i class="fas fa-trophy"></i> Achievement
                 </button>
-                <button class="post-action" style="background: #4F46E5; color: white;" onclick="createPost()">
-                    Post
+                <button class="post-action" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;" onclick="createPost()">
+                    <i class="fas fa-paper-plane"></i> Post
                 </button>
             </div>
         </div>
 
         <!-- Post 1 -->
-        <div class="post">
+        <div class="post" id="post1">
             <div class="post-header">
                 <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=45&h=45&fit=crop" class="post-avatar">
                 <div class="post-user-info">
                     <div class="post-user-name">Sarah Parker</div>
-                    <div class="post-time">2 hours ago • 🌍 Public</div>
+                    <div class="post-time">2 hours ago • <i class="fas fa-globe"></i> Public</div>
                 </div>
             </div>
             <div class="post-content">
-                Just completed my first 10k run! 🏃‍♀️ New personal best! Never thought I could do this 3 months ago. 
+                Just completed my first 10k run! 🏃‍♀️ New personal best! Never thought I could do this 3 months ago.
                 So proud of this journey! 💪
             </div>
             <div class="post-stats">
-                <span class="post-stat">❤️ 245 likes</span>
-                <span class="post-stat">💬 32 comments</span>
-                <span class="post-stat">🔄 15 shares</span>
+                <span class="post-stat"><i class="fas fa-heart"></i> 245 likes</span>
+                <span class="post-stat"><i class="fas fa-comment"></i> 32 comments</span>
+                <span class="post-stat"><i class="fas fa-share"></i> 15 shares</span>
             </div>
             <div class="post-interactions">
-                <button class="interaction-btn" onclick="likePost(this)">
-                    <span>❤️</span> Like
+                <button class="interaction-btn" onclick="likePost(this, 245)">
+                    <i class="far fa-heart"></i> Like
                 </button>
-                <button class="interaction-btn" onclick="commentPost()">
-                    <span>💬</span> Comment
+                <button class="interaction-btn" onclick="commentPost(this)">
+                    <i class="far fa-comment"></i> Comment
                 </button>
                 <button class="interaction-btn" onclick="sharePost()">
-                    <span>🔄</span> Share
+                    <i class="fas fa-share"></i> Share
                 </button>
             </div>
         </div>
 
         <!-- Post 2 -->
-        <div class="post">
+        <div class="post" id="post2">
             <div class="post-header">
                 <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=45&h=45&fit=crop" class="post-avatar">
                 <div class="post-user-info">
                     <div class="post-user-name">Mike Chen</div>
-                    <div class="post-time">Yesterday • 🌍 Public</div>
+                    <div class="post-time">Yesterday • <i class="fas fa-globe"></i> Public</div>
                 </div>
             </div>
             <div class="post-content">
-                30 days streak achieved! 🔥 Consistency is key! 
+                30 days streak achieved! 🔥 Consistency is key!
                 Feeling stronger and more energetic every single day.
             </div>
             <div class="post-stats">
-                <span class="post-stat">❤️ 189 likes</span>
-                <span class="post-stat">💬 28 comments</span>
-                <span class="post-stat">🔄 10 shares</span>
+                <span class="post-stat"><i class="fas fa-heart"></i> 189 likes</span>
+                <span class="post-stat"><i class="fas fa-comment"></i> 28 comments</span>
+                <span class="post-stat"><i class="fas fa-share"></i> 10 shares</span>
             </div>
             <div class="post-interactions">
-                <button class="interaction-btn liked" onclick="likePost(this)">
-                    <span>❤️</span> Liked
+                <button class="interaction-btn liked" onclick="likePost(this, 189)">
+                    <i class="fas fa-heart"></i> Liked
                 </button>
-                <button class="interaction-btn" onclick="commentPost()">
-                    <span>💬</span> Comment
+                <button class="interaction-btn" onclick="commentPost(this)">
+                    <i class="far fa-comment"></i> Comment
                 </button>
                 <button class="interaction-btn" onclick="sharePost()">
-                    <span>🔄</span> Share
+                    <i class="fas fa-share"></i> Share
                 </button>
             </div>
         </div>
 
         <!-- Post 3 -->
-        <div class="post">
+        <div class="post" id="post3">
             <div class="post-header">
                 <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=45&h=45&fit=crop" class="post-avatar">
                 <div class="post-user-info">
                     <div class="post-user-name">Emily Rodriguez</div>
-                    <div class="post-time">2 days ago • 🌍 Public</div>
+                    <div class="post-time">2 days ago • <i class="fas fa-globe"></i> Public</div>
                 </div>
             </div>
             <div class="post-content">
-                New personal record in deadlift! 🏋️‍♀️ 120kg! Hard work pays off. 
+                New personal record in deadlift! 🏋️‍♀️ 120kg! Hard work pays off.
                 Thank you all for the motivation and support!
             </div>
             <div class="post-stats">
-                <span class="post-stat">❤️ 312 likes</span>
-                <span class="post-stat">💬 45 comments</span>
-                <span class="post-stat">🔄 22 shares</span>
+                <span class="post-stat"><i class="fas fa-heart"></i> 312 likes</span>
+                <span class="post-stat"><i class="fas fa-comment"></i> 45 comments</span>
+                <span class="post-stat"><i class="fas fa-share"></i> 22 shares</span>
             </div>
             <div class="post-interactions">
-                <button class="interaction-btn" onclick="likePost(this)">
-                    <span>❤️</span> Like
+                <button class="interaction-btn" onclick="likePost(this, 312)">
+                    <i class="far fa-heart"></i> Like
                 </button>
-                <button class="interaction-btn" onclick="commentPost()">
-                    <span>💬</span> Comment
+                <button class="interaction-btn" onclick="commentPost(this)">
+                    <i class="far fa-comment"></i> Comment
                 </button>
                 <button class="interaction-btn" onclick="sharePost()">
-                    <span>🔄</span> Share
+                    <i class="fas fa-share"></i> Share
                 </button>
             </div>
+        </div>
+
+        <!-- Load More Button -->
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="friend-btn" onclick="loadMorePosts()" style="padding: 12px 30px;">
+                <i class="fas fa-sync-alt"></i> Load More Posts
+            </button>
         </div>
     </div>
 
@@ -289,12 +458,15 @@
     <div>
         <!-- Active Friends -->
         <div class="sidebar-card">
-            <div class="sidebar-title">Active Friends 🌟</div>
+            <div class="sidebar-title">
+                <i class="fas fa-users"></i>
+                Active Friends 🌟
+            </div>
             <div class="friend-item">
                 <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=45&h=45&fit=crop" class="friend-avatar">
                 <div class="friend-info">
                     <div class="friend-name">Sarah Parker</div>
-                    <div class="friend-status">Working out now 💪</div>
+                    <div class="friend-status"><i class="fas fa-fire"></i> Working out now</div>
                 </div>
                 <button class="friend-btn" onclick="challengeFriend(1)">Challenge</button>
             </div>
@@ -302,7 +474,7 @@
                 <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=45&h=45&fit=crop" class="friend-avatar">
                 <div class="friend-info">
                     <div class="friend-name">Mike Chen</div>
-                    <div class="friend-status">Completed workout ✅</div>
+                    <div class="friend-status"><i class="fas fa-check-circle"></i> Completed workout</div>
                 </div>
                 <button class="friend-btn" onclick="challengeFriend(2)">Challenge</button>
             </div>
@@ -310,16 +482,21 @@
                 <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=45&h=45&fit=crop" class="friend-avatar">
                 <div class="friend-info">
                     <div class="friend-name">Emily Rodriguez</div>
-                    <div class="friend-status">Online now 🟢</div>
+                    <div class="friend-status"><i class="fas fa-circle"></i> Online now</div>
                 </div>
                 <button class="friend-btn" onclick="challengeFriend(3)">Challenge</button>
             </div>
-            <a href="#" style="display: block; text-align: center; margin-top: 15px; color: #4F46E5;">See all friends →</a>
+            <a href="#" style="display: block; text-align: center; margin-top: 15px; color: var(--primary); text-decoration: none;">
+                See all friends <i class="fas fa-arrow-right"></i>
+            </a>
         </div>
 
         <!-- Weekly Leaderboard -->
         <div class="sidebar-card">
-            <div class="sidebar-title">Weekly Leaderboard 🏆</div>
+            <div class="sidebar-title">
+                <i class="fas fa-chart-line"></i>
+                Weekly Leaderboard 🏆
+            </div>
             <div class="leaderboard-item">
                 <span class="rank gold">🥇</span>
                 <span class="leaderboard-name">Sarah Parker</span>
@@ -336,12 +513,12 @@
                 <span class="leaderboard-score">1,980 pts</span>
             </div>
             <div class="leaderboard-item">
-                <span class="rank">4</span>
+                <span class="rank">4️⃣</span>
                 <span class="leaderboard-name">You</span>
                 <span class="leaderboard-score">1,850 pts</span>
             </div>
             <div class="leaderboard-item">
-                <span class="rank">5</span>
+                <span class="rank">5️⃣</span>
                 <span class="leaderboard-name">David Kim</span>
                 <span class="leaderboard-score">1,670 pts</span>
             </div>
@@ -349,86 +526,134 @@
 
         <!-- Active Challenges -->
         <div class="sidebar-card">
-            <div class="sidebar-title">Active Challenges 🎯</div>
+            <div class="sidebar-title">
+                <i class="fas fa-trophy"></i>
+                Active Challenges 🎯
+            </div>
             <div class="friend-item">
                 <div class="friend-info">
                     <div class="friend-name">Summer Shape Up</div>
                     <div class="friend-status">20 workouts • 12/20 done</div>
                 </div>
-                <button class="friend-btn" onclick="viewChallenge()">Join</button>
+                <button class="friend-btn" onclick="viewChallenge('Summer Shape Up')">Join</button>
             </div>
             <div class="friend-item">
                 <div class="friend-info">
                     <div class="friend-name">10K Steps Daily</div>
                     <div class="friend-status">7 day streak • 128 participants</div>
                 </div>
-                <button class="friend-btn" onclick="viewChallenge()">Join</button>
+                <button class="friend-btn" onclick="viewChallenge('10K Steps Daily')">Join</button>
             </div>
             <div class="friend-item">
                 <div class="friend-info">
                     <div class="friend-name">Push-up Challenge</div>
                     <div class="friend-status">1000 push-ups • 450/1000</div>
                 </div>
-                <button class="friend-btn" onclick="viewChallenge()">Join</button>
+                <button class="friend-btn" onclick="viewChallenge('Push-up Challenge')">Join</button>
             </div>
         </div>
 
         <!-- Trending Hashtags -->
         <div class="sidebar-card">
-            <div class="sidebar-title">Trending 🔥</div>
+            <div class="sidebar-title">
+                <i class="fas fa-hashtag"></i>
+                Trending 🔥
+            </div>
             <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#FitTrack</span>
-                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#FitnessMotivation</span>
-                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#WorkoutDaily</span>
-                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#HealthyLifestyle</span>
-                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#GymLife</span>
-                <span style="background: #F3F4F6; padding: 6px 12px; border-radius: 20px; cursor: pointer;">#FitnessJourney</span>
+                <span class="hashtag" onclick="searchHashtag('#FitTrack')">#FitTrack</span>
+                <span class="hashtag" onclick="searchHashtag('#FitnessMotivation')">#FitnessMotivation</span>
+                <span class="hashtag" onclick="searchHashtag('#WorkoutDaily')">#WorkoutDaily</span>
+                <span class="hashtag" onclick="searchHashtag('#HealthyLifestyle')">#HealthyLifestyle</span>
+                <span class="hashtag" onclick="searchHashtag('#GymLife')">#GymLife</span>
+                <span class="hashtag" onclick="searchHashtag('#FitnessJourney')">#FitnessJourney</span>
+                <span class="hashtag" onclick="searchHashtag('#NoPainNoGain')">#NoPainNoGain</span>
+                <span class="hashtag" onclick="searchHashtag('#FitFam')">#FitFam</span>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    let currentPostLikes = {};
-
+    // Create post
     function createPost() {
-        alert("Post created successfully! 🎉");
-    }
-
-    function addPhoto() {
-        alert("Add photo/video to your post");
-    }
-
-    function addWorkout() {
-        alert("Share your workout details");
-    }
-
-    function addAchievement() {
-        alert("Share your achievement!");
-    }
-
-    function likePost(button) {
-        button.classList.toggle('liked');
-        if (button.classList.contains('liked')) {
-            button.innerHTML = '<span>❤️</span> Liked';
+        const postContent = document.getElementById('postContent').value;
+        if (postContent.trim()) {
+            alert("🎉 Post created successfully! Your fitness journey inspires others!");
+            document.getElementById('postContent').value = '';
         } else {
-            button.innerHTML = '<span>❤️</span> Like';
+            alert("Please write something before posting!");
         }
     }
 
-    function commentPost() {
-        alert("Add a comment...");
+    function addPhoto() {
+        alert("📸 Add photo/video to your post - show off your progress!");
+    }
+
+    function addWorkout() {
+        alert("🏋️ Share your workout details - inspire others with your routine!");
+    }
+
+    function addAchievement() {
+        alert("🏆 Share your achievement - celebrate your wins!");
+    }
+
+    // Like post with counter
+    function likePost(button, currentLikes) {
+        const icon = button.querySelector('i');
+        const isLiked = button.classList.contains('liked');
+
+        if (!isLiked) {
+            button.classList.add('liked');
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            button.innerHTML = '<i class="fas fa-heart"></i> Liked';
+            // Update like count in stats
+            const statsDiv = button.closest('.post').querySelector('.post-stats');
+            const likeSpan = statsDiv.querySelector('span:first-child');
+            const newLikes = currentLikes + 1;
+            likeSpan.innerHTML = `<i class="fas fa-heart"></i> ${newLikes} likes`;
+        } else {
+            button.classList.remove('liked');
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            button.innerHTML = '<i class="far fa-heart"></i> Like';
+            const statsDiv = button.closest('.post').querySelector('.post-stats');
+            const likeSpan = statsDiv.querySelector('span:first-child');
+            const newLikes = currentLikes - 1;
+            likeSpan.innerHTML = `<i class="fas fa-heart"></i> ${newLikes} likes`;
+        }
+    }
+
+    // Comment on post
+    function commentPost(button) {
+        const comment = prompt("💬 Write your comment:");
+        if (comment && comment.trim()) {
+            alert("✅ Comment posted successfully!");
+            // Update comment count
+            const statsDiv = button.closest('.post').querySelector('.post-stats');
+            const commentSpan = statsDiv.querySelector('span:nth-child(2)');
+            const currentComments = parseInt(commentSpan.innerHTML.match(/\d+/)[0]);
+            commentSpan.innerHTML = `<i class="fas fa-comment"></i> ${currentComments + 1} comments`;
+        }
     }
 
     function sharePost() {
-        alert("Share this post with your friends!");
+        alert("🔗 Share link copied to clipboard! Inspire others with this post!");
     }
 
     function challengeFriend(friendId) {
-        alert(`Challenge sent to friend! 💪`);
+        alert(`💪 Challenge sent to friend! Get ready to compete!`);
     }
 
-    function viewChallenge() {
-        alert("View challenge details");
+    function viewChallenge(challengeName) {
+        alert(`🎯 You've joined the "${challengeName}" challenge! Good luck!`);
+    }
+
+    function searchHashtag(hashtag) {
+        alert(`🔍 Showing posts with ${hashtag}`);
+    }
+
+    function loadMorePosts() {
+        alert("📱 Loading more posts from the community...");
     }
 </script>
