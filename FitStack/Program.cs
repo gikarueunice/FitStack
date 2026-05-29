@@ -49,6 +49,7 @@ builder.Services.Configure<EmailSettings>(
 
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<INutritionService, NutritionService>();
 builder.Services.AddScoped<IOTPService, OTPService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IEmailService, EmailService>();

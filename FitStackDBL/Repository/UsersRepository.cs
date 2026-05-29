@@ -77,5 +77,12 @@ namespace FitStackDBL.Repository
             // Stub: update last login or stats in DB. Implement as needed.
             return Task.CompletedTask;
         }
+        // In UserService.cs
+        public async Task<Users?> GetUserByIdAsync(int id)
+        {
+            const string sql = "SELECT * FROM Users WHERE Id = @Id AND IsActive = 1";
+            using var connection = CreateConnection();
+            return await connection.QueryFirstOrDefaultAsync<Users>(sql, new { Id = id });
+        }
     }
 }

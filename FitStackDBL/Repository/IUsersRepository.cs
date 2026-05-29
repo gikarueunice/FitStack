@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using FitStackDBL.Model;
+using System.Threading.Tasks;
 
 namespace FitStackDBL.Repository
 {
@@ -8,5 +9,6 @@ namespace FitStackDBL.Repository
         Task<Model.Users?> GetByEmail(string email);
         Task<Model.Users?> GetById(int userId);
         Task UpdateLoginStats(int userId);
+       Task<Users?> GetUserByIdAsync(int id);
     }
 }

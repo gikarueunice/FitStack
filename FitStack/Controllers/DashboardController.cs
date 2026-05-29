@@ -1,61 +1,126 @@
 ﻿using FitStack.ViewModels;
 using FitStack.ViewModels.Dashboard;
+using FitStackDBL.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace FitStack.Controllers
 {
     public class DashboardController : Controller
     {
+        private readonly IUserService _userService;
+
+        public DashboardController(IUserService userService)
+        {
+            _userService = userService;
+        }
         public IActionResult Index()
         {
             var model = GetDashboardData();
 
             return View(model);
         }
-        public IActionResult Goals()
+        private async Task SetUserDataAsync()
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
+            {
+                var user = await _userService.GetUserByIdAsync(userId);
+                if (user != null)
+                {
+                    ViewBag.UserId = user.Id;
+                    ViewBag.UserName = user.FullName;
+                    ViewBag.UserEmail = user.Email;
+                    ViewBag.UserAvatar = user.ProfilePictureUrl ?? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop";
+                    ViewBag.UserLevel = user.Level ?? 1;
+                    ViewBag.UserXP = user.XP ?? 0;
+                    ViewBag.JoinDate = user.CreatedAt.ToString("MMM yyyy");
+                }
+            }
+        }
+        public async Task<IActionResult> Goals()
+        {
+            await SetUserDataAsync();
+            ViewData["Title"] = "My Goals";
             return View();
         }
 
-        public IActionResult Schedules()
+        public async Task<IActionResult> Schedules()
         {
+            await SetUserDataAsync();
+            ViewData["Title"] = "Schedules";
             return View();
         }
 
-        public IActionResult Achievements()
+        public async Task<IActionResult> WorkOutPlan()
         {
+            await SetUserDataAsync();
+            ViewData["Title"] = "Workout Plan";
             return View();
         }
 
-        public IActionResult Statistics()
+        public async Task<IActionResult> DietPlan()
         {
+            await SetUserDataAsync();
+            ViewData["Title"] = "Diet Plan";
             return View();
         }
-        public IActionResult Settings()
+
+        public async Task<IActionResult> Progress()
         {
+            await SetUserDataAsync();
+            ViewData["Title"] = "Progress";
             return View();
         }
-        public IActionResult WorkOutPlan()
+
+        public async Task<IActionResult> Achievements()
         {
+            await SetUserDataAsync();
+            ViewData["Title"] = "Achievements";
             return View();
         }
-        public IActionResult DietPlan()
+
+        public async Task<IActionResult> Statistics()
         {
+            await SetUserDataAsync();
+            ViewData["Title"] = "Statistics";
             return View();
         }
+
+        public async Task<IActionResult> Community()
+        {
+            await SetUserDataAsync();
+            ViewData["Title"] = "Community";
+            return View();
+        }
+
+        public async Task<IActionResult> Wellness()
+        {
+            await SetUserDataAsync();
+            ViewData["Title"] = "Wellness";
+            return View();
+        }
+
+        public async Task<IActionResult> Profile()
+        {
+            await SetUserDataAsync();
+            ViewData["Title"] = "Profile";
+            return View();
+        }
+
+        public async Task<IActionResult> Settings()
+        {
+            await SetUserDataAsync();
+            ViewData["Title"] = "Settings";
+            return View();
+        }
+        
         public IActionResult Social()
         {
             return View();
         }
-        public IActionResult Progress()
-        {
-            return View();
-        }
-        public IActionResult Profile()
-        {
-            return View();
-        }
+
         private DashboardViewModel GetDashboardData()
         {
             // This would come from your database
