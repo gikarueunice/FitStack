@@ -18,7 +18,18 @@ namespace FitStackDBL.Services
             _logger = logger;
         }
 
+        public async Task UpdateProfilePictureAsync(int userId, string pictureUrl, string picturePath)
+        {
+            const string sql = @"
+        UPDATE Users 
+        SET ProfilePictureUrl = @PictureUrl,
+            ProfilePicturePath = @PicturePath,
+            UpdatedAt = GETUTCDATE()
+        WHERE Id = @UserId";
 
+            using var connection = new SqlConnection(_connectionString);
+            await connection.ExecuteAsync(sql, new { UserId = userId, PictureUrl = pictureUrl, PicturePath = picturePath });
+        }
         public async Task<Users?> GetUserByIdAsync(int id)
         {
             const string sql = "SELECT * FROM Users WHERE Id = @Id";

@@ -16,7 +16,7 @@ namespace FitStackDBL.Services
     {
         private readonly ILogger<NutritionService> _logger;
         private readonly string _apiKey;
-        private readonly string _apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+        private readonly string _apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
         public NutritionService(IConfiguration configuration, ILogger<NutritionService> logger)
         {
@@ -142,10 +142,8 @@ namespace FitStackDBL.Services
             },
                     generationConfig = new
                     {
-                        temperature = 0.4,
-                        topP = 0.95,
-                        topK = 40,
-                        maxOutputTokens = 2048
+                        temperature = 0.2,
+                        maxOutputTokens = 4096
                     }
                 };
 

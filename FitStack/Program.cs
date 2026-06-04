@@ -52,6 +52,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<INutritionService, NutritionService>();
 builder.Services.AddScoped<IOTPService, OTPService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
+builder.Services.AddScoped<IProfileImageServices, ProfileImageServices>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

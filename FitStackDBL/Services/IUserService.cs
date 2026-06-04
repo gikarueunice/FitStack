@@ -19,6 +19,7 @@ namespace FitStackDBL.Services
         Task ResetLoginAttemptsAsync(int userId);
         Task IncrementLoginAttemptsAsync(int userId);
         Task<Users> UpdatePhoneOTPAsync(string phoneNumber, string otp);
-        
+        Task UpdateProfilePictureAsync(int userId, string pictureUrl, string picturePath);
+
     }
 }

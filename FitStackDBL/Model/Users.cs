@@ -37,6 +37,7 @@ namespace FitStackDBL.Model
         public DateTime? LastLoginAt { get; set; }
         public bool IsActive { get; set; }
         public string? ProfilePictureUrl { get; set; }
+        public string? ProfilePicturePath { get; set; }
         public UserProfile? Profile { get; set; }
         public string? Password { get; internal set; }
         public bool IsPhoneVerified { get; set; }
