@@ -109,7 +109,39 @@ namespace FitStack.Controllers
                 return StatusCode(500, new { success = false, message = ex.Message, details = ex.InnerException?.Message });
             }
         }
+        [HttpGet("get-current-user")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+                if (userId == 0)
+                    return Unauthorized();
 
+                var user = await _userService.GetUserByIdAsync(userId);
+                if (user == null)
+                    return NotFound();
+
+                return Ok(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        fullName = user.FullName,
+                        email = user.Email,
+                        level = user.Level,
+                        xp = user.XP,
+                        profilePicture = user.ProfilePictureUrl ?? "",
+                        initial = user.FullName?.FirstOrDefault().ToString().ToUpper() ?? "U"
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting current user");
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
         [HttpPost("update")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
         {

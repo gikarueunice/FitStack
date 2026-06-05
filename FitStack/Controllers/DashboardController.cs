@@ -120,7 +120,24 @@ namespace FitStack.Controllers
         {
             return View();
         }
-
+        private async Task LoadUserDataAsync()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int userId))
+            {
+                var user = await _userService.GetUserByIdAsync(userId);
+                if (user != null)
+                {
+                    ViewBag.UserId = user.Id;
+                    ViewBag.UserName = user.FullName;
+                    ViewBag.UserEmail = user.Email;
+                    ViewBag.UserAvatar = !string.IsNullOrEmpty(user.ProfilePictureUrl) ? user.ProfilePictureUrl : "";
+                    ViewBag.UserInitial = user.FullName?.FirstOrDefault().ToString().ToUpper() ?? "U";
+                    ViewBag.UserLevel = user.Level;
+                    ViewBag.UserXP = user.XP;
+                }
+            }
+        }
         private DashboardViewModel GetDashboardData()
         {
             // This would come from your database

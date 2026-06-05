@@ -157,3 +157,35 @@ if (yearElement) {
     const currentYear = new Date().getFullYear();
     yearElement.innerHTML = yearElement.innerHTML.replace('2026', currentYear);
 }
+// Function to update chart colors when theme changes
+function updateChartsForTheme() {
+    const isDark = document.body.classList.contains('dark-mode');
+    const textColor = isDark ? '#F9FAFB' : '#1F2937';
+    const gridColor = isDark ? '#374151' : '#E5E7EB';
+
+    // If using Chart.js
+    if (typeof Chart !== 'undefined') {
+        const charts = Chart.instances;
+        Object.keys(charts).forEach(key => {
+            const chart = charts[key];
+            if (chart.options && chart.options.scales) {
+                if (chart.options.scales.y && chart.options.scales.y.ticks) {
+                    chart.options.scales.y.ticks.color = textColor;
+                }
+                if (chart.options.scales.x && chart.options.scales.x.ticks) {
+                    chart.options.scales.x.ticks.color = textColor;
+                }
+                if (chart.options.scales.y && chart.options.scales.y.grid) {
+                    chart.options.scales.y.grid.color = gridColor;
+                }
+                if (chart.options.scales.x && chart.options.scales.x.grid) {
+                    chart.options.scales.x.grid.color = gridColor;
+                }
+            }
+            if (chart.options && chart.options.plugins && chart.options.plugins.legend) {
+                chart.options.plugins.legend.labels.color = textColor;
+            }
+            chart.update();
+        });
+    }
+}

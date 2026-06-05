@@ -467,6 +467,57 @@
             }
         });
     }
+        async function uploadImage() {
+        if (!selectedFile) {
+            showNotification('Please select an image first', 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('profileImage', selectedFile);
+
+        const spinner = document.getElementById('loadingSpinner');
+        spinner.style.display = 'flex';
+
+        try {
+            const response = await fetch('/api/profile/upload-avatar', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            spinner.style.display = 'none';
+
+            if (result.success) {
+                // Update current page avatar
+                const profileAvatar = document.getElementById('profileAvatar');
+                if (profileAvatar) profileAvatar.src = result.imageUrl + '?t=' + new Date().getTime();
+
+                // Update sidebar avatar
+                const sidebarAvatar = document.querySelector('.sidebar-user .user-avatar');
+                if (sidebarAvatar) {
+                    sidebarAvatar.src = result.imageUrl + '?t=' + new Date().getTime();
+                    sidebarAvatar.style.display = 'block';
+                }
+
+                // Hide default avatar if exists
+                const defaultAvatar = document.getElementById('defaultAvatar');
+                if (defaultAvatar) defaultAvatar.style.display = 'none';
+
+                closeUploadModal();
+                showNotification('Profile picture updated successfully!', 'success');
+
+                // Refresh user data across the site
+                refreshUserData();
+            } else {
+                showNotification(result.message || 'Failed to upload image', 'error');
+            }
+        } catch (error) {
+            spinner.style.display = 'none';
+            showNotification('Error uploading image', 'error');
+        }
+    }
 </script>
 
 <style>

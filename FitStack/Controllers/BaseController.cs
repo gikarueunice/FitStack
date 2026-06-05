@@ -1,20 +1,42 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using FitStackDBL.Services;
 
 namespace FitStack.Controllers
-{
-    [Authorize]
-    public abstract class BaseController : Controller
     {
-        protected void SetUserDataFromClaims()
+        [Authorize]
+        public abstract class BaseController : Controller
         {
-            ViewBag.UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            ViewBag.UserName = User.FindFirst(ClaimTypes.Name)?.Value ?? "User";
-            ViewBag.UserEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
-            ViewBag.UserLevel = User.FindFirst("UserLevel")?.Value ?? "1";
-            ViewBag.UserXP = User.FindFirst("UserXP")?.Value ?? "0";
-            ViewBag.UserAvatar = User.FindFirst("ProfilePicture")?.Value ?? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop";
+            private IUserService? _userService;
+
+            protected IUserService UserService => _userService ??= HttpContext.RequestServices.GetRequiredService<IUserService>();
+
+            protected async Task LoadUserDataAsync()
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (int.TryParse(userIdClaim, out int userId))
+                {
+                    var user = await UserService.GetUserByIdAsync(userId);
+                    if (user != null)
+                    {
+                        ViewBag.UserId = user.Id;
+                        ViewBag.UserName = user.FullName;
+                        ViewBag.UserEmail = user.Email;
+                        ViewBag.UserAvatar = !string.IsNullOrEmpty(user.ProfilePictureUrl) ? user.ProfilePictureUrl : "";
+                        ViewBag.UserInitial = GetUserInitial(user.FullName);
+                        ViewBag.UserLevel = user.Level;
+                        ViewBag.UserXP = user.XP;
+                        ViewBag.ProfilePictureUrl = user.ProfilePictureUrl;
+                    }
+                }
+            }
+
+            private string GetUserInitial(string? fullName)
+            {
+                if (string.IsNullOrEmpty(fullName)) return "U";
+                return fullName.Trim().FirstOrDefault().ToString().ToUpper();
+            }
         }
     }
-}

@@ -244,6 +244,7 @@
             <div class="meal-actions">
                 <button class="swap-btn" onclick="swapMeal('breakfast')">🔄 Swap Meal</button>
                 <button class="swap-btn" onclick="logMeal('breakfast')">✅ Log Meal</button>
+                <button class="swap-btn" onclick="openCaptureForMeal('breakfast')">📸 Capture</button>
             </div>
         </div>
     </div>
@@ -266,6 +267,7 @@
             <div class="meal-actions">
                 <button class="swap-btn" onclick="swapMeal('lunch')">🔄 Swap Meal</button>
                 <button class="swap-btn" onclick="logMeal('lunch')">✅ Log Meal</button>
+                <button class="swap-btn" onclick="openCaptureForMeal('lunch')">📸 Capture</button>
             </div>
         </div>
     </div>
@@ -288,7 +290,21 @@
             <div class="meal-actions">
                 <button class="swap-btn" onclick="swapMeal('dinner')">🔄 Swap Meal</button>
                 <button class="swap-btn" onclick="logMeal('dinner')">✅ Log Meal</button>
+                <button class="swap-btn" onclick="openCaptureForMeal('dinner')">📸 Capture</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden file input + Camera Modal for DietPlan -->
+<input type="file" id="dietFileInput" accept="image/jpeg,image/jpg,image/png,image/webp" capture="environment" style="display:none;" onchange="handleDietFileSelect(this)">
+
+<div id="dietCameraModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:2000; align-items:center; justify-content:center;">
+    <div style="background:var(--bg-secondary); padding:16px; border-radius:12px; max-width:480px; width:96%; text-align:center;">
+        <video id="dietCameraVideo" autoplay playsinline style="width:100%; border-radius:8px; background:#000;"></video>
+        <div style="margin-top:8px; display:flex; gap:8px; justify-content:center;">
+            <button type="button" class="btn-primary" onclick="captureDietFromCamera()">Capture</button>
+            <button type="button" class="btn-outline" onclick="closeDietCamera()">Cancel</button>
         </div>
     </div>
 </div>
@@ -393,4 +409,96 @@
     document.addEventListener('DOMContentLoaded', function() {
         loadWaterIntake();
     });
+
+    // DietPlan capture/analyze
+    let dietCameraStream = null;
+    let activeMealForCapture = null;
+
+    function openCaptureForMeal(meal) {
+        activeMealForCapture = meal;
+        // Show mobile file picker first for best UX
+        const fileInput = document.getElementById('dietFileInput');
+        if (fileInput) fileInput.click();
+    }
+
+    function handleDietFileSelect(input) {
+        if (input.files && input.files[0]) {
+            analyzeDietImage(input.files[0], activeMealForCapture);
+        }
+    }
+
+    async function analyzeDietImage(file, meal) {
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) { alert('Max 5MB'); return; }
+
+        // show loader
+        const card = document.querySelector(`.meal-card[data-meal='${meal}']`);
+        if (!card) return;
+        const mealContentEl = card.querySelector('.meal-content');
+        const orig = mealContentEl ? mealContentEl.innerHTML : '';
+        const loaderHtml = '<div style="padding:20px; text-align:center;">Analyzing...</div>';
+        if (mealContentEl) mealContentEl.innerHTML = loaderHtml;
+
+        const formData = new FormData();
+        formData.append('foodImage', file, file.name);
+
+        try {
+            const resp = await fetch('/FoodAnalysis/Analyze', { method: 'POST', body: formData });
+            const data = await resp.json();
+            if (data.success && data.data) {
+                // Update calories display in the meal card
+                const caloriesSpan = card.querySelector('.calories');
+                if (caloriesSpan) caloriesSpan.textContent = `${data.data.calories} cal`;
+
+                // Optionally save to server or log
+                alert('Analysis complete: ' + data.data.mealName + ' - ' + data.data.calories + ' cal');
+            } else {
+                alert(data.message || 'Could not analyze image');
+                if (mealContentEl) mealContentEl.innerHTML = orig;
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error analyzing image');
+            if (mealContentEl) mealContentEl.innerHTML = orig;
+        }
+    }
+
+    // Camera fallback (optional): open camera modal
+    async function openDietCamera() {
+        try {
+            const modal = document.getElementById('dietCameraModal');
+            modal.style.display = 'flex';
+            dietCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+            const video = document.getElementById('dietCameraVideo');
+            video.srcObject = dietCameraStream;
+            await video.play();
+        } catch (err) {
+            console.error('Camera error', err);
+            alert('Unable to access camera. Please allow camera permission or use file upload.');
+        }
+    }
+
+    function closeDietCamera() {
+        const modal = document.getElementById('dietCameraModal');
+        modal.style.display = 'none';
+        if (dietCameraStream) {
+            dietCameraStream.getTracks().forEach(t => t.stop());
+            dietCameraStream = null;
+        }
+    }
+
+    function captureDietFromCamera() {
+        const video = document.getElementById('dietCameraVideo');
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function(blob) {
+            if (!blob) return;
+            const file = new File([blob], 'capture.jpg', { type: 'image/jpeg' });
+            analyzeDietImage(file, activeMealForCapture);
+            closeDietCamera();
+        }, 'image/jpeg', 0.9);
+    }
 </script>

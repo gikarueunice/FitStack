@@ -334,7 +334,7 @@
         <!-- Create Post -->
         <div class="feed-card">
             <div class="create-post">
-                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=50&h=50&fit=crop" class="post-avatar">
+                <img src="@ViewBag.ProfilePictureUrl?t=@DateTime.Now.Ticks" alt="User" class="user-avatar" id="sidebarAvatar">
                 <textarea class="post-input" id="postContent" placeholder="Share your fitness achievement... 🎉" rows="3"></textarea>
             </div>
             <div class="post-actions">

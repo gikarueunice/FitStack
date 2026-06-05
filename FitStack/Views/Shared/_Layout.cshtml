@@ -46,5 +46,27 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        // Global theme init for non-dashboard pages
+        (function() {
+            try {
+                const saved = localStorage.getItem('theme');
+                const mql = window.matchMedia('(prefers-color-scheme: dark)');
+                const apply = (isDark) => {
+                    if (isDark) document.body.classList.add('dark-mode'); else document.body.classList.remove('dark-mode');
+                };
+
+                if (saved === 'dark') apply(true);
+                else if (saved === 'light') apply(false);
+                else apply(mql.matches);
+
+                // Listen for system changes when no user override
+                if (!saved) {
+                    if (mql.addEventListener) mql.addEventListener('change', e => apply(e.matches));
+                    else if (mql.addListener) mql.addListener(e => apply(e.matches));
+                }
+            } catch (ex) { console.error('Theme init error', ex); }
+        })();
+    </script>
 </body>
 </html>
