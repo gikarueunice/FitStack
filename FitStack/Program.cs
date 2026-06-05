@@ -97,7 +97,7 @@ else
 }
 
 app.UseHttpsRedirection();
-
+app.UseDeveloperExceptionPage();
 app.UseStaticFiles();
 
 app.UseRouting();
