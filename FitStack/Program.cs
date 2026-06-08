@@ -95,6 +95,15 @@ else
     // Enable custom pages in development too
     app.UseStatusCodePagesWithReExecute("/Error/StatusCode/{0}");
 }
+if (app.Environment.IsDevelopment() || true) // Remove true after debugging
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 app.UseDeveloperExceptionPage();

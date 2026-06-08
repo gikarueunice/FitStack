@@ -20,6 +20,6 @@ namespace FitStackDBL.Services
         Task IncrementLoginAttemptsAsync(int userId);
         Task<Users> UpdatePhoneOTPAsync(string phoneNumber, string otp);
         Task UpdateProfilePictureAsync(int userId, string pictureUrl, string picturePath);
-
+        //bool TestConnection();
     }
 }

@@ -388,12 +388,21 @@ namespace FitStack.Controllers
 
             try
             {
-                var user = await _userService.GetUserByEmailAsync(model.Email);
+                var identifier = (model.Email ?? string.Empty).Trim();
+                _logger.LogInformation("Login attempt for identifier: {Identifier}", identifier);
+
+                // Try email lookup first, then phone fallback
+                var user = await _userService.GetUserByEmailAsync(identifier);
+                if (user == null)
+                {
+                    _logger.LogDebug("User lookup by email failed for {Identifier}, trying phone lookup", identifier);
+                    user = await _userService.GetUserByPhoneNumberAsync(identifier);
+                }
 
                 if (user == null)
                 {
-                    _logger.LogWarning("Login attempt with non-existent email: {Email}", model.Email);
-                    TempData["Error"] = "No account found with this email address. Please check your email or <a href='/auth/register'>create a new account</a>.";
+                    _logger.LogWarning("Login attempt with non-existent identifier: {Identifier}", identifier);
+                    TempData["Error"] = "No account found with this email/phone. Please check your details or <a href='/auth/register'>create a new account</a>.";
                     ModelState.AddModelError("", "Invalid email or password");
                     return View(model);
                 }
@@ -902,6 +911,7 @@ namespace FitStack.Controllers
                 return Json(new { success = false, message = "Failed to verify code" });
             }
         }
+
         [HttpGet]
         [Route("auth/test-api")]
         public IActionResult TestApi()
